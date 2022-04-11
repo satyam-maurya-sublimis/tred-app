@@ -44,8 +44,8 @@ class TrnProjectRoomConfigurationExtension extends AbstractExtension
     public function getWigetSearch()
     {
         $filters = [];
-        if ($this->session->has('city')){
-            $city = $this->session->get('city');
+        if ($this->session->getSession()->has('city')){
+            $city = $this->session->getSession()->get('city');
         }else{
             $city = $this->params->get('city');
             $this->session->set('city',$city);

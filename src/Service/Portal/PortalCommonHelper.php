@@ -25,7 +25,7 @@ class PortalCommonHelper {
         //$appUser = $this->em->getRepository(AppUser::class)->find($postData['userId']);
         $filters = [];
         if($postData){
-            if (isset($postData["roomConfiguration"]) && $postData["roomConfiguration"] !=""){
+            if (is($postData["roomConfiguration"]) && $postData["roomConfiguration"] !=""){
                 if (is_array($postData["roomConfiguration"])){
                     $filters["projectRoomConfigurations"]=$postData["roomConfiguration"];
                 }else{
@@ -67,7 +67,6 @@ class PortalCommonHelper {
     }
 
     function getCity($city){
-
         if ($city != "") {
             if ($city == "favicon.ico"){
                 $city = $this->parameterBag->get('city');
@@ -75,7 +74,7 @@ class PortalCommonHelper {
             }
         }else{
             $city = $this->parameterBag->get('city');
-            $this->session->set('city',$city);
+            $this->session->getSession()->set('city',$city);
         }
         return $city;
     }
