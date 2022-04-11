@@ -1,0 +1,179 @@
+{% extends 'portal/layout/index.html.twig' %}
+{% set route =  app.request.get('_route') %}
+{% if route == "portal_contact_us" or route == "portal_sales_enquiry"  %}
+    {% set route1 = "portal_contact_us" %}
+{% endif  %}
+{% set cmsPage = get_cms_page_by_route(route1) %}
+{% set banners = get_cms_page_banner(cmsPage.id) %}
+{#{% set advertisements = get_cms_page_ads(cmsPage.id) %}#}
+{% block portal_content %}
+    <div class="wrapper">
+        <section class="banner-carousel">
+            <div class="carousel">
+                <div class="carousel-inner">
+                    {% for banner in banners %}
+
+                    <div class="carousel-item {% if loop.first %}active{% endif %}">
+                        <figure class="contact"  data-aos="fade-right" data-aos-delay="200">
+                            <img src="{{ banner.bannerDesktopImagePath|imagine_filter('resize_image_scale_268_268') }}" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                        </figure>
+                        <div class="container">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb" data-aos="fade-right" data-aos-delay="200">
+                                    <li class="breadcrumb-item"><a href="{{ path('portal_index') }}">Home</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">{% if route == "portal_contact_us"%}Contact Us{% else %}Sales Enquiry{% endif %}</li>
+                                </ol>
+                            </nav>
+                            <div class="banner-content">
+                                <div class="caption typ2">
+                                    {{ banner.bannerDescription|raw }}
+                                </div>
+                                <div class="loan-key-points contact">
+                                    {% for content in cmsPage.cmsPageContent|filter((a)=>a.cmsPageContentPosition =="middle") %}
+                                        {{ content.pageContent|raw }}
+                                    {% endfor %}
+                                    <div class="dsc-box">
+                                        <div class="row">
+                                            {% for content in cmsPage.cmsPageContent|filter((a)=>a.isActive == 1) %}
+                                                {% if content.cmsPageContentPosition == "left" %}
+                                                <div class="col-md-6" data-aos="fade-right" data-aos-delay="200">
+                                                    <div class="p-4">
+{#                                                        {% for content in cmsPage.cmsPageContent|filter((a)=>a.cmsPageContentPosition =="left"  and a.isActive == 1) %}#}
+                                                            {{ content.pageContent|raw }}
+{#                                                        {% endfor %}#}
+                                                    </div>
+                                                </div>
+                                                {% endif  %}
+                                                {% if content.cmsPageContentPosition == "right" %}
+                                                <div class="col-md-6" data-aos="fade-right" data-aos-delay="400">
+                                                    <div class="p-4">
+{#                                                        {% for content in cmsPage.cmsPageContent|filter((a)=>a.cmsPageContentPosition =="right" and a.isActive == 1) %}#}
+                                                            {{ content.pageContent|raw }}
+{#                                                        {% endfor %}#}
+                                                    </div>
+                                                </div>
+                                                {% endif  %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <a href="#" class="btn btn-primary btn-apply-loan">Request Quote Now</a>
+                                <div class="yellow-box" data-aos="fade-right" data-aos-delay="200">
+                                    <a href="#" class="fa fa-close"></a>
+{#                                    <div class="frmEnquiry"></div>#}
+                                    {{ form_start(form,{'attr':{"class":"form","id":"frmEnquiry"}}) }}
+                                    <p class="pb-3">
+                                        <b>To enquire about a particular service offered by TRED, kindly fill out the details given below and we will get back to you at the earliest.</b>
+                                    </p>
+                                    <span class="mendatory-field"> * All fields are mandatory</span>
+                                    <!-- Show Flash Messages -->
+                                    {% block cms_messages %}
+                                        {% for label, messages in app.flashes %}
+                                            {% for message in messages %}
+                                                <div class="alert alert-{{ label }} alert-dismissible" role="alert">
+                                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                    {{ message|trans}}
+                                                </div>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    {% endblock %}
+                                    {# End Flash message section #}
+                                    {{ form_row(form.firstName) }}
+                                    {{ form_row(form.enquiryEmailAddress) }}
+                                    <div class="row row-xs">
+                                        <div class="col-md-3">
+                                            {{ form_row(form.mstCountry) }}
+                                        </div>
+                                        <div class="col-md-9">
+                                            {{ form_row(form.enquiryMobileNumber) }}
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn-primary">Send Request</button>
+                                    {{ form_end(form) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{#    <script src="{{ asset('assets/js/captcha.basic.min.js') }}" type="text/javascript"></script>#}
+    <script>
+        {#function callAjax(form){#}
+        {#    jQuery.ajax({#}
+        {#        url: "{{ path('portal_form_contact_us') }}",#}
+        {#        type: "POST",#}
+        {#        dataType: "HTML",#}
+        {#        data: form,#}
+        {#        success: function (data) {#}
+        {#            // $(".frmEnquiry").html(data);#}
+        {#            window.location.href = "{{ path('portal_form_enquiry_success') }}";#}
+        {#        }#}
+        {#    });#}
+        {#}#}
+        function formActition(){
+            /****Form****/
+            function formcontrol(){
+                $(".form-control").filter(function() {
+                    if (this.value.length !==0){
+                        $(this).siblings('label').addClass('clicked');
+                    }
+                });
+            }
+            formcontrol();
+            $('.form-group label').click(function () {
+                $(this).addClass('clicked');
+            });
+            $('.form-control').click(function () {
+                $(this).siblings('label').addClass('clicked');
+            });
+            $('.form-control').keyup(function () {
+                $(this).siblings('label').addClass('clicked');
+            });
+            $('.form-control').blur(function () {
+                if ($(this).val()) {
+                    $(this).siblings('label').addClass('clicked');
+                } else if (!$(this).val()) {
+                    $(this).siblings('label').removeClass('clicked');
+                }
+            });
+            /****Form****/
+        }
+        jQuery("document").ready(function(){
+            AOS.init({
+                delay: 50,
+                duration: 1000,
+                offset:0,
+                once: true,
+                disable:true
+            })
+            if(width < 991) {
+                $('.mob-filter').click(function(){
+                    $('.top-filter-sec').toggle(500);
+                    $(this).toggleClass('active');
+                });
+            }
+            {#jQuery.ajax({#}
+            {#    url: "{{ path('portal_form_contact_us') }}",#}
+            {#    type: "GET",#}
+            {#    dataType: "HTML",#}
+            {#    success: function (data) {#}
+            {#        // $(".frmEnquiry").html(data).captcha({'idCaptchaInput':'captcha','idCaptchaText':'captha-code'});#}
+            {#        formActition();#}
+            {#        $('.form').submit(function(event) {#}
+            {#            event.preventDefault();#}
+            {#            var form = $(this).serialize();#}
+            {#            callAjax(form);#}
+            {#        });#}
+            {#    }#}
+            {#});#}
+        });
+    </script>
+{% endblock %}

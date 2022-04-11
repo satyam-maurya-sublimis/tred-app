@@ -1,0 +1,92 @@
+{% extends 'layout/content.html.twig' %}
+
+{% block cms_content %}
+    <div class="card">
+        <div class="card-header">
+            {#<h4 class="card-title txt-bold float-left">{{ data.circle |upper}}</h4> #}
+            <h4 class="card-title float-right">
+                <a href="{{ path(path_edit, {'id': data.id}) }}" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i> {{'label.edit'|trans}}</a>
+                <a href="{{ path(path_index) }}" class="btn btn-dark btn-sm"><i class="fa fa-list"></i> {{'label.back_to_list' | trans}}</a>
+            </h4>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="card-body">
+                    <div class="card-header mt-2">
+                        <h3 class="card-title">{{ 'Vendor Partner Details'|upper }}</h3>
+                    </div>
+                    <div class="row">
+                        <table class="table table-responsive-md text-sm">
+                            <tbody>
+                            <tr>
+                                <th>{{ 'label.company'|trans }}</th>
+                                <td colspan="3">{{ data.orgCompany }}</td>
+                                <th>{{ 'label.vendor_partner_name'|trans }}</th>
+                                <td colspan="3">{{ data.vendorPartnerName }}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ 'label.vendor_type'|trans }}</th>
+                                <td colspan="3">{{ data.mstVendorType }}</td>
+                                <th>{{ 'label.operating_cities'|trans }}</th>
+                                <td colspan="3">{{ data.mstCitiesOperatingIn | join(', ') }}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ 'label.product_type'|trans }}</th>
+                                <td colspan="3">{{ data.mstProductType  | join(', ') }}</td>
+                                <th>{{ 'label.product_subtype'|trans }}</th>
+                                <td colspan="3">{{ data.mstProductSubType | join(', ') }}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ 'label.experience'|trans }}</th>
+                                <td colspan="3">{{ data.experience  | join(', ') }}</td>
+                                <th>{{ 'label.nature_of_business'|trans }}</th>
+                                <td colspan="3">{{ data.mstNatureOfBusiness | join(', ') }}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ 'label.gst_number'|trans }}</th>
+                                <td colspan="3">{{ data.gstNumber   }}</td>
+                                <th>{{ 'label.legal_status_of_firm'|trans }}</th>
+                                <td colspan="3">{{ data.legalStatusOfFirm }}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ 'label.year_of_establishment'|trans }}</th>
+                                <td colspan="3">{{ data.establishmentYear  | date('d M Y') }}</td>
+                                <th>{{ 'label.no_of_employees'|trans }}</th>
+                                <td colspan="3">{{ data.noOfEmployees }}</td>
+                            </tr>
+
+                            <tr>
+                                <th>{{ 'label.annual_turn_over'|trans }}</th>
+                                <td colspan="3">{{ data.annualTurnOver   }}</td>
+                                <th>{{ 'label.projects_completed'|trans }}</th>
+                                <td colspan="3">{{ data.projectsCompleted }}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ 'label.website_url'|trans }}</th>
+                                <td colspan="3"><a href="{{ data.websiteUrl   }}" target="_blank">{{ data.websiteUrl   }}</a> </td>
+                                <td colspan="4"></td>
+                            </tr>
+                            <tr>
+                                <th>{{ 'label.introduction'|trans }}</th>
+                                <td colspan="5">{{ data.introduction | raw  }}</td>
+                                <td colspan="2"></td>
+                            </tr>
+                            <tr>
+                                <th>{{ 'label.company_logo'|trans }}</th>
+                                <td colspan="5">{% if data.companyLogo is not empty and data.companyLogo != '' and data.companyLogo != 'files/' %} <img
+                                            src="{{ data.companyLogo|imagine_filter('resize_image_200') }}" alt="logo"> {% endif %}</td>
+                                <td colspan="2"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+{% endblock %}

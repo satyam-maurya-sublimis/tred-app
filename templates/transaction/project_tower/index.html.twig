@@ -1,0 +1,76 @@
+{% extends 'layout/content.html.twig' %}
+{% block cms_content %}
+    <!-- Small boxes (Stat box) -->
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title"><a href="{{ path(path_add) }}" class="btn btn-dark btn-sm"><i class="fa fa-plus"></i> {{label_title|trans}}</a></h4>
+                </div>
+                <nav class="card-content collapse show">
+                    <div class="card-body card-dashboard ">
+                        <table id="dataTable" class="table table-responsive-md table-sm text-sm">
+                            <thead>
+                            <tr>
+                                <th>{{ 'label.id'|trans|upper }}</th>
+                                <th>{{ 'label.tower_created_date'|trans|upper }}</th>
+                                <th>{{ 'label.tower_name'|trans|upper }}</th>
+                                <th>{{ 'label.vendor_partner_name'|trans|upper }}</th>
+                                <th>{{ 'label.project_type'|trans|upper }}</th>
+                                <th>{{ 'label.possession_on'|trans|upper }}</th>
+                                <th>{{ 'label.country'|trans|upper }}</th>
+                                <th>{{ 'label.state'|trans|upper }}</th>
+                                <th>{{ 'label.city'|trans|upper }}</th>
+                                <th>{{ 'label.project_status'|trans|upper }}</th>
+                                <th>{{ 'label.is_active'|trans|upper }}</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for project_tower in project_towers %}
+                                <tr>
+                                    <td>{{ project_tower.id }}</td>
+                                    <td>{{ project_tower.createdOn | date('d M Y') }}</td>
+                                    <td>{{ project_tower.towerName }}</td>
+                                    <td>{{ project_tower.trnProject.trnVendorPartnerDetails }}</td>
+                                    <td>{{ project_tower.trnProject.mstPropertyType }}</td>
+                                    <td>{{ project_tower.trnProject.possessionOn }}</td>
+                                    <td>{{ project_tower.trnProject.mstCountry }}</td>
+                                    <td>{{ project_tower.trnProject.mstState }}</td>
+                                    <td>{{ project_tower.trnProject.mstCity }}</td>
+                                    <td>{{ project_tower.trnProject.mstProjectStatus }}</td>
+
+                                    <td>{{ project_tower.isActive ? 'Yes' : 'No' }}</td>
+                                    <td>
+                                        <div class="btn-group-toggle" role="group" aria-label="Action Buttons">
+                                            <a href="{{ path(path_show, {'id': project_tower.id}) }}"><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-expand"></i></button></a>&nbsp;
+                                            <a href="{{ path(path_edit, {'id': project_tower.id}) }}"><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i></button></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="8">{{'info.no_record_found'|trans}}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody></table>
+                    </div>
+                    <div class="card-footer">
+                        <div class="row">
+                            <div class="col-sm-5">
+                                <div class="text-muted">{{ 'info.total_records'|trans }} {{ project_towers.getTotalItemCount }}</div>
+                            </div>
+                            <div class="col-sm-7">
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination justify-content-end">
+                                        {{ knp_pagination_render(project_towers) }}
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'layout/content.html.twig' %}
+{% block cms_content %}
+    <div class="card">
+        <div class="card-header">
+            <div class="col-sm-12">
+                <h3 class="card-title"><b>{{label_title|trans}}</b></h3>
+                <h4 class="card-title float-right">
+                    <a href="{{ path(path_edit, {'id': data.id}) }}" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i> {{'label.edit'|trans}}</a>
+                    <a href="{{ path(path_index) }}" class="btn btn-dark btn-sm"><i class="fa fa-list"></i> {{'label.back_to_list' | trans}}</a>
+                </h4>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body" id="record">
+            <div class="row">
+                <table class="table table-responsive-md text-sm">
+                        <tbody>
+                        <tr>
+                            <td class="col-sm-2">{{ 'label.company_logo'|trans }}</td>
+                            <td class="col-sm-4" colspan="3"><img src="{{ data.companyLogoFilePath|imagine_filter('resize_logo_120') }}" alt="{{ data.company }}"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-sm-2">{{ 'label.name'|trans }}</td>
+                            <td class="col-sm-4">{{ data.company }}</td>
+                            <td class="col-sm-2">{{ 'label.website'|trans }}</td>
+                            <td class="col-sm-4">{{ data.companyWebsite }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ 'label.gst'|trans }}</td>
+                            <td>{{ data.companyGSTNumber|default('-') }}</td>
+                            <td>{{ 'label.pan'|trans }}</td>
+                            <td>{{ data.companyPANNumber|default('-') }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ 'label.fiscal_year'|trans }}</td>
+                            <td>{{ data.companyFiscalStartMonth ? data.companyFiscalStartMonth|date('d M') : '' }} - {{ data.companyFiscalEndMonth ? data.companyFiscalEndMonth|date('d M') : '' }}</td>
+                            <td>{{ 'label.currency'|trans }}</td>
+                            <td>{{ data.mstCurrency }}</td>
+                        </tr>
+
+                        <tr>
+                            <td>{{ 'label.is_active'|trans }}</td>
+                            <td colspan="3">{{ data.isActive ? 'Yes' : 'No' }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+{% endblock %}

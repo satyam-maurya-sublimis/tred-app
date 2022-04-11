@@ -1,0 +1,78 @@
+{% if cmsLandingPage.cmsBanners|length > 0 %}
+    <section class="banner-carousel typ3">
+        <div id="mainBanner" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                {% for banner in cmsLandingPage.cmsBanners %}
+                    <div class="carousel-item {% if loop.first %}active{% endif %}">
+                        <figure>
+                            <img src="{{ banner.bannerDesktopImagePath|imagine_filter('resize_image_scale_1280_300') }}" class="desktop-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                            <img src="{{ banner.bannerTabletImagePath|imagine_filter('resize_image_scale_767_350') }}" class="tab-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                            <img src="{{ banner.bannerMobileImagePath|imagine_filter('resize_image_scale_350_250') }}" class="mobile-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                            <div class="container">
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb" data-aos="fade-right" data-aos-delay="200">
+                                        <li class="breadcrumb-item"><a href="{{ path('portal_index') }}">Home</a></li>
+                                        <li class="breadcrumb-item"><a href="{{ path('portal_interior_index') }}">Interiors</a></li>
+                                        <li class="breadcrumb-item active" aria-current="page">{{ cmsLandingPage.mstProductType }}</li>
+                                    </ol>
+                                </nav>
+                                {{ banner.bannerDescription|raw }}
+                            </div>
+                            {#                                    <a href="#intro" class="next-section-arrow"><i class="fa fa-chevron-down"></i></a>#}
+                        </figure>
+                    </div>
+                {% endfor %}
+            </div>
+            {% if cmsLandingPage.cmsBanners|length > 1 %}
+                <a class="carousel-control-prev" href="#mainBanner" role="button" data-slide="prev"> <i class="fa fa-angle-left"></i> </a>
+                <a class="carousel-control-next" href="#mainBanner" role="button" data-slide="next"> <i class="fa fa-angle-right"></i>
+                    <div class="num">1 / {{ cmsLandingPage.cmsBanners|length }}</div>
+                </a>
+            {% endif %}
+        </div>
+    </section>
+{% endif  %}
+<div class="wrapper">
+    <section class="banner-sec">
+        <figure class="home-furnising"  data-aos="fade-right" data-aos-delay="200"><img src="{{ cmsLandingPage.cmsLandingPageImagePath|imagine_filter('resize_image_scale_570_367') }}" alt="" title=""></figure>
+        <div class="container">
+
+            <div class="caption typ2" data-aos="fade-right" data-aos-delay="200">
+                {{ cmsLandingPage.cmsLandingPageBannerTitle|raw }}
+            </div>
+            <div class="loan-key-points">
+                <h2 data-aos="fade-right" data-aos-delay="200">Home <span>Furnishing</span></h2>
+                <p data-aos="fade-right" data-aos-delay="200">Furnishing your home with special pieces and unique trinkets that hold value to you is what undeniably transforms any home into your home. </p>
+                <p data-aos="fade-right" data-aos-delay="400">Whether it’s faux fur throws or blackout curtains, it’s these little details that will instantly help your personalize your abode. </p>
+                <p data-aos="fade-right" data-aos-delay="600">Shop from over thousands of stunning pieces to see what piques your interest.</p>
+                <a href="#" class="btn btn-primary btn-apply-loan">Request Quote Now</a>
+                <div class="card-deck cust-card typ3 mt-5">
+                    {% for content in cmsLandingPage.cmsLandingPageContents %}
+                        {% if content.pageMediaPosition == 'left' %}
+                            <div class="card" data-aos="fade-right" data-aos-delay="200">
+                                <figure class="">
+                                    <a href="#">
+                                        <img src="{{ content.pageImagePath|imagine_filter('resize_image_scale_395_300') }}" class="card-img-top" alt="{{ content.pageImageAlt }}" title="{{ content.pageImageTitle }}">
+                                    </a>
+                                </figure>
+                            </div>
+                        {% endif  %}
+                        {% if content.pageMediaPosition == 'right' %}
+                            <div class="card" data-aos="fade-right" data-aos-delay="400">
+                                <figure class="">
+                                    <a href="#">
+                                        <img src="{{ content.pageImagePath|imagine_filter('resize_image_scale_395_300') }}" class="card-img-top" alt="{{ content.pageImageAlt }}" title="{{ content.pageImageTitle }}">
+                                    </a>
+                                </figure>
+                            </div>
+                        {% endif  %}
+                    {% endfor %}
+                </div>
+                <div class="yellow-box typ2">
+                    <a href="#" class="fa fa-close"></a>
+                    <div class="frmEnquiry"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

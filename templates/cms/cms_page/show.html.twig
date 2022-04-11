@@ -1,0 +1,85 @@
+{% extends 'layout/content.html.twig' %}
+
+{% block cms_content %}
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title float-right">
+                <a href="{{ path(path_edit, {'id': data.id}) }}" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i> {{'label.edit'|trans}}</a>
+                <a href="{{ path(path_index) }}" class="btn btn-dark btn-sm"><i class="fa fa-list"></i> {{'label.back_to_list' | trans}}</a>
+                &nbsp;
+
+            </h4>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="card-body">
+                    <div class="row">
+                        <table class="table table-responsive-md text-sm">
+                            <tbody>
+                                <tr>
+                                    <th>{{ 'label.name'|trans }}</th>
+                                    <td>{{ data.pageName }}</td>
+                                    <th>{{ 'label.title'|trans }}</th>
+                                    <td colspan="3">{{ data.pageTitle }}</td>
+                                </tr>
+                                <tr>
+                                    <th>{{ 'label.content'|trans }}</th>
+                                    <td colspan="5"> {% for content in data.cmsPageContent %}
+                                        {{ content | raw }}
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>{{ 'label.routing'|trans }}</th>
+                                    <td>{{ data.pageRoute }}</td>
+                                    <th>{{ 'label.parent_page'|trans }}</th>
+                                    <td>{{ data.parentId|default('') }}</td>
+                                    <th>{{ 'label.product'|trans }}</th>
+                                    <td>{{ data.prdProduct }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5">{{ 'SEO Section'|upper }}</td>
+                                </tr>
+                                <tr>
+                                    <th>{{ 'label.meta_title'|trans }}</th>
+                                    <td>{{ data.metaTitle }}</td>
+                                    <th>{{ 'label.meta_keyword'|trans }}</th>
+                                    <td>{{ data.metaKeyword }}</td>
+                                    <th>{{ 'label.meta_description'|trans }}</th>
+                                    <td>{{ data.metaDescription }}</td>
+                                </tr>
+                                <tr>
+                                    <th>{{ 'label.focus_key_phrase'|trans }}</th>
+                                    <td>{{ data.focusKeyPhrase }}</td>
+                                    <th>{{ 'label.key_phrase_synonyms'|trans }}</th>
+                                    <td>{{ data.keyPhraseSynonyms }}</td>
+                                    <th>{{ 'label.schema'|trans }}</th>
+                                    <td>{{ data.seoSchema }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5">{{ 'Social Share Section'|upper }}</td>
+                                </tr>
+                                <tr>
+                                    <th>{{ 'label.social_title'|trans }}</th>
+                                    <td>{{ data.ogTitle }}</td>
+                                    <th>{{ 'label.social_description'|trans }}</th>
+                                    <td>{{ data.ogDescription }}</td>
+                                    <th>{{ 'label.social_image'|trans }}</th>
+                                    <td><img src="{{ data.ogImagePath|imagine_filter('resize_image_200') }}" alt="--"></td>
+                                </tr>
+                                <tr>
+                                    <th>Is Active</th>
+                                    <td colspan="5">{{ data.isActive ? 'Yes' : 'No' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br>
+{% endblock %}

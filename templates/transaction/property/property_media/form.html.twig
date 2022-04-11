@@ -1,0 +1,105 @@
+{% extends 'layout/content.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assets/plugins/summernote/summernote-bs4.css') }}" media="all" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="{{asset('assets/plugins/kartik-v/bootstrap-fileinput/css/fileinput.min.css')}}">
+{% endblock %}
+{% block cms_content %}
+    {% set back_to_list = app.request.server.get('HTTP_REFERER') %}
+    {{ form_start(form) }}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">
+                {% if mode == 'add' %}<i class="fa fa-plus"></i> {% else%} <i class="fa fa-edit"></i> {% endif%}  <b>{{label_title|trans|upper}}</b>
+            </h5>
+        </div>
+        <div class="card-header">
+            <h4 class="card-title">{{ label_heading|trans|upper }} : {{ trnProject.projectName }}</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.trnProjectRoomConfigurations) }}
+                </div>
+                <div class="col-sm-3 imageDiv">
+                    {{ form_row(form.mstDeviceType) }}
+                    {{ form_row(form.mstUploadDocumentType) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mediaFileName) }}
+                </div>
+
+                <div class="col-sm-3">
+                    {% if form.vars.data is not empty %}
+                        <img src="{{ form.vars.data.mediaFilePath|imagine_filter('resize_image_200') }}" alt="{{ form.vars.data.mediaName }}">
+                    {% endif %}
+                </div>
+
+            </div>
+            <div class="row mt-3">
+
+
+                <div style="display: none;" class="col-sm-3 videoDiv">
+                    {{ form_row(form.mediaPath) }}
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-3">
+                    {{ form_row(form.mediaName) }}
+                </div>
+                <div class="col-sm-3 imageDiv">
+                    {{ form_row(form.mediaAltText) }}
+                </div>
+                <div class="col-sm-3 imageDiv">
+                    {{ form_row(form.mediaTitle) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.position) }}
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-3">
+                    {{ form_row(form.isActive) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <button type="submit" class="{{ button_css|default("btn btn-dark btn-sm") }}">
+            <i class="fa fa-save" aria-hidden="true"></i> {{ label_button|trans }}
+        </button>
+        <a href="{{ back_to_list }}" class="btn btn-link"><i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}</a>
+    </div>
+    {{ form_end(form) }}
+    <br>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{asset('assets/plugins/kartik-v/bootstrap-fileinput/js/fileinput.min.js')}}"></script>
+    <script src="{{asset('assets/plugins/kartik-v/bootstrap-fileinput/themes/fa/theme.min.js')}}"></script>
+    <script>
+        $(document).ready(function() {
+            $('label[for=trn_upload_document_mediaFileName]').remove();
+            $("#trn_upload_document_mediaFileName").fileinput({
+                theme: "fa",
+                overwriteInitial: true,
+                maxFileSize: 7168,
+                showClose: false,
+                showCaption: false,
+                showBrowse: false,
+                browseOnZoneClick: true,
+                removeLabel: '',
+                defaultPreviewContent: '<h6 class="text-muted">Click to upload image</h6>',
+                layoutTemplates: {main2: '{preview} {remove} {browse}'},
+                allowedFileExtensions: ["jpg","jpeg", "png"]
+            });
+
+            // Copy the intro text to alt and title
+            $("#trn_upload_document_mediaName").keyup(function(){
+                var Text = $(this).val();
+                $("#trn_upload_document_mediaAltText").val(Text);
+                $("#trn_upload_document_mediaTitle").val(Text);
+            });
+        });
+    </script>
+{% endblock %}

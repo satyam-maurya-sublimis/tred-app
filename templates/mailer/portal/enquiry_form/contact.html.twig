@@ -1,0 +1,143 @@
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>TRED</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Lato', Arial, Helvetica, sans-serif; font-size: 16px; line-height:26px; color: #231F20; }
+        .wrapper { max-width: 700px; margin-left: auto; margin-right: auto; margin-top: 50px; }
+        table { border: 0; margin: 0 auto; border-spacing: 0; border-collapse: collapse; }
+        .main-table { padding: 0; margin: 0; width: 100%; background:#fff;}
+        .main-table p { margin-bottom: 1.5rem; margin-top: 0 !important; line-height: 20px; }
+        h1 { font-family:'Montserrat', Arial, Helvetica, sans-serif; font-size: 20px; font-weight: 600; color: #B55D28;}
+
+        .system-msg { font-size: 14px; text-align:left; border-top:solid 1px rgb(112 112 112 / 50%);}
+        .system-msg td { font-size: 14px; }
+        a { color: #B55D28; text-decoration: none; font-size:14px;}
+        a:hover { color: #B55D28; text-decoration: underline; }
+    </style>
+</head>
+
+<body>
+<div class="wrapper">
+
+    <table width="100%" border="0" cellspacing="0" cellpadding="30" bgcolor="#F7F7F7">
+        <tr>
+            <td>
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" class="main-table">
+                    <tr>
+                        <td><table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr style="border-bottom: solid 1px #B55D28;">
+                                    <td width="40">&nbsp;</td>
+                                    <td align="left" valign="middle"><img src="{{ absolute_url(asset('resources/images/logo-tred.png')) }}" width="180" alt="TRED" title="TRED"></td>
+                                </tr>
+                            </table></td>
+                    </tr>
+                    <tr>
+                        <td height="10" valign="top">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td><table width="100%" cellpadding="0" cellspacing="5" border="0">
+                                {% set enquiry_title = "Contact" %}
+                                <tr>
+                                    <td></td>
+                                    <td valign="top"><strong>Dear {{ data.enquiryFirstName }} {{ data.enquiryLastName }},</strong><br /><br />
+                                        Thank you for enquiry with us. One of our experts will get in touch you soon.<br />                  <br /></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td width="40"></td>
+                                    <td valign="top"><table width="100%" cellpadding="0" cellspacing="5" border="0">
+                                            <tr>
+                                                <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                        <tr style="background:rgb(180 93 39 / 5%);">
+                                                            <td width="202" height="45" style="padding-left:10px"><strong>Name</strong></td>
+                                                            <td width="332" style="padding-left:20px; border-left:#ffffff 2px solid;">{{ data.enquiryFirstName }} {{ data.enquiryLastName }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td height="40" style="padding-left:10px"><strong>Email</strong></td>
+                                                            <td style="padding-left:20px; border-left:#ffffff 2px solid;">{{ data.enquiryEmailAddress }}</td>
+                                                        </tr>
+                                                        <tr style="background:rgb(180 93 39 / 5%);">
+                                                            <td height="40" style="padding-left:10px"><strong>Mobile</strong></td>
+                                                            <td style="padding-left:20px; border-left:#ffffff 2px solid;">+{{ data.mstCountry.phoneCode}} {{ data.enquiryMobileNumber }}</td>
+                                                        </tr>
+{#                                                        <tr >#}
+{#                                                            <td height="40" style="padding-left:10px"><strong>City </strong></td>#}
+{#                                                            <td style="padding-left:20px; border-left:#ffffff 2px solid;">{{ data.mstCity }}</td>#}
+{#                                                        </tr>#}
+                                                        <tr style="background:rgb(180 93 39 / 5%);">
+                                                            <td height="40" style="padding-left:10px"><strong>Enquiry</strong></td>
+                                                            <td style="padding-left:20px; border-left:#ffffff 2px solid;">{{ enquiry_title }}</td>
+                                                        </tr>
+{#                                                        <tr >#}
+{#                                                            <td height="40" style="padding-left:10px"><strong>Service</strong></td>#}
+{#                                                            <td style="padding-left:20px; border-left:#ffffff 2px solid;">{{ data.mstProductCategory }}</td>#}
+{#                                                        </tr>#}
+{#                                                        <tr style="background:rgb(180 93 39 / 5%);">#}
+{#                                                            <td height="40" style="padding-left:10px"><strong>Comments </strong></td>#}
+{#                                                            <td style="padding-left:20px; border-left:#ffffff 2px solid;">{{ data.enquiryDescription }}</td>#}
+{#                                                        </tr>#}
+
+
+                                                    </table></td>
+                                            </tr>
+                                            <tr>
+                                                <td height="30">&nbsp;</td>
+                                            </tr>
+{#                                            <tr>#}
+{#                                                <td><strong>Contact Us:</strong></td>#}
+{#                                            </tr>#}
+{#                                            <tr>#}
+{#                                                <td height="30" valign="bottom"> In case of any queries.</td>#}
+{#                                            </tr>#}
+{#                                            <tr>#}
+{#                                                <td>&nbsp;</td>#}
+{#                                            </tr>#}
+{#                                            <tr>#}
+{#                                                <td>#}
+{#                                                    <table width="100%" border="0" align="left" cellpadding="0" cellspacing="0" class="contactTable">#}
+{#                                                        <tr>#}
+{#                                                            <td width="16" align="left"><img src="images/icon-email.jpg" alt="" width="12" height="12"></td>#}
+{#                                                            <td><strong><a href="mailto:info@jbcbricks.com">info@jbcbricks.com</a></strong></td>#}
+{#                                                            <td width="13" align="left"><img src="images/icon-call.jpg" alt="" width="9" height="20"></td>#}
+{#                                                            <td><a href="tel:919824602559"><strong>+91 98246 02559</strong></a>   /   <a href="tel:0795732076"><strong>079 2573-2076</strong></a></td>#}
+{#                                                            <td width="12" align="left"><img src="images/icon-web.jpg" alt="" width="8" height="10"></td>#}
+{#                                                            <td><strong><a href="https://www.jbcbricks.com" target="_blank">www.jbcbricks.com</a></strong></td>#}
+{#                                                        </tr>#}
+{#                                                    </table>#}
+{#                                                </td>#}
+{#                                            </tr>#}
+                                            <tr>
+                                                <td height="30">&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Warm Regards,</td>
+                                            </tr>
+                                            <tr>
+                                                <td height="50">TRED Team</td>
+                                            </tr>
+                                            <tr>
+                                                <td height="50">&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td height="50" align="left" class="system-msg"> <strong>Note</strong>: This is system generated message. Please do not reply directly
+                                                    to this email.</td>
+                                            </tr>
+                                        </table></td>
+                                    <td width="36"></td>
+                                </tr>
+                            </table></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

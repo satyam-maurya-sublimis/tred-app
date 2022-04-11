@@ -1,0 +1,346 @@
+{% extends 'layout/content.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assets/plugins/summernote/summernote-bs4.css') }}" media="all" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="{{asset('assets/plugins/kartik-v/bootstrap-fileinput/css/fileinput.min.css')}}">
+{% endblock %}
+{% macro LocalityContent(form) %}
+    <div class="col-sm-12 LocalityContentClass">
+        <div class="row">
+            <div class="col-sm-3">
+                {{ form_row(form.mstState) }}
+            </div>
+            <div class="col-sm-3">
+                {{ form_row(form.mstCity) }}
+            </div>
+            <div class="col-sm-3">
+                {{ form_row(form.mstPincode) }}
+            </div>
+            <div class="col-sm-1 removeLocalityContentClass mb-4"> <br>
+                <button type="button" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Remove</button>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+{% import _self as formMacro %}
+{% block cms_content %}
+    {% set back_to_list = app.request.server.get('HTTP_REFERER') %}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">
+                {% if mode == 'add' %}<i class="fa fa-plus"></i> {% else%} <i class="fa fa-edit"></i> {% endif%}  <b>{{label_title|trans|upper}}</b>
+            </h5>
+        </div>
+        {{ form_start(form) }}
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.trnVendorPartnerDetails) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.noOfYearsInBusiness) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.teamSize) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.annualTurnOver) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.numberOfUnitSoldAnnually) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.prdBrands) }}
+                </div>
+{#                <div class="col-sm-3">#}
+{#                    {{ form_row(form.mstCities) }}#}
+{#                </div>#}
+                <div class="col-sm-3">
+                    {{ form_row(form.mstRating) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mstSubscriptionCategory) }}
+                </div>
+            </div>
+            <div class="row card">
+                <div class="card-header col">
+                    <h3 class="card-title">{{ 'Add Office Locality Details'|upper }}</h3>
+                </div>
+                <div class="card-body col">
+                    <div class="row" data-prototype="{{ formMacro.LocalityContent(form.trnTopVendorPartnersLocalities.vars.prototype)|e('html_attr') }}">
+                        <div class="col" id="localityContent" >
+                            {% for row in form.trnTopVendorPartnersLocalities %}
+                                {{ formMacro.LocalityContent(row) }}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer col">
+                    <button type="button" id="addLocalityContent" class="btn btn-dark btn-sm"><i class="fa fa-plus"></i> Add Locality Details</button>
+                </div>
+            </div>
+{#            <div class="row">#}
+{#                <div class="col-sm-4">#}
+{#                    {{ form_row(form.mstVendorType) }}#}
+{#                </div>#}
+{#                <div class="col-sm-6">#}
+{#                    {{ form_row(form.mstCitiesOperatingIn) }}#}
+{#                </div>#}
+{#            </div>#}
+            <div class="row card">
+                <div class="card-header col">
+                    <h3 class="card-title">{{ 'Contact Person Details'|upper }}</h3>
+                </div>
+                <div class="card-body col">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            {{ form_row(form.mstSalutation) }}
+                        </div>
+                        <div class="col-sm-6">
+                            {{ form_row(form.contactPersonName) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            {{ form_row(form.contactPersonCountry) }}
+                        </div>
+                        <div class="col-sm-3">
+                            {{ form_row(form.contactPersonState) }}
+                        </div>
+                        <div class="col-sm-3">
+                            {{ form_row(form.contactPersonCity) }}
+                        </div>
+                        <div class="col-sm-3">
+                            {{ form_row(form.contactPersonPincode) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            {{ form_row(form.contactPersonImage) }}
+
+                        </div>
+                        {% if form.vars.data is not empty %}
+                            <div class="col-sm-3">
+                                {% if form.vars.data.contactPersonImage is not empty and form.vars.data.contactPersonImage != 'files/' %}
+                                    <img src="{{ asset('images') }}/{{ form.vars.data.contactPersonImage }}" alt="{{ form.vars.data.contactPersonName }}">
+                                    {{ form_row(form.removeContactPersonImage) }}
+                                {% else %}
+                                    {{ form_row(form.removeContactPersonImage,{'attr':{'disabled':'disabled'}}) }}
+                                {% endif %}
+
+                            </div>
+
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-sm-4" >
+                    {{ form_row(form.isActive) }}
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="card-footer">
+        <button type="submit" class="{{ button_css|default("btn btn-dark btn-sm") }}">
+            <i class="fa fa-save" aria-hidden="true"></i> {{ label_button|trans }}
+        </button>
+        <a href="{{ back_to_list }}" class="btn btn-link"><i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}</a>
+    </div>
+    {{ form_end(form) }}
+    <br>
+
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <link href="{{ asset('assets/plugins/summernote/summernote-bs4.css') }}" media="all" rel="stylesheet" type="text/css" />
+    <script src="{{asset('assets/plugins/kartik-v/bootstrap-fileinput/js/fileinput.min.js')}}"></script>
+    <script src="{{asset('assets/plugins/kartik-v/bootstrap-fileinput/themes/fa/theme.min.js')}}"></script>
+    <script src="{{ asset('assets/plugins/summernote/summernote-bs4.min.js') }}" type="text/javascript"></script>
+    {#    <script src="{{ asset('assets/plugins/bootstrap-switch/js/bootstrap-switch.min.js') }}" type="text/javascript"></script>#}
+    {# <script src="{{ asset('assets/js/registration/register/form.js') }}"></script> #}
+    <script>
+        $(function () {
+
+            $LocalityContent = jQuery('#localityContent').parent();
+            $LocalityContent.data('index', jQuery('#localityContent').find('.LocalityContentClass').length);
+
+            jQuery(document).on('click', '.removeLocalityContentClass', function (e) {
+                jQuery(this).closest(".LocalityContentClass").remove();
+            });
+
+            jQuery("#addLocalityContent").on('click', function (e) {
+                addLocalityContent($LocalityContent);
+            });
+
+            // Summernote
+            $(".textarea").summernote({
+                height: 200,
+                toolbar: [
+                    // [groupName, [list of button]]
+                    ['style', ['bold', 'italic', 'underline']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link']],
+                    ['view', ['fullscreen', 'codeview', 'help']],
+                ]
+            });
+            $(".custom-file-input").fileinput({
+                theme: "fa",
+                overwriteInitial: true,
+                maxFileSize: 800,
+                showClose: false,
+                showCaption: false,
+                showBrowse: false,
+                browseOnZoneClick: true,
+                removeLabel: '',
+                defaultPreviewContent: '<h6 class="text-muted">Click to upload contact person image</h6>',
+                layoutTemplates: {main2: '{preview} {remove} {browse}'},
+                allowedFileExtensions: ["jpg","jpeg", "png"]
+            });
+            $('label[for=trn_top_vendor_partners_contactPersonImage]').remove();
+            {% if mode == "add" %}
+                jQuery("#addLocalityContent").trigger("click");
+            {% else %}
+                jQuery("#localityContent").find(".mstcity").map(function(item){
+                    var id = $(this).attr("id").replace("trn_top_vendor_partners_trnTopVendorPartnersLocalities_","").replace("_mstCity","");
+                    getCity(id);
+                    getState(id);
+                });
+            {% endif  %}
+            jQuery(".removeLocalityContentClass:first").find("button.btn-danger").hide();
+        })
+        jQuery(document).on('change', "#trn_top_vendor_partners_contactPersonState", function(e) {
+            var data = {};
+            data['q'] = jQuery(this).val();
+            jQuery.ajax({
+                url: "/core/location/city_list",
+                data: data,
+                type: "GET",
+                dataType: "JSON",
+                success: function (data) {
+                    var product = jQuery("#trn_top_vendor_partners_contactPersonCity");
+                    product.html('');
+                    // add options
+                    product.append('<option value="" >Select City..</option>');
+                    $.each(data, function (id, name) {
+                        product.append('<option value="'+ name.id +'">'+ name.name + '</option>');
+                    });
+                }
+            });
+        });
+
+            jQuery(document).on('change', ".mstcity", function(e) {
+                var data = {};
+                data['q'] = jQuery(this).val();
+                var oThis = this;
+                jQuery.ajax({
+                    url: "/core/location/locality_in_city",
+                    data: data,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (data) {
+                        var product = jQuery("#trn_top_vendor_partners_contactPersonPincode");
+                        product.html('');
+                        // add options
+                        product.append('<option value="" >Select locality..</option>');
+                        $.each(data, function (id, name) {
+                            product.append('<option value="'+ name.id +'">'+ name.name + '</option>');
+                        });
+                    }
+                });
+                jQuery(".removeLocalityContentClass").find("button.btn-danger:first").hide();
+
+            });
+        function addLocalityContent($ContentObj) {
+            // Get the data-prototype explained earlier
+            var prototype = $ContentObj.data('prototype');
+
+            // get the new index
+            var index = $ContentObj.data('index');
+            var newForm = prototype;
+            newForm = newForm.replace(/__name__/g, index);
+            $ContentObj.data('index', index + 1);
+
+            // Display the form in the page in an li, before the "Add a tag" link li
+            jQuery('#localityContent').append(newForm);
+            getCity(index)
+            getState(index)
+            $("#trn_top_vendor_partners_trnTopVendorPartnersLocalities_"+index+"_mstPincode").select2({
+                theme: 'bootstrap4'
+            })
+            jQuery(".removeLocalityContentClass:first").find("button.btn-danger").hide();
+        }
+        function getCity(i)
+        {
+            {#$("#trn_top_vendor_partners_trnTopVendorPartnersLocalities_"+i+"_mstCity").select2({#}
+            {#    theme: 'bootstrap4',#}
+            {#    ajax: {#}
+            {#        url: "{{ path('top_vendor_partner_city') }}",#}
+            {#        dataType: 'JSON',#}
+            {#        data: function (params) {#}
+            {#            return {#}
+            {#                vendor_id: $("#trn_top_vendor_partners_trnVendorPartnerDetails").val(),#}
+            {#            };#}
+            {#        },#}
+            {#        processResults: function (data) {#}
+            {#            return {#}
+            {#                results: data,#}
+            {#            };#}
+            {#        },#}
+            {#    },#}
+            {#});#}
+            jQuery(document).on('change', "#trn_top_vendor_partners_trnTopVendorPartnersLocalities_"+i+"_mstCity", function(e) {
+                var data = {};
+                data['q'] = jQuery(this).val();
+                var oThis = this;
+                jQuery.ajax({
+                    url: "/core/location/locality_in_city",
+                    data: data,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (data) {
+                        var product = jQuery("#trn_top_vendor_partners_trnTopVendorPartnersLocalities_"+i+"_mstPincode");
+                        product.html('');
+                        // add options
+                        product.append('<option value="" >Select locality..</option>');
+                        $.each(data, function (id, name) {
+                            product.append('<option value="'+ name.id +'">'+ name.name + '</option>');
+                        });
+                    }
+                });
+            });
+        }
+
+        function getState(i)
+        {
+            jQuery(document).on('change', "#trn_top_vendor_partners_trnTopVendorPartnersLocalities_"+i+"_mstState", function(e) {
+                var data = {};
+                data['q'] = jQuery(this).val();
+                var oThis = this;
+                jQuery.ajax({
+                    url: "/core/location/city_list",
+                    data: data,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (data) {
+                        var product = jQuery("#trn_top_vendor_partners_trnTopVendorPartnersLocalities_"+i+"_mstCity");
+                        product.html('');
+                        // add options
+                        product.append('<option value="" >Select City..</option>');
+                        $.each(data, function (id, name) {
+                            product.append('<option value="'+ name.id +'">'+ name.name + '</option>');
+                        });
+                    }
+                });
+            });
+        }
+    </script>
+{% endblock %}

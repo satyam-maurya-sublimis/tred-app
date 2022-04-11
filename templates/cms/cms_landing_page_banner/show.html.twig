@@ -1,0 +1,57 @@
+{% extends 'layout/content.html.twig' %}
+{% block cms_content %}
+    <div class="card">
+        <div class="card-header">
+            <div class="col-sm-12">
+                <h3 class="card-title"><b>{{label_title|trans}}</b></h3>
+                <h4 class="card-title float-right">
+                    <a href="{{ path(path_edit, {'id': data.id}) }}/?page_id={{ app.request.get('page_id') }}" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i> {{'label.edit'|trans}}</a>
+                    <a href="{{ path(path_index) }}/?page_id={{ app.request.get('page_id') }}" class="btn btn-dark btn-sm"><i class="fa fa-list"></i> {{'label.back_to_list' | trans}}</a>
+                </h4>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body" id="record">
+            <div class="row">
+                <table class="table table-responsive-md text-sm">
+                        <tbody>
+                            <tr>
+                                <th>Name</th>
+                                <td>{{ data.bannerName }}</td>
+                                <th>Detail</th>
+                                <td>{{ data.bannerDescription|raw }}</td>
+                                <th>Valid From Date</th>
+                                <td>{{ data.bannerValidFromDate ? data.bannerValidFromDate|date('d M Y') : '' }}</td>
+                                <th>Valid To Date</th>
+                                <td>{{ data.bannerValidToDate ? data.bannerValidToDate|date('d M Y') : '' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Banner</th>
+                                <td>
+                                    <img src="{{ data.bannerDesktopImagePath|imagine_filter('resize_image_200') }}" alt="...">
+                                    <img src="{{ data.bannerTabletImagePath|imagine_filter('resize_image_200') }}" alt="...">
+                                    <img src="{{ data.bannerMobileImagePath|imagine_filter('resize_image_200') }}" alt="...">
+                                </td>
+                                <th>Media Type</th>
+                                <td>{{ data.bannerMediaType }}</td>
+                                <th>Banner Image Name</th>
+                                <td>{{ data.bannerImageSetName }}</td>
+                                <th>Banner Image Alt</th>
+                                <td>{{ data.bannerImageAlt }}</td>
+                            </tr>
+                            <tr>
+                                <th>Banner Image Title</th>
+                                <td>{{ data.bannerImageTitle }}</td>
+                                <th>Sequence No</th>
+                                <td>{{ data.sequenceNo }}</td>
+                                <th>Is Active</th>
+                                <td colspan="3">{{ data.isActive ? 'Yes' : 'No' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

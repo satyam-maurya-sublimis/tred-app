@@ -1,0 +1,67 @@
+{% extends 'layout/content.html.twig' %}
+
+{% block cms_content %}
+    <div class="card">
+        <div class="card-header">
+            <div class="col-sm-12">
+                <h3 class="card-title"><b>{{label_title|trans}}</b></h3>
+
+                <h4 class="card-title float-right custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="customSwitch1">
+{#                    <label class="custom-control-label btn btn-dark btn-sm" for="customSwitch1"><i class="fa fa-clock"></i> {{'label.log'|trans}}</label>#}
+                    <a href="{{ path(path_edit, {'id': data.id}) }}/?product_id={{ app.request.get('product_id') }}" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i> {{'label.edit'|trans}}</a>
+                    <a href="{{ path(path_index) }}/?product_id={{ app.request.get('product_id') }}" class="btn btn-dark btn-sm"><i class="fa fa-list"></i> {{'label.back_to_list' | trans}}</a>
+                </h4>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body" id="record">
+        <div class="row">
+            <table class="table table-responsive-md text-sm">
+                <tbody>
+                    <tr>
+                        <td class="col-sm-2">{{ 'label.name'|trans }}</td>
+                        <td class="col-sm-4">{{ data.mediaName|default('') }} </td>
+                        <td class="col-sm-2">{{ 'label.type'|trans }}</td>
+                        <td class="col-sm-4">{{ data.mediaType }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ 'label.image'|trans }}</td>
+                        <td><img src="{{ data.mediaFilePath|imagine_filter('resize_image_100') }}" alt=".."></td>
+                        <td>{{ 'label.embedded_url'|trans }}</td>
+                        <td>{{ data.mediaPath|default('') }} </td>
+                    </tr>
+                    <tr>
+                        <td>{{ 'label.alt'|trans }}</td>
+                        <td>{{ data.mediaAlText }}</td>
+                        <td>{{ 'label.title'|trans }}</td>
+                        <td>{{ data.mediaTitle|default('') }} </td>
+
+                    </tr>
+                    <tr>
+                        <td>{{ 'label.position'|trans }}</td>
+                        <td>{{ data.position }}</td>
+                        <td>{{ 'label.is_active'|trans }}</td>
+                        <td>{{ data.isActive ? 'Yes': 'No' }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        </div>
+
+{#        <div class="card"  id="timeline"  style="display: none">#}
+{#            <div class="card-body mt-3">#}
+{#                <div class="row">#}
+{#                    <h3><i class="fa fa-clock"></i> {{'label.log'|trans}}</h3>#}
+{#                </div>#}
+{#                {% set collection = 'TrnFurnitureProductCatalogMedia' %}#}
+{#                {% set collectionType = 'TrnFurnitureProductCatalog' %}#}
+{#                {% include('log/log.html.twig') %}#}
+{#            </div>#}
+{#        </div>#}
+
+    </div>
+{% endblock %}
+
+

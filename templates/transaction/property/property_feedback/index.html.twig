@@ -1,0 +1,67 @@
+{% extends 'layout/content.html.twig' %}
+{% block cms_content %}
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title"><a href="{{ path(path_add) }}/?projectId={{ app.request.get('projectId') }}" class="btn btn-dark btn-sm"><i class="fa fa-plus"></i> {{label_title|trans}}</a></h4>
+                <a class="float-right" href="{{ path('product_properties_index',{'pincodeId': app.session.get('search').pincodeId,'projectName': app.session.get('search').projectName }) }}" class="btn btn-link"><i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}</a>
+            </div>
+            <div class="card-header">
+                <h4 class="card-title">{{ label_heading|trans|upper }} : {{ trnProject.projectName }}</h4>
+            </div>
+            <nav class="card-content collapse show">
+                <div class="card-body card-dashboard ">
+                    <table id="dataTable" class="table table-responsive-md table-sm text-sm">
+                        <thead>
+                        <tr>
+                            {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+                            <th>{{ 'label.user'|trans|upper }}</th>
+                            {% endif %}
+                            <th>{{ 'label.creation_date'|trans|upper }}</th>
+                            <th>{{ 'label.project_property_feedback_topic'|trans|upper }}</th>
+                            <th>{{ 'label.project_property_feedback'|trans|upper }}</th>
+                            <th>{{ 'label.remarks'|trans|upper }}</th>
+{#                            <th>{{ 'label.is_approved'|trans|upper }}</th>#}
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for trnProjectFeedback in trnProjectFeedbacks %}
+                        <tr>
+                            {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+                            <td>{{ trnProjectFeedback.createdBy.appUserInfo.userFirstName }} {{ trnProjectFeedback.createdBy.appUserInfo.userLastName }}</td>
+                            {% endif %}
+                            <td>{{ trnProjectFeedback.createdOn|date('d M Y') }}</td>
+                            <td>{{ trnProjectFeedback.topic}}</td>
+                            <td>{{ trnProjectFeedback.feedback|raw}}</td>
+                            <td>{{ trnProjectFeedback.tredRemark|raw }}</td>
+{#                            <td>{{ trnProjectFeedback.isApproved ? 'Yes' : 'No' }}</td>#}
+                            <td>
+                                {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+                                    {% if trnProjectFeedback.replyBy is not null %}
+                                        <a href="{{ path(path_show, {'id': trnProjectFeedback.id,'projectId':app.request.get('projectId')}) }}"><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-expand"></i></button></a>
+                                    {% else %}
+                                        <a href="{{ path(path_reply, {'id': trnProjectFeedback.id,'projectId':app.request.get('projectId') }) }}" alt="{{ 'label.reply'|trans }}" title="{{ 'label.reply'|trans }}" ><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-reply"></i></button></a>&nbsp;&nbsp;
+                                    {% endif %}
+                                {% else %}
+                                        <a href="{{ path(path_show, {'id': trnProjectFeedback.id,'projectId':app.request.get('projectId')}) }}"><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-expand"></i></button></a>
+                                {% endif %}
+{#                                <div class="btn-group-toggle" role="group" aria-label="Action Buttons">#}
+{#                                    <a href="{{ path(path_edit, {'id': trnProjectFeedback.id,'appUser': app.user.id,'projectId':app.request.get('projectId') }) }}"><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i></button></a>&nbsp;#}
+{#                                </div>#}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4">{{'info.no_record_found'|trans}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+            </nav>
+        </div>
+    </div>
+</div>
+{% endblock %}

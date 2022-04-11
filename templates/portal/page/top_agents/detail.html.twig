@@ -1,0 +1,676 @@
+{% extends 'portal/layout/index.html.twig' %}
+{% block portal_content %}
+    {% set cities = [] %}
+    {% set localities = [] %}
+    {% set propertyTypes = [] %}
+    {% set cntSale = 0 %}
+    {% set cntRent = 0 %}
+    {% set projectProjectType = [] %}
+    {% set projectPossessions = get_possession_date() %}
+    {% set projectAvailabilityFromDate = get_available_date()  %}
+    {% set projectProductSubType = [] %}
+    {% set noOfBathRooms = [] %}
+    {% set propertyTransactionCategoryId = [] %}
+    {% for trnProjectRoomConfiguration in trnProjectRoomConfigurations %}
+        {% if ("%02d"|format(trnProjectRoomConfiguration.mstPropertyTransactionCategory.id)~"|"~trnProjectRoomConfiguration.mstPropertyTransactionCategory) not in propertyTransactionCategoryId %}
+            {% set propertyTransactionCategoryId = ["%02d"|format(trnProjectRoomConfiguration.mstPropertyTransactionCategory.id)~"|"~trnProjectRoomConfiguration.mstPropertyTransactionCategory]|merge(propertyTransactionCategoryId) %}
+        {% endif %}
+
+        {% if trnProjectRoomConfiguration.mstPropertyTransactionCategory == "Buy" %}
+            {% set cntSale = cntSale + 1 %}
+        {% endif %}
+
+        {% if trnProjectRoomConfiguration.mstPropertyTransactionCategory == "Rent" %}
+            {% set cntRent = cntRent + 1 %}
+        {% endif %}
+
+        {% if ("%02d"|format(trnProjectRoomConfiguration.trnProject.mstCity.id)~"|"~trnProjectRoomConfiguration.trnProject.mstCity.city) not in cities %}
+            {% set cities = ["%02d"|format(trnProjectRoomConfiguration.trnProject.mstCity.id)~"|"~trnProjectRoomConfiguration.trnProject.mstCity.city]|merge(cities) %}
+        {% endif %}
+
+        {% if ("%02d"|format(trnProjectRoomConfiguration.trnProject.mstCity.id)~"|"~trnProjectRoomConfiguration.trnProject.mstPincode.officeName) not in localities %}
+            {% set localities = ["%02d"|format(trnProjectRoomConfiguration.trnProject.mstCity.id)~"|"~trnProjectRoomConfiguration.trnProject.mstPincode.officeName]|merge(localities) %}
+        {% endif %}
+
+        {% if ("%02d"|format(trnProjectRoomConfiguration.trnProject.mstProductSubType.id)~"|"~trnProjectRoomConfiguration.trnProject.mstProductSubType.productSubType) not in projectProductSubType %}
+            {% set projectProductSubType = ["%02d"|format(trnProjectRoomConfiguration.trnProject.mstProductSubType.id)~"|"~trnProjectRoomConfiguration.trnProject.mstProductSubType.productSubType]|merge(projectProductSubType) %}
+        {% endif %}
+    {% endfor %}
+{#    {% set projectMoreFilter = projectMoreFilter|merge({ 'Bathroom' : noOfBathRooms,'Property_Area':{'Area':projectArea,'AreaValue':projectAreaValue|sort} }) %}#}
+    <div class="wrapper">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ path('portal_index') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ path('portal_top_agents_index') }}">Top Agents</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ trnVendorPartnerDetails }}</li>
+                </ol>
+            </nav>
+        </div>
+        <section class="explore-properties">
+            <div class="container">
+                <div class="comp-properties">
+                    <img src="{{ asset('images') }}/{{ trnVendorPartnerDetails.companyLogo }}" class="comp-img">
+                    <div class="left-details">
+                        <h3>{{ trnVendorPartnerDetails }}</h3>
+                        <ul class="prop-list">
+{#                            <li><span>RERA ID</span>: {{ trnVendorPartnerDetails.legalStatusOfFirm }} </li>#}
+                            <li><span>Location</span>: {{ trnVendorPartnerDetails.mstCity }}, {{ trnVendorPartnerDetails.mstState }}, {{ trnVendorPartnerDetails.mstPincode.pincode }}, {{ trnVendorPartnerDetails.mstCountry }} </li>
+                        </ul>
+                    </div>
+                    <div class="rgt-details">
+                        <ul class="btn-sec">
+{#                            <li><a href="#" class="btn btn-primary-outline-sm" data-toggle="modal" data-target="#view-contact">View Contact</a></li>#}
+                            <li><a href="#" class="btn btn-primary" data-toggle="modal" data-target="#enquiry-form">Send Enquiry</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="mt-0">
+            <div class="container inner-tab">
+                <div id="parentHorizontalTab">
+                    <ul class="resp-tabs-list hor_1">
+                        <li><a class="nav-item nav-link active overview"><i class="fa fa-file-text-o" aria-hidden="true"></i>Company Overview</a></li>
+                        {% if cntSale > 0  %}
+                            {% for propertyTransactionCategory in propertyTransactionCategoryId %}
+                                {% if "Buy" in propertyTransactionCategory %}
+                                    {% set tmpPropertyTransactionCategory =  propertyTransactionCategory|split("|") %}
+                                    <li><a class="nav-item nav-link sale" data-id="{{ tmpPropertyTransactionCategory.0|trim('0','left') }}"><i></i>Properties for Sale ({{ cntSale }})</a></li>
+                                {% endif  %}
+                            {% endfor %}
+                        {% endif  %}
+                        {% if cntRent > 0  %}
+                            {% for propertyTransactionCategory in propertyTransactionCategoryId %}
+                                {% if "Rent" in propertyTransactionCategory %}
+                                    {% set tmpPropertyTransactionCategory =  propertyTransactionCategory|split("|") %}
+                                    <li><a class="nav-item nav-link rent" data-id="{{ tmpPropertyTransactionCategory.0|trim('0','left') }}"><i></i>Properties for Rent ({{ cntRent }})</a></li>
+                                {% endif  %}
+                            {% endfor %}
+                        {% endif  %}
+                    </ul>
+                    <div class="resp-tabs-container hor_1">
+                        <div>
+                            <div class="tbl-style two-col">
+                                <div class="padd-overview company-overview">
+                                    <h3>Company Overview</h3>
+                                    <p>{{ trnVendorPartnerDetails.introduction|raw }}</p>
+                                    <h4>Deals In Localities</h4>
+
+                                    {% for trnTopVendorPartnersLocalities in trnTopVendorPartners.trnTopVendorPartnersLocalities %}
+                                        <span>{{ trnTopVendorPartnersLocalities.mstCity }}</span>
+                                        <ul class="list-overview typ2">
+                                        {% for mstPincode in trnTopVendorPartnersLocalities.mstPincode %}
+                                            <li>{{ mstPincode.officeName }}</li>
+                                        {% endfor %}
+                                        </ul>
+{#                                        {% set tmpcity = city|split("|") %}#}
+{#                                        <span>{{ tmpcity.1 }}</span>#}
+{#                                        <ul class="list-overview typ2">#}
+{#                                            {% for locality in  localities %}#}
+{#                                                {% set tmplocality = locality|split("|") %}#}
+{#                                                {% if tmplocality.0 == tmpcity.0 %}#}
+{#                                                    <li>{{ tmplocality.1 }}</li>#}
+{#                                                {% endif  %}#}
+{#                                            {% endfor %}#}
+{#                                        </ul>#}
+                                    {% endfor %}
+{#                                    {% for city in cities %}#}
+{#                                        {% set tmpcity = city|split("|") %}#}
+{#                                        <span>{{ tmpcity.1 }}</span>#}
+{#                                        <ul class="list-overview typ2">#}
+{#                                            {% for locality in  localities %}#}
+{#                                                {% set tmplocality = locality|split("|") %}#}
+{#                                                {% if tmplocality.0 == tmpcity.0 %}#}
+{#                                                    <li>{{ tmplocality.1 }}</li>#}
+{#                                                {% endif  %}#}
+{#                                            {% endfor %}#}
+{#                                        </ul>#}
+{#                                    {% endfor %}#}
+                                    <h4>Property Type Deals In</h4>
+                                    <ul class="list-overview typ3">
+                                        {% for productSubType in  projectProductSubType %}
+                                            {% set tmppropertyType = productSubType|split("|") %}
+                                            <li>{{ tmppropertyType.1 }}</li>
+                                        {% endfor %}
+                                    </ul>
+
+                                    <h4>Services Offered</h4>
+                                    <ul class="list-service">
+                                        <li>{{ trnVendorPartnerDetails.mstVendorType }}</li>
+                                    </ul>
+
+                                </div>
+                                {% include("portal/page/top_agents/profile.html.twig") %}
+                            </div>
+                        </div>
+                        {% if cntSale > 0  %}
+                        <div>
+                            {% include('portal/page/top_agents/filter.html.twig') with {'mFilters': menuFilters.1 } %}
+{#                            {% include('portal/page/top_agents/sale.html.twig') %}#}
+                            <section class="mt-0 property-sale">
+                                <div class="tbl-style two-col">
+                                    <div>
+                                        <div class="sort-by-sec">
+                                            <ul>
+                                                <li><b>Properties for Sale</b></li>
+                                            </ul>
+                                            <div class="sort-by">
+                                                <label>Sort by :</label>
+                                                <div class="select-custom">
+                                                    <select id="ssortBy" class="ms-offscreen">
+                                                        <option value="">Select</option>
+                                                        <option value="Tred">TRED Recommended</option>
+                                                        <option value="Low">Price - Low to High</option>
+                                                        <option value="High">Price - High to Low</option>
+                                                        <option value="Recent">Most Recent</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <ul class="project-listing">
+                                            {% include("portal/page/top_agents/slisting.html.twig") %}
+                                        </ul>
+                                    </div>
+                                    {% include("portal/page/top_agents/profile.html.twig") %}
+                                </div>
+                            </section>
+                        </div>
+                        {% endif  %}
+                        {% if cntRent > 0  %}
+                        <div>
+                            {% include('portal/page/top_agents/rfilter.html.twig') with {'mFilters': menuFilters.2 } %}
+{#                            {% include('portal/page/top_agents/rent.html.twig') %}#}
+                            <section class="mt-0 property-sale">
+                                <div class="tbl-style two-col">
+                                    <div>
+                                        <div class="sort-by-sec">
+                                            <ul>
+                                                <li><b>Properties for Sale</b></li>
+                                            </ul>
+                                            <div class="sort-by">
+                                                <label>Sort by :</label>
+                                                <div class="select-custom">
+                                                    <select id="rsortBy" class="ms-offscreen">
+                                                        <option value="">Select</option>
+                                                        <option value="Tred">TRED Recommended</option>
+                                                        <option value="Low">Price - Low to High</option>
+                                                        <option value="High">Price - High to Low</option>
+                                                        <option value="Recent">Most Recent</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <ul class="project-listing">
+                                            {% include("portal/page/top_agents/rlisting.html.twig") %}
+                                        </ul>
+                                    </div>
+                                    {% include("portal/page/top_agents/profile.html.twig") %}
+                                </div>
+                            </section>
+                        </div>
+                        {% endif  %}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!---- Contact Form Modal -->
+{#        <div class="modal fade" id="view-contact" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">#}
+{#            <div class="modal-dialog otp-modal" role="document">#}
+{#                <div class="modal-content">#}
+
+{#                    <div class="modal-body form-sec with-bg">#}
+{#                        <div class="bdr-sec">#}
+{#                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">#}
+{#                                <span aria-hidden="true">&times;</span>#}
+{#                            </button>#}
+{#                            <div class="form-group contact-tred-expert">#}
+{#                                <h2>View <span>Contact</span></h2>#}
+{#                                <div class="form-group">#}
+{#                                    <h3>Share your details to get this Agent Contact No.</h3>#}
+{#                                    <span class="mendatory-field">*Mandatory Fields</span>#}
+{#                                </div>#}
+{#                                <form class="form">#}
+{#                                    <div class="form-group">#}
+{#                                        <label for="name" class="">Full Name*</label>#}
+{#                                        <input type="text" id="name" name="name" required="required" class="form-control">#}
+{#                                    </div>#}
+{#                                    <div class="form-group">#}
+{#                                        <label for="email-id" class="">Email ID*</label>#}
+{#                                        <input type="email" id="email-id" email-id="email-id" required="required" class="form-control">#}
+{#                                    </div>#}
+{#                                    <div class="form-group mob-no">#}
+{#                                        <div class="input-group-prepend">#}
+{#                                            <select>#}
+{#                                                <option>+91</option>#}
+{#                                                <option>+92</option>#}
+{#                                            </select>#}
+{#                                        </div>#}
+{#                                        <label for="mobile-number">Mobile Number*</label>#}
+{#                                        <input type="tel" id="mobile-number" name="mobile-number" required="required" minlength="10" maxlength="10" class="form-control">#}
+{#                                    </div>#}
+{#                                    <label class="checkbox-lbl">#}
+{#                                        <input type="checkbox">#}
+{#                                        I agree to be contacted by TRED and other agents via WhatsApp, SMS, Phone, Email etc.#}
+{#                                    </label>#}
+{#                                    <div class="w-100"></div>#}
+{#                                    <div class="form-group"><a href="#" class="btn btn-primary modal-contact" data-toggle="modal" data-target="#verify-number">Get Agent Details</a></div>#}
+{#                                    <p class="terms">By Procedding you agree to our <span class="terms"><a href="" class="terms" data-toggle="modal" data-target="#terms-conditions">Terms & Conditions.</a></span></p>#}
+{#                                </form>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+
+        <!---- Send Enquiry -->
+        <div class="modal fade" id="enquiry-form" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div class="modal-dialog otp-modal" role="document">
+                <div class="modal-content">
+                    <div class="modal-body form-sec with-bg ">
+                        <div class="bdr-sec">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <div class="form-group"><h2>Send <span>Enquiry</span></h2></div>
+                            <div class="form-group">
+                                <h3>Share your details to be sent to the Agent.</h3>
+                                <span class="mendatory-field">*Mandatory Fields</span>
+                            </div>
+                            <div class="top-agent-form">
+                            </div>
+                        </div>
+{#                        <div class="modal-body form-sec with-bg">#}
+{#                            <div class="bdr-sec">#}
+{#                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">#}
+{#                                    <span aria-hidden="true">×</span>#}
+{#                                </button>#}
+
+{#                                <div class="form-group">#}
+{#                                    <h2>Send <span>Enquiry</span></h2>#}
+{#                                    <div class="form-group">#}
+{#                                        <h3>Share your details to be sent to the Agent.</h3>#}
+{#                                        <span class="mendatory-field">*Mandatory Fields</span>#}
+{#                                    </div>#}
+{#                                    <form class="form">#}
+{#                                        <div class="form-group">#}
+{#                                            <label for="name" class="">Full Name*</label>#}
+{#                                            <input type="text" id="name" name="name" required="required" class="form-control">#}
+{#                                        </div>#}
+{#                                        <div class="form-group">#}
+{#                                            <label for="email-id" class="">Email ID*</label>#}
+{#                                            <input type="email" id="email-id" email-id="email-id" required="required" class="form-control">#}
+{#                                        </div>#}
+{#                                        <div class="form-group mob-no">#}
+{#                                            <div class="input-group-prepend">#}
+{#                                                <select>#}
+{#                                                    <option>+91</option>#}
+{#                                                    <option>+92</option>#}
+{#                                                </select>#}
+{#                                            </div>#}
+{#                                            <label for="mobile-number">Mobile Number*</label>#}
+{#                                            <input type="tel" id="mobile-number" name="mobile-number" required="required" minlength="10" maxlength="10" class="form-control">#}
+{#                                        </div>#}
+{#                                        <!-- <div class="form-group">#}
+{#                                          <textarea class="form-control character-count" placeholder="Message"></textarea>#}
+{#                                          <p class="char-remain"><span class='remainingC'><span>1000</span></span> Remaining Characters</p>#}
+{#                                        </div> -->#}
+{#                                        <label class="checkbox-lbl">#}
+{#                                            <input type="checkbox">#}
+{#                                            I agree to be contacted by TRED and other agents via WhatsApp, SMS, Phone, Email etc.#}
+{#                                        </label>#}
+{#                                        <div class="w-100"></div>#}
+{#                                        <div class="form-group"><a href="#" class="btn btn-primary modal-contact" data-toggle="modal" data-target="#verify-number">Get Agent Details</a></div>#}
+{#                                        <p class="terms">By Procedding you agree to our <span class="terms"><a href="" class="terms" data-toggle="modal" data-target="#terms-conditions">Terms &amp; Conditions.</a></span></p>#}
+{#                                    </form>#}
+
+{#                                </div>#}
+
+
+{#                            </div>#}
+{#                        </div>#}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('resources/js/easyResponsiveTabs.js') }}"></script>
+    <script>
+        var wwidth = $(window). width();
+        var wheight = $(window). height();
+
+        function getFilter() {
+            var data = {};
+
+            data['propertyTransactionCategoryId'] = $('.resp-tabs-list').find("li.resp-tab-active").find("a").attr("data-id");
+            data['trnVendorPartnersId'] = "{{ trnVendorPartnerDetails.id }}";
+            data['isTopVendorPartners'] = 1;
+
+            {#data['slugName'] = "{{ app.request.get('slugName') }}";#}
+
+            data['propertyTypeId'] = eval(jQuery(".propertyType:checked").val());
+            data['productSubType'] = $('.productSubType.active').map(function () {
+                return eval($(this).val());
+            }).get();
+
+            data['projectStatus'] = $('.projectStatus.active').map(function () {
+                return eval($(this).attr("data-id"));
+
+            }).get();
+
+            data['projectRoomConfigurations'] = $('.bhkrooms.active').map(function () {
+                return $(this).attr("data-id");
+            }).get();
+
+            data['projectPossessions'] = $('.possessionDate.active').map(function () {
+                return $(this).attr("data-id")+"~"+$(this).attr("data-value");
+            }).get();
+
+            data['projectPostedBy'] = $('.posted.active').map(function () {
+                return eval($(this).attr("data-id"));
+            }).get();
+
+            data['projectAmenities'] = $('.amenities.active').map(function () {
+                return eval($(this).attr("data-id"));
+            }).get();
+
+            data['noOfBathRooms'] = $('.bathrooms.active').map(function () {
+                return eval($(this).attr("data-id"));
+            }).get();
+
+            if ($('.areaValue').val() !=""){
+                data['propertyAreaValue'] =  $('.areaValue').val();
+                data['propertyAreaRange'] =  $('.areaValueRange.active').attr("data-id");
+            }
+
+            if ($('#minrange').val() !="" && $('#maxrange').val() !="" ){
+                data["priceRangeMin"] =  $('#minrange').attr("data-value");
+                data["priceRangeMax"] =  $('#maxrange').attr("data-value");
+                data["priceRangeMinDenomination"] =  $('#minrange').attr("data-denomination");
+                data["priceRangeMaxDenomination"] =  $('#maxrange').attr("data-denomination");
+            }
+
+            if ($('.hpgcity').val() !=""){
+                data['mstCity'] = $('.hpgcity').val();
+            }
+
+            if (data['propertyTransactionCategoryId'] == 1){
+                if ($("#ssortBy").val() !=""){
+                    data['sort'] = $("#ssortBy").val();
+                }
+
+            }else{
+                if ($("#rsortBy").val() !=""){
+                    data['sort'] = $("#rsortBy").val();
+                }
+            }
+
+            jQuery.ajax({
+                url: "{{ path('portal_top_agents_filter') }}",
+                data: data,
+                type: "POST",
+                dataType: "html",
+                success: function (data) {
+                    var result = $(".project-listing");
+                    result.html('');
+                    result.html(data);
+                    $(".propertyCount").html($(".project-listing").find("li.property-listing").length);
+                },
+                complete:function(result){
+                    jQuery.ajax({
+                        url: "{{ path('portal_properties_selected_filter') }}",
+                        data: data,
+                        type: "POST",
+                        dataType: "html",
+                        success: function (result_2) {
+                            var result = $(".selected-filter");
+                            result.html('');
+                            result.html(result_2);
+                        }
+                    });
+                }
+            });
+
+
+        }
+        function formActition(){
+            /****Form****/
+            function formcontrol(){
+                $(".form-control").filter(function() {
+                    if (this.value.length !==0){
+                        $(this).siblings('label').addClass('clicked');
+                    }
+                });
+            }
+            formcontrol();
+            $('.form-group label').click(function () {
+                $(this).addClass('clicked');
+            });
+            $('.form-control').click(function () {
+                $(this).siblings('label').addClass('clicked');
+            });
+            $('.form-control').keyup(function () {
+                $(this).siblings('label').addClass('clicked');
+            });
+            $('.form-control').blur(function () {
+                if ($(this).val()) {
+                    $(this).siblings('label').addClass('clicked');
+                } else if (!$(this).val()) {
+                    $(this).siblings('label').removeClass('clicked');
+                }
+            });
+            /****Form****/
+        }
+        jQuery("document").ready(function(){
+            jQuery.ajax({
+                url: "{{ path('portal_top_agents_enquiry',{'trnVendorPartnerDetailsId':trnVendorPartnerDetails.id}) }}",
+                type: "GET",
+                dataType: "HTML",
+                success: function (data) {
+                    $(".top-agent-form").html(data);
+                    formActition();
+                }
+            });
+
+            jQuery.ajax({
+                url: "{{ path('portal_top_agents_enquiry_frm',{'trnVendorPartnerDetailsId':trnVendorPartnerDetails.id,'frm':2}) }}",
+                type: "GET",
+                dataType: "HTML",
+                success: function (data) {
+                    $(".top-agent-form2").html(data);
+                    formActition();
+                }
+            });
+
+            $('.call-action.active').hide();
+            $('.call-action .closeBtn').hide();
+
+            $('.call-action span a').click(function(){
+                $('.call-action').addClass('active');
+                $('.call-action .closeBtn').show();
+            });
+
+            $('.call-action .closeBtn').click(function(){
+                $('.call-action').removeClass('active');
+                $(this).hide();
+            });
+
+            $('#parentHorizontalTab').easyResponsiveTabs({
+                type: 'default', //Types: default, vertical, accordion
+                width: 'auto', //auto or any width like 600px
+                fit: true, // 100% fit in a container
+                tabidentify: 'hor_1', // The tab groups identifier
+                activate: function(event) { // Callback function if tab is switched
+                    var $tab = $(this);
+                    var $info = $('#nested-tabInfo');
+                    var $name = $('span', $info);
+                    $name.text($tab.text());
+                    $info.show();
+                }
+            });
+
+            if(width < 991) {
+                $('.mob-hide').hide()
+                $('.mob-filter').click(function(){
+                    $('.top-filter-sec').toggle(500);
+                    $('.top-filter').toggleClass('active');
+                });
+                $('#cancel-filter').click(function(){
+                    $('.top-filter-sec').hide(500);
+                    $('.top-filter').removeClass('active');
+                });
+                $('#save-filter').click(function(){
+                    $('.top-filter-sec').hide(500);
+                    $('.top-filter').removeClass('active');
+                });
+                $('.mob-search').on('click',function(e) {
+                    e.preventDefault();
+                    $(this).toggleClass('fa-close');
+                    $(this).parents().find('.banner-carousel').find('.search_box').toggleClass('open');
+                });
+
+            }
+            jQuery(".btn-done").click(function(e){
+                e.preventDefault();
+                if ($(this).hasClass('budgetbtn')){
+                    if (jQuery(this).closest('.widget-section').length > 0){
+                        jQuery(this).closest('.widget-section').find('.open-dropdown1').hide();
+                    }
+                }else{
+                    $(this).parents('.open-dropdown').hide();
+                    getFilter();
+                }
+            });
+            jQuery(".productSubType").click(function(e){
+                e.preventDefault();
+                $(this).toggleClass("active");
+            });
+            jQuery(".projectStatus").click(function(e){
+                e.preventDefault();
+                $(this).toggleClass("active");
+            });
+            jQuery(".bhkrooms").click(function(e){
+                e.preventDefault();
+                $(this).toggleClass("active");
+            });
+            jQuery(".possessionDate").click(function(e){
+                e.preventDefault();
+                $(this).toggleClass("active");
+            });
+            jQuery(".posted").click(function(e){
+                e.preventDefault();
+                $(this).toggleClass("active");
+            });
+            jQuery(".areaValueRange").click(function(e){
+                e.preventDefault();
+                jQuery(".areaValueRange").removeClass("active")
+                $(this).addClass("active");
+                if ($(".areaValue").val() == ""){
+                    alert("Please select the value of Property Area");
+                }
+            });
+            jQuery("#ssortBy").change(function(){
+                getFilter();
+            });
+            jQuery("#rsortBy").change(function(){
+                getFilter();
+            });
+
+            jQuery(".minRange").click(function(e){
+                e.preventDefault();
+                jQuery("#minrange").val(jQuery(this).text());
+                jQuery("#minrange").attr("data-value",jQuery(this).attr("data-range"));
+                jQuery("#minrange").attr("data-denomination",jQuery(this).attr("data-denomination"));
+                jQuery(".minRange").hide();
+                jQuery(".maxRange").map(function(index,item){
+                    var dataRange = eval($(item).attr("data-range"));
+                    var getValue = eval(jQuery("#minrange").attr("data-value"));
+                    if(getValue >= dataRange){
+                        $(item).closest("li").hide();
+                    }
+                });
+            });
+
+            jQuery(".maxRange").click(function(e){
+                e.preventDefault();
+                jQuery("#maxrange").val(jQuery(this).text());
+                jQuery("#maxrange").attr("data-value",jQuery(this).attr("data-range"));
+                jQuery("#maxrange").attr("data-denomination",jQuery(this).attr("data-denomination"));
+                jQuery(".maxRange").hide();
+            });
+
+            jQuery(document).on("click",".close-filter",function(e){
+                e.preventDefault();
+                var dataId = $(this).closest("li").attr("data-id");
+                var dataValue = $(this).closest("li").attr("data-value");
+                if (dataId == "budget"){
+                    jQuery("#minrange").val("");
+                    jQuery(".minRange").show();
+                    jQuery("#maxrange").val("");
+                    jQuery(".maxRange").show();
+                }
+                if (dataId == "bhkrooms"){
+                    $('.bhkrooms.active').map(function () {
+                        if ($(this).attr("data-id") == dataValue){
+                            $(this).removeClass("active");
+                        }
+                    })
+                    // jQuery(".bhkrooms").attr("data-id",dataValue).removeClass("active");
+                }
+                if (dataId == "possession"){
+                    $('.possessionDate.active').map(function () {
+                        if ($(this).attr("data-id") == dataValue){
+                            $(this).removeClass("active");
+                        }
+                    })
+                }
+                if (dataId == "posted"){
+                    jQuery(".posted").attr("data-id",dataValue).removeClass("active");
+                }
+                if (dataId == "amenities"){
+                    jQuery(".amenities").attr("data-id",dataValue).removeClass("active");
+                }
+                if (dataId == "productSubType"){
+                    jQuery(".productSubType").attr("data-id",dataValue).removeClass("active");
+                }
+                if (dataId == "projectStatus"){
+                    jQuery(".projectStatus").attr("data-id",dataValue).removeClass("active");
+                }
+                if (dataId == "amenities"){
+                    jQuery(".amenities").attr("data-id",dataValue).removeClass("active");
+                }
+                if (dataId == "propertyAreaRangeValue"){
+                    jQuery(".areaValue").val("");
+                    jQuery(".areaValueRange").attr("data-id",dataValue).removeClass("active");
+                }
+                getFilter();
+                $(this).closest("li").remove();
+                if (jQuery(".selected-filter").find("li").length == 0 ){
+                    jQuery(".seleted-filter-close").trigger("click");
+                }
+
+            });
+            $(window).bind('scroll', function() {
+                $('.agent-dtls-frm').removeClass('fixedtop').find('.form-sec').removeClass('fixedtop');
+                $('.agent-dtls-frm').find(".profile-details").show();
+                if($(this).scrollTop() >= ($('footer').offset().top + $('footer').outerHeight())-200-window.innerHeight) {
+                    $('.agent-dtls-frm').removeClass('fixedtop');
+                }else if ($(this).scrollTop() > 220) {
+                    $('.agent-dtls-frm').find(".profile-details").hide();
+                    $('.agent-dtls-frm').addClass('fixedtop');
+
+                }
+            });
+        });
+    </script>
+{% endblock %}

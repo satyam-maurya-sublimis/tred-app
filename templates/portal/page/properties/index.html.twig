@@ -1,0 +1,140 @@
+{% extends 'portal/layout/index.html.twig' %}
+{% block portal_content %}
+<section class="banner-carousel slider-item">
+    {% set route =  app.request.get('_route') %}
+    {% set cmsPage = get_cms_page_by_route(route) %}
+    {% set page = get_pagecontent_by_route(route) %}
+    {% set banners = get_cms_page_banner(cmsPage.id) %}
+    {% set advertisements = get_cms_page_ads(cmsPage.id) %}
+    <div id="mainBanner" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+            {% for banner in banners %}
+                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                    <figure>
+                        <img src="{{ banner.bannerDesktopImagePath|imagine_filter('resize_image_scale_1280_300') }}" class="desktop-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                        <img src="{{ banner.bannerTabletImagePath|imagine_filter('resize_image_scale_767_350') }}" class="tab-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                        <img src="{{ banner.bannerMobileImagePath|imagine_filter('resize_image_scale_350_250') }}" class="mobile-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                    </figure>
+                    <div class="container">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{{ path("portal_index") }}">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Properties</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+<div class="wrapper">
+    <section class="explore-properties">
+        <div class="container">
+            {% for content in page.cmsPageContent|filter((a)=>a.cmsPageContentPosition =="title") %}
+                <h2 data-aos="fade-right" data-aos-delay="200">{{ content.pageContent|raw }} </h2>
+            {% endfor %}
+            <h3 data-aos="fade-down" data-aos-delay="400">
+                {% for cmsPageContent in page.cmsPageContent %}
+                    {{ cmsPageContent.pageContent|raw }}
+                {% endfor %}
+
+                <div class="card-deck cust-card typ2">
+                    {% for productType in get_sub_product_by_route(page.id) %}
+                        <div class="card aos-init aos-animate" data-aos="fade-down" data-aos-delay="200">
+                            <figure class="typ2">
+                                <a href="{{ path('portal_properties_list',{'slugName':productType.productType|lower}) }}">
+                                    <img src="{{ productType.productTypeImagePath|imagine_filter('resize_image_scale_380_200')  }}" class="card-img-top" alt="...">
+                                </a>
+                            </figure>
+                            <figcaption>
+                                <h3>{{ productType.productType }}</h3>
+                                <p>{{ productType.productTypeDescription|raw }}</p>
+                                <a href="{{ path('portal_properties_list',{'slugName':productType.productType|lower}) }}" class="btn btn-primary aos-init" data-aos="fade-down" data-aos-delay="200">View All Residential Properties</a>
+                            </figcaption>
+                        </div>
+                    {% endfor %}
+                </div>
+                <br><br>
+            </h3>
+        </div>
+    </section>
+    {% if advertisements|length > 0 %}
+        <section class="bg-container text-center add-sec">
+            <div class="container" data-aos="fade-down" data-aos-delay="200">
+                {% for ads in advertisements|filter((a)=>a.advertisementPosition =="middle") %}
+                    <img src="{{ ads.advertisementDesktopImagePath|imagine_filter('resize_image_advertisement') }}" class="desktop-purpose" alt="{{ ads.advertisementName }}" title="{{ ads.advertisementName }}">
+                {% endfor %}
+            </div>
+        </section>
+    {% endif  %}
+</div>
+<!--Main Wrapper Starts-->
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function () {
+
+            AOS.init({
+                duration: 1200,
+            })
+
+            $('.call-action.active').hide();
+            $('.call-action .closeBtn').hide();
+
+            $('.call-action span a').click(function(){
+                $('.call-action').addClass('active');
+                $('.call-action .closeBtn').show();
+            });
+
+            $('.call-action .closeBtn').click(function(){
+                $('.call-action').removeClass('active');
+                $(this).hide();
+            });
+
+            $("select").click(function(){
+                $(this).parent().addClass('active');
+            });
+
+
+            function formcontrol(){
+                $(".form-control").filter(function() {
+                    if (this.value.length !==0){
+                        $(this).siblings('label').addClass('clicked');
+                    }
+                });
+            }
+
+            formcontrol();
+            $('.form-group label').click(function () {
+                $(this).addClass('clicked');
+            });
+            $('.form-control').click(function () {
+                $(this).siblings('label').addClass('clicked');
+            });
+            $('.form-control').keyup(function () {
+                $(this).siblings('label').addClass('clicked');
+            });
+            $('.form-control').blur(function () {
+                if ($(this).val()) {
+                    $(this).siblings('label').addClass('clicked');
+                } else if (!$(this).val()) {
+                    $(this).siblings('label').removeClass('clicked');
+                }
+            });
+
+
+
+            if(width < 991) {
+                $('.mob-filter').click(function(){
+                    $('.top-filter-sec').toggle(500);
+                    $(this).toggleClass('active');
+                });
+
+
+            }
+        });
+        /*Equal Height*/
+    </script>
+{% endblock %}

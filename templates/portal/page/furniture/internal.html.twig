@@ -1,0 +1,166 @@
+{% extends 'portal/layout/index.html.twig' %}
+{% block portal_content %}
+    {% if cmsLandingPage %}
+        {% if cmsLandingPage.cmsBanners|length > 0 %}
+            <section class="banner-carousel typ3">
+                <div id="mainBanner" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        {% for banner in cmsLandingPage.cmsBanners %}
+                            <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                <figure>
+                                    <img src="{{ banner.bannerDesktopImagePath|imagine_filter('resize_image_scale_1280_300') }}" class="desktop-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                                    <img src="{{ banner.bannerTabletImagePath|imagine_filter('resize_image_scale_767_350') }}" class="tab-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                                    <img src="{{ banner.bannerMobileImagePath|imagine_filter('resize_image_scale_350_250') }}" class="mobile-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                                    <div class="container">
+                                        <nav aria-label="breadcrumb">
+                                            <ol class="breadcrumb" data-aos="fade-right" data-aos-delay="200">
+                                                <li class="breadcrumb-item"><a href="{{ path('portal_index') }}">Home</a></li>
+                                                <li class="breadcrumb-item"><a href="{{ path('portal_furniture_index') }}">Furniture</a></li>
+                                                <li class="breadcrumb-item active" aria-current="page">{{ cmsLandingPage.mstProductType }}</li>
+                                            </ol>
+                                        </nav>
+                                        {{ banner.bannerDescription|raw }}
+                                    </div>
+                                    {#                                    <a href="#intro" class="next-section-arrow"><i class="fa fa-chevron-down"></i></a>#}
+                                </figure>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% if cmsLandingPage.cmsBanners|length > 1 %}
+                        <a class="carousel-control-prev" href="#mainBanner" role="button" data-slide="prev"> <i class="fa fa-angle-left"></i> </a>
+                        <a class="carousel-control-next" href="#mainBanner" role="button" data-slide="next"> <i class="fa fa-angle-right"></i>
+                            <div class="num">1 / {{ cmsLandingPage.cmsBanners|length }}</div>
+                        </a>
+                    {% endif %}
+                </div>
+            </section>
+        {% endif  %}
+        <div class="wrapper">
+            <section class="banner-sec">
+                <figure class="furniture"  data-aos="fade-right" data-aos-delay="200"><img src="{{ cmsLandingPage.cmsLandingPageImagePath|imagine_filter('resize_image_scale_564_354') }}" alt="" title=""></figure>
+                <div class="container">
+                    <div class="caption typ2" data-aos="fade-right" data-aos-delay="200">
+                        {{ cmsLandingPage.cmsLandingPageBannerTitle|raw }}
+                    </div>
+                    <div class="loan-key-points">
+                        {% set productTypeName = cmsLandingPage.mstProductType.productType|split(" ") %}
+                        {% if productTypeName.2 is defined %}
+                            <h2 data-aos="fade-right" data-aos-delay="200">{{ productTypeName.0 }} {{ productTypeName.1 }} <span>{{ productTypeName.2 }}</span></h2>
+                        {% else %}
+                            <h2 data-aos="fade-right" data-aos-delay="200">{{ productTypeName.0 }} <span>{{ productTypeName.1 }}</span></h2>
+                        {% endif %}
+                        {{ cmsLandingPage.mstProductType.productTypeDescription|raw }}
+                        <a href="#" class="btn btn-primary btn-apply-loan">Request Quote Now</a>
+
+                        <div class="yellow-box typ4" data-aos="fade-right" data-aos-delay="200">
+                            <a href="#" class="fa fa-close"></a>
+                            <div class="frmEnquiry"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="mb-5 mt-5">
+                <div class="container">
+                    <div class="card-deck cust-card typ3">
+                        {% for content in cmsLandingPage.cmsLandingPageContents %}
+                            {% if content.pageMediaPosition == 'left' %}
+                                <div class="card" data-aos="fade-right" data-aos-delay="200">
+                                    <figure class="">
+                                        <a href="#">
+                                            <img src="{{ content.pageImagePath|imagine_filter('resize_image_scale_395_300') }}" class="card-img-top" alt="{{ content.pageImageAlt }}" title="{{ content.pageImageTitle }}">
+                                        </a>
+                                    </figure>
+                                </div>
+                            {% endif  %}
+                            {% if content.pageMediaPosition == 'right' %}
+                                <div class="card" data-aos="fade-right" data-aos-delay="400">
+                                    <figure class="">
+                                        <a href="#">
+                                            <img src="{{ content.pageImagePath|imagine_filter('resize_image_scale_395_300') }}" class="card-img-top" alt="{{ content.pageImageAlt }}" title="{{ content.pageImageTitle }}">
+                                        </a>
+                                    </figure>
+                                </div>
+                            {% endif  %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+        </div>
+    {% endif  %}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/captcha.basic.min.js') }}" type="text/javascript"></script>
+    <script>
+        jQuery("document").ready(function(){
+
+            AOS.init({
+                delay: 50,
+                duration: 1000,
+                offset:0,
+                once: true
+            })
+            jQuery.ajax({
+                url: "{{ path('portal_form_enquiry',{'slugName': app.request.get('slugName') } ) }}",
+                type: "GET",
+                dataType: "HTML",
+                success: function (data) {
+                    $(".frmEnquiry").html(data).captcha({'idCaptchaInput': 'captcha', 'idCaptchaText': 'captha-code'});
+                    formActition();
+                    $('.form').submit(function (event) {
+                        event.preventDefault();
+                        var form = $(this).serialize();
+                        callAjax(form);
+                    });
+                }
+            });
+            var totalItemsPop = $('#mainBanner .carousel-item').length;
+            $('#mainBanner').on('slid.bs.carousel', function() {
+                setTimeout(function(){
+                    currentIndexPop = $('#mainBanner .carousel-item.active').index() + 1;
+                    $('.num').html('' + currentIndexPop + ' / ' + totalItemsPop + '');
+                });
+            });
+        });
+        function callAjax(form){
+            jQuery.ajax({
+                url: "{{ path('portal_form_enquiry',{'slugName': app.request.get('slugName')}) }}",
+                type: "POST",
+                dataType: "HTML",
+                data: form,
+                success: function (data) {
+                    // $(".frmEnquiry").html(data);
+                    window.location.href = "{{ path('portal_form_enquiry_success') }}";
+                }
+            });
+        }
+        function formActition(){
+            /****Form****/
+            function formcontrol(){
+                $(".form-control").filter(function() {
+                    if (this.value.length !==0){
+                        $(this).siblings('label').addClass('clicked');
+                    }
+                });
+            }
+            formcontrol();
+            $('.form-group label').click(function () {
+                $(this).addClass('clicked');
+            });
+            $('.form-control').click(function () {
+                $(this).siblings('label').addClass('clicked');
+            });
+            $('.form-control').keyup(function () {
+                $(this).siblings('label').addClass('clicked');
+            });
+            $('.form-control').blur(function () {
+                if ($(this).val()) {
+                    $(this).siblings('label').addClass('clicked');
+                } else if (!$(this).val()) {
+                    $(this).siblings('label').removeClass('clicked');
+                           }
+            });
+            /****Form****/
+        }
+    </script>
+{% endblock %}

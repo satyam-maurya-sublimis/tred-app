@@ -1,0 +1,7 @@
+{% if cmsPage.cmsPageContent[9] is defined and cmsPage.cmsPageContent[9].isActive %}
+    <section class="bg-container why-love-tred">
+        <div class="container">
+            {{ cmsPage.cmsPageContent[9].pageContent|raw }}
+        </div>
+    </section>
+{% endif %}

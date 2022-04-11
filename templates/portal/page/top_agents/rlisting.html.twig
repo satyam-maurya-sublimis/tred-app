@@ -1,0 +1,151 @@
+
+{% for trnProjectRoomConfiguration in trnProjectRoomConfigurations|filter((a)=>a.mstPropertyTransactionCategory.id == 2) %}
+    <li>
+        <div class="card-deck cust-card">
+            <div class="card">
+                <figure>
+                    {% set uploadImageCount = 0 %}
+                    {% for  upload in trnProjectRoomConfiguration.trnUploadDocuments %}
+                        {% set uploadImageCount = uploadImageCount+1 %}
+                        {% if upload.mediaFileName %}
+                            <img src="{{ upload.mediaFilePath|imagine_filter('resize_image_scale_330_220') }}" class="card-img-top" alt="..">
+                        {% endif  %}
+                    {% else %}
+                        <img src="{{ asset('resources/images/no_image.jpg') }}" class="card-img-top" title="No Image" alt="No Image">
+                    {% endfor  %}
+                    <figcaption>
+                        <div class="top-left">
+                            {% if trnProjectRoomConfiguration.trnProject.isTredRecommended %}
+                                <span><i class="fa fa-check"></i> {{ trnProjectRoomConfiguration.trnProject.orgCompany.company }} Recommended </span>
+                            {% endif  %}
+                        </div>
+                        <div class="bottom-left">
+                            <ul class="like-view">
+                                <li>
+                                    <a href="#" data-id="{{ trnProjectRoomConfiguration.id }}" class="thumbs-up" >
+                                        <i class="fa fa-thumbs-o-up"></i>
+                                        <b class="fa-thumbs-o-up-count">{% if trnProjectRoomConfiguration.roomConfigurationLikes %}{{ trnProjectRoomConfiguration.roomConfigurationLikes }}{% else %}0{% endif %}</b>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <i class="fa fa-eye"></i>
+                                        <b>{% if trnProjectRoomConfiguration.roomConfigurationViews %}{{ trnProjectRoomConfiguration.roomConfigurationViews }}{% else %}0{% endif %}</b>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bottom-center">
+                            <ul class="like-view">
+                                <li>
+                                    <a href="#">
+                                        <i class="fa fa-camera"></i>
+                                        <b>{{ uploadImageCount }}</b>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        {% if trnProjectRoomConfiguration.trnProject.isRera %}
+                            <div class="bottom-right">
+                                <div class="rera">
+                                    RERA
+                                </div>
+                            </div>
+                        {% endif  %}
+                    </figcaption>
+                </figure>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title"><b>{{ trnProjectRoomConfiguration.mstRoomConfiguration.roomConfiguration }} {{ trnProjectRoomConfiguration.trnProject.mstProductSubType.productSubType }} </b> in {{ trnProjectRoomConfiguration.trnProject.projectName }}</h5>
+                <span class="location"><b>{{ trnProjectRoomConfiguration.trnProject.trnVendorPartnerDetails.vendorPartnerName }},</b> {{ trnProjectRoomConfiguration.trnProject.mstPincode.officeName }}, {{ trnProjectRoomConfiguration.trnProject.mstCity.city }}-{{ trnProjectRoomConfiguration.trnProject.mstPincode }}</span>
+                <ul class="flat-dtls typ2">
+                    <li>
+                        <div class="prz">
+                          <span>
+                            <b>{{ trnProjectRoomConfiguration.areaValue }} {{ trnProjectRoomConfiguration.mstProjectArea }}</b>
+                          </span>
+                            <small>{{ trnProjectRoomConfiguration.mstProjectAreaCategory }}</small>
+                        </div>
+                    </li>
+                    <li>
+                        <div>
+                          <span>
+                            <b class="amt"><i class="fa fa-rupee"></i> {{ trnProjectRoomConfiguration.deposit|replace({'.00':''}) }} {{ trnProjectRoomConfiguration.mstDenomination }}</b>
+                          </span>
+                            <small>Deposit</small>
+                        </div>
+                    </li>
+                    <li>
+                        <div>
+                            <span>
+                              <b class="amt"><i class="fa fa-rupee"></i> {{ trnProjectRoomConfiguration.rentPerMonth|replace({'.00':''}) }}</b>
+                            </span>
+                            <small>Rent ({{ trnProjectRoomConfiguration.isNegotiable?'Negotiable':'' }})</small>
+                        </div>
+                    </li>
+                </ul>
+                <ul class="flat-dtls property-dtls">
+                    <li>
+                                <span class="icon"><img src="/resources/images/icons/icon-Furniture-sm.png">
+                                </span>
+                        <span>
+                                    {{ trnProjectRoomConfiguration.mstFurnishing }}
+                                    <small>Furnishing</small>
+                                </span>
+                    </li>
+                    <li>
+                                <span class="icon"><img src="/resources/images/icons/icon-AgeProperty.png">
+                                </span>
+                        <span>
+                                    {{ trnProjectRoomConfiguration.trnProject.propertyAge|default("NA") }}
+                                    <small>Property Age</small>
+                                </span>
+
+                    </li>
+                    <li>
+                                <span class="icon"><img src="/resources/images/icons/icon-Family.png">
+                                </span>
+                        <span>
+                                    {% for tenants in trnProjectRoomConfiguration.mstPreferredTenant %}
+                                        {{ tenants }}{{ not loop.last ? ',' }}
+                                    {% endfor %}
+
+                                    <small>Preferred Tenants</small>
+                                </span>
+
+                    </li>
+                    <li>
+                                <span class="icon"><i class="fa fa-calendar-o"></i>
+                                </span>
+                        <span>
+                                    {% if trnProjectRoomConfiguration.trnProject.availabilityFromDate %}
+                                        {% if date(trnProjectRoomConfiguration.trnProject.availabilityFromDate) > date() %}
+                                            {{ trnProjectRoomConfiguration.trnProject.availabilityFromDate|date('M - Y') }}
+                                        {% else %}
+                                            Ready to move
+                                        {% endif %}
+                                    {% endif %}
+                                    <small>Available From</small>
+                                </span>
+                    </li>
+                </ul>
+                <div class="view-details">
+                    <div class="left-sec">
+
+
+                    </div>
+                    <div class="rgt-sec">
+                        {% set title = trnProjectRoomConfiguration.mstRoomConfiguration.roomConfiguration~" "~trnProjectRoomConfiguration.trnProject.mstProductSubType.productSubType~" "~trnProjectRoomConfiguration.trnProject.projectName  %}
+                        {% set title = title|lower|replace({" ":"-",",":""})  %}
+                        <ul class="btn-sec">
+                            <li><a href="{{ path("portal_properties_rent_detail",{'slugName':trnProjectRoomConfiguration.trnProject.mstProductType.productTypeSlugName,'city':trnProjectRoomConfiguration.trnProject.mstCity|lower,'title':title,'id':trnProjectRoomConfiguration.id}) }}" class="btn btn-primary-outline-sm">View Details</a></li>
+                            <li>
+                                <a href="{{ path('portal_tred_experts_room',{'mstPropertyTransactionCategory':trnProjectRoomConfiguration.mstPropertyTransactionCategory.propertyTransactionCategory,'trnProjectRoomConfiguration':trnProjectRoomConfiguration.id}) }}" class="btn btn-primary contactDifferent" data-toggle="modal" data-target="#contactDifferent">Contact Now</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+{% endfor %}

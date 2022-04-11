@@ -1,0 +1,86 @@
+{% extends 'layout/content.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assets/plugins/summernote/summernote-bs4.css') }}" media="all" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="{{asset('assets/plugins/kartik-v/bootstrap-fileinput/css/fileinput.min.css')}}">
+{% endblock %}
+{% block cms_content %}
+    {% set back_to_list = app.request.server.get('HTTP_REFERER') %}
+    {% set roomConfiguration = [] %}
+    {% set roomConfigurationId = [] %}
+    {% for trnProjectRoomConfiguration in trnProjectRoomConfigurations %}
+        {% if (trnProjectRoomConfiguration.mstRoomConfiguration~"|"~trnProjectRoomConfiguration.areaValue~"|"~trnProjectRoomConfiguration.mstProjectArea) not in roomConfiguration %}
+            {% set roomConfiguration = [trnProjectRoomConfiguration.mstRoomConfiguration~"|"~trnProjectRoomConfiguration.areaValue~"|"~trnProjectRoomConfiguration.mstProjectArea]|merge(roomConfiguration) %}
+            {% set roomConfigurationId = ["%02d"|format(trnProjectRoomConfiguration.id)~"|"~trnProjectRoomConfiguration.mstRoomConfiguration~"|"~trnProjectRoomConfiguration.areaValue~"|"~trnProjectRoomConfiguration.mstProjectArea]|merge(roomConfigurationId) %}
+        {% endif %}
+{#        {% if ("%02d"|format(trnProjectRoomConfiguration.id)~"|"~trnProjectRoomConfiguration.mstRoomConfiguration~"|"~trnProjectRoomConfiguration.areaValue~"|"~trnProjectRoomConfiguration.mstProjectArea) not in roomConfiguration %}#}
+{#            {% set roomConfiguration = ["%02d"|format(trnProjectRoomConfiguration.id)~"|"~trnProjectRoomConfiguration.mstRoomConfiguration~"|"~trnProjectRoomConfiguration.areaValue~"|"~trnProjectRoomConfiguration.mstProjectArea]|merge(roomConfiguration) %}#}
+{#        {% endif %}#}
+    {% endfor %}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">
+                <i class="fa fa-plus"></i><b>{{label_title|trans|upper}}</b>
+            </h5>
+            <h5 class="card-title float-right">
+                <a href="{{ path('product_room_configuration_index',{'projectId':app.request.get('projectId')}) }}" class="btn btn-link"><i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}</a>
+            </h5>
+        </div>
+        <div class="card-header">
+            <h4 class="card-title">{{ label_heading|trans|upper }} : {{ trnProject.projectName }}</h4>
+        </div>
+        <div class="card-body">
+            <form name="frm" id="frm" action="{{ path(path_add) }}">
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <input type="hidden" name="projectId" value="{{ trnProject.id }}"/>
+                        <select id="trnProjectRoomConfiguration" name="trnProjectRoomConfiguration" required="required" class="form-control">
+                            <option value="" selected>Select</option>
+                            {% for trnProjectRoomConfiguration in roomConfigurationId %}
+                                {% set tmpRoomConfiguration = trnProjectRoomConfiguration|split("|") %}
+                                <option value="{{ tmpRoomConfiguration.0 }}">{{ tmpRoomConfiguration.1 }} : ( {{ tmpRoomConfiguration.2 }} {{ tmpRoomConfiguration.3 }} )</option>
+                            {% endfor %}
+                            <option value="New">Add New Room Configuration</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <button id="btn" class="btn btn-dark btn-sm"><i class="fa fa-plus"></i> {{label_title|trans}}</button>
+
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/plugins/jquery-validation/jquery.validate.min.js') }}" type="text/javascript"></script>
+    <script>
+        $(document).ready(function() {
+            $("#frm").validate({
+                rules: {
+                    'trnProjectRoomConfiguration': {
+                        required: true,
+                    },
+                },
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                messages: {
+                    trnProjectRoomConfiguration: "Please select room configuration from dropdown"
+                },
+            });
+        });
+
+    </script>
+{% endblock %}

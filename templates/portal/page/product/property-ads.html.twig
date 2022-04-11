@@ -1,0 +1,9 @@
+{% if ads %}
+    <li>
+        <figure class="adscene">
+                {% for ad in ads|filter((ad)=>ad.advertisementPosition == "middle") %}
+                    <img src="{{ ad.advertisementDesktopImagePath|imagine_filter('resize_image_advertisement') }}" class="desktop-purpose" alt="{{ ad.AdvertisementName }}" title="{{ ad.AdvertisementName }}">
+                {% endfor %}
+        </figure>
+    </li>
+{% endif %}

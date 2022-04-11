@@ -1,0 +1,85 @@
+{% extends 'layout/content.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block cms_content %}
+    {% set back_to_list = app.request.server.get('HTTP_REFERER') %}
+    {{ form_start(form) }}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">
+                {% if mode == 'add' %}<i class="fa fa-plus"></i> {% else%} <i class="fa fa-edit"></i> {% endif%}  <b>{{label_title|trans|upper}}</b>
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.mstProductType) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mstProductSubType) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.furnitureCategory) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.furnitureCategorySlugName) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.isActive) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <button type="submit" class="{{ button_css|default("btn btn-dark btn-sm") }}">
+            <i class="fa fa-save" aria-hidden="true"></i> {{ label_button|trans }}
+        </button>
+        <a href="{{ back_to_list }}" class="btn btn-link"><i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}</a>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function slugify(string) {
+            return string
+                .toString()
+                .trim()
+                .toLowerCase()
+                .replace(/\s+/g, "-")
+                .replace(/[^\w\-]+/g, "")
+                .replace(/--+/g, "-")
+                .replace(/^-+/, "")
+                .replace(/-+$/, "");
+        }
+        $("document").ready(function(){
+            $("#mst_furniture_category_furnitureCategory").keyup(function(){
+                var Text = $(this).val();
+                $("#mst_furniture_category_furnitureCategorySlugName").val(slugify(Text));
+            });
+            jQuery(document).on('change', "#mst_furniture_category_mstProductType", function (e) {
+                var data = {};
+                data['q'] = jQuery(this).val();
+                var oThis = this;
+                jQuery.ajax({
+                    url: "{{ path('location_productSubType') }}",
+                    data: data,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (data) {
+                        var product = jQuery("#mst_furniture_category_mstProductSubType");
+                        product.html('');
+                        // add options
+                        product.append('<option value="" >Select..</option>');
+                        $.each(data, function (id, name) {
+                            product.append('<option value="' + name.id + '">' + name.name + '</option>');
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends 'layout/content.html.twig' %}
+
+{% block cms_content %}
+    <div class="card">
+        <div class="card-header">
+            <div class="col-sm-12">
+                <h3 class="card-title"><b>{{label_title|trans}}</b></h3>
+
+                <h4 class="card-title float-right custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="customSwitch1">
+                    {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+                        <a href="{{ path(path_edit, {'id': data.id}) }}/?projectId={{ app.request.get('projectId') }}" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i> {{'label.edit'|trans}}</a>
+                    {% else %}
+                        {% if data.trnProject.createdBy.id == app.user.id %}
+                            <a href="{{ path(path_edit, {'id': data.id}) }}/?projectId={{ app.request.get('projectId') }}" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i> {{'label.edit'|trans}}</a>
+                        {% endif %}
+                    {% endif %}
+                    <a href="{{ path(path_index) }}?projectId={{ app.request.get('projectId') }}" class="btn btn-dark btn-sm"><i class="fa fa-list"></i> {{'label.back_to_list' | trans}}</a>
+                </h4>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body" id="record">
+        <div class="row">
+            <table class="table table-responsive-md text-sm">
+                <tbody>
+                    <tr>
+                        <td class="col-sm-2" colspan="6">
+                            <b>{{ data.trnProject.projectName }}</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-sm-2">{{ 'label.room_configuration'|trans }}</td>
+                        <td class="col-sm-2" colspan="5">{{ data.mstRoomConfiguration }} </td>
+                    </tr>
+                    <tr>
+                        <td class="col-sm-2">{{ 'label.no_of_bedroom'|trans }}</td>
+                        <td class="col-sm-2">{{ data.noOfBedRoom }}</td>
+                        <td class="col-sm-2">{{ 'label.no_of_bathroom'|trans }}</td>
+                        <td class="col-sm-2">{{ data.noOfBathRooms }}</td>
+                        <td class="col-sm-2">{{ 'label.no_of_balcony'|trans }}</td>
+                        <td class="col-sm-2">{{ data.noOfBalcony }}</td>
+                    </tr>
+                    <tr>
+                        <td class="col-sm-2">{{ 'label.project_area_measurement'|trans }}</td>
+                        <td class="col-sm-2">{{ data.mstProjectAreaCategory }}</td>
+                        <td class="col-sm-2">{{ 'label.project_area_type'|trans }}</td>
+                        <td class="col-sm-2" colspan="3">{{ data.mstProjectArea }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        </div>
+
+{#        <div class="card"  id="timeline"  style="display: none">#}
+{#            <div class="card-body mt-3">#}
+{#                <div class="row">#}
+{#                    <h3><i class="fa fa-clock"></i> {{'label.log'|trans}}</h3>#}
+{#                </div>#}
+{#                {% set collection = 'TrnFurnitureMedia' %}#}
+{#                {% set collectionType = 'TrnFurniture' %}#}
+{#                {% include('log/log.html.twig') %}#}
+{#            </div>#}
+{#        </div>#}
+
+    </div>
+{% endblock %}
+
+

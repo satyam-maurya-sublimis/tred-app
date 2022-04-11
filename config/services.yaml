@@ -1,0 +1,50 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+    public_file_folder: 'images/files'
+    user_file_folder: 'images/users'
+    cache_adapter: cache.adapter.apcu
+    locale: 'en'
+    uploads_dir_name: 'images'
+    base_url_param: 'core'
+    uploads_base_url: '/%uploads_dir_name%'
+    company_id: 1
+    city : 'mumbai'
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+        bind:
+            $publicFilesFileSystem: '@oneup_flysystem.public_file_filesystem_filesystem'
+            $privateFilesFileSystem: '@oneup_flysystem.private_file_filesystem_filesystem'
+            $uploadedAssetsBaseUrl: '%uploads_base_url%'
+            $publiFileFolder: '%public_file_folder%'
+            $privateFileFolder: '%user_file_folder%'
+
+    Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
+        arguments:
+            - !service { class: PDO, factory: ['@database_connection', 'getWrappedConnection'] }
+            # If you get transaction issues (e.g. after login) uncomment the line below
+            - { lock_mode: 1 }
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/*'
+        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+
+    # controllers are imported separately to make sure services can be injected
+    # as action arguments even if you don't extend any base controller class
+    App\Controller\:
+        resource: '../src/Controller'
+        tags: ['controller.service_arguments']
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+    Symfony\Component\Asset\Context\RequestStackContext: '@assets.context'

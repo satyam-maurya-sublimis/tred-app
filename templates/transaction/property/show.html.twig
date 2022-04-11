@@ -1,0 +1,218 @@
+{% extends 'layout/content.html.twig' %}
+
+{% block cms_content %}
+    <div class="card">
+        <div class="card-header">
+            {#<h4 class="card-title txt-bold float-left">{{ data.circle |upper}}</h4> #}
+            <h4 class="card-title float-right">
+                {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+                    <a href="{{ path(path_edit, {'id': data.id}) }}" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i> {{'label.edit'|trans}}</a>
+                {% else %}
+                    {% if data.createdBy.id == app.user.id %}
+                        <a href="{{ path(path_edit, {'id': data.id}) }}" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i> {{'label.edit'|trans}}</a>
+                    {% endif %}
+                {% endif %}
+                <a class="float-right" href="{{ path('product_properties_index',{'pincodeId': app.session.get('search').pincodeId,'projectName': app.session.get('search').projectName }) }}" class="btn btn-link"><i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}</a>
+            </h4>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="card-header mt-2">
+                <h3 class="card-title">{{ 'Project'|upper }}</h3>
+            </div>
+            <div class="row">
+                <table class="table table-responsive-md text-sm">
+                    <tbody>
+                    <tr>
+                        <th>{{ 'label.org_company'|trans }}</th>
+                        <td>{{ data.orgCompany }}</td>
+                        <th>{{ 'label.product_category'|trans }}</th>
+                        <td>{{ data.mstProductCategory }}</td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'label.product_type'|trans }}</th>
+                        <td >{{ data.mstProductType }}</td>
+                        <th>{{ 'label.product_subtype'|trans }}</th>
+                        <td>{{ data.mstProductSubType }}</td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'label.vendor_partner_name'|trans }}</th>
+                        <td >{{ data.trnVendorPartnerDetails }}</td>
+                        <th>{{ 'label.project_name'|trans }}</th>
+                        <td>{{ data.projectName }}</td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'label.country'|trans }}</th>
+                        <td >{{ data.mstCountry }}</td>
+                        <th>{{ 'label.state'|trans }}</th>
+                        <td>{{ data.mstState }}</td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'label.city'|trans }}</th>
+                        <td >{{ data.mstCity }}</td>
+                        <th>{{ 'label.area_city'|trans }}</th>
+                        <td>{{ data.mstAreaInCity }}</td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'label.property_type'|trans }}</th>
+                        <td >{{ data.mstPropertyType }}</td>
+                        <th>{{ 'label.status'|trans }}</th>
+                        <td>{{ data.mstProjectStatus }}</td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'label.possession_on'|trans }}</th>
+                        <td >{% if data.possessionDate %}{{ data.possessionDate }}{% else %}{{ data.possessionMonth }} - {{ data.possessionYear }}{% endif %}</td>
+                        <th>{{ 'label.room_configuration'|trans }}</th>
+                        <td>{{ data.mstRoomConfiguration|join(',') }}</td>
+                    </tr>
+{#                    <tr>#}
+{#                        <th>{{ 'label.super_area'|trans }}</th>#}
+{#                        <td >{{ data.superArea }} {{ data.mstProjectAreaSuperArea }}</td>#}
+{#                        <th>{{ 'label.price_per'|trans }}</th>#}
+{#                        <td>{{ data.mstSuperAreaCurrency.iso3 }} {{ data.superAreaPricePer }}</td>#}
+{#                    </tr>#}
+{#                    <tr>#}
+{#                        <th>{{ 'label.carpet_area'|trans }}</th>#}
+{#                        <td >{{ data.carpetArea }} {{ data.mstProjectAreaCarpetArea }}</td>#}
+{#                        <th>{{ 'label.price_per'|trans }}</th>#}
+{#                        <td>{{ data.mstCurrencyCarpetArea.iso3 }} {{ data.carpetAreaPricePer }}</td>#}
+{#                    </tr>#}
+                    <tr>
+                        <th>{{ 'label.loading'|trans }}</th>
+                        <td >{{ data.loading }}</td>
+                        <th>{{ 'label.car_parking'|trans }}</th>
+                        <td>{{ data.carParking }}</td>
+                    </tr>
+{#                    <tr>#}
+{#                        <th>{{ 'label.maharera_reg_no'|trans }}</th>#}
+{#                        <td >{{ data.mahaReraRegisterationNo }}</td>#}
+{#                        <th>{{ 'label.bank_approved'|trans }}</th>#}
+{#                        <td>{{ data.bankApproved? 'Yes':'No' }}</td>#}
+{#                    </tr>#}
+                    <tr>
+                        <th>{{ 'label.occupancy_certificate'|trans }}</th>
+                        <td>{{ data.occupancyCerificate ? 'Yes':'No' }}</td>
+                        <th>{{ 'label.commencement_certificate'|trans }}</th>
+                        <td>{{ data.commencementCerificate? 'Yes':'No' }}</td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'label.total_no_units'|trans }}</th>
+                        <td>{{ data.totalNoUnits }}</td>
+                        <th>{{ 'label.total_number_towers'|trans }}</th>
+                        <td>{{ data.totalNoOfTower }}</td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'label.project_overview'|trans }}</th>
+                        <td colspan="3">{{ data.projectOverview|raw }}</td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'label.project_amenities'|trans }}</th>
+                        <td>{% for amenities in data.mstAmenities %}
+                                <li>{{ amenities }}</li>
+                            {% endfor %}
+                        </td>
+                        <th>{{ 'label.project_feature'|trans }}</th>
+                        <td>{% for features in data.mstProjectFeature %}
+                                <li>{{ features }}</li>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'label.highlights'|trans }}</th>
+                        <td>{% for highlights in data.mstProjectHighlights %}
+                                <li>{{ highlights }}</li>
+                            {% endfor %}
+                        </td>
+                        <th>{{ 'label.rating'|trans }}</th>
+                        <td>{{ data.mstProjectRating }}</td>
+                    </tr>
+{#                    <tr>#}
+{#                        <th>{{ 'label.phase'|trans }}</th>#}
+{#                        <td>{{ data.phase }}</td>#}
+{#                        <th>{{ 'label.open_space_percentage'|trans }}</th>#}
+{#                        <td>{{ data.openSpacePercentage }}</td>#}
+{#                    </tr>#}
+{#                    <tr>#}
+{#                        <th>{{ 'label.phase'|trans }}</th>#}
+{#                        <td>{{ data.phase }}</td>#}
+{#                        <th>{{ 'label.open_space_percentage'|trans }}</th>#}
+{#                        <td>{{ data.openSpacePercentage }}</td>#}
+{#                    </tr>#}
+{#                    <tr>#}
+{#                        <th>{{ 'label.approved_by'|trans }}</th>#}
+{#                        <td>{{ data.approvedBy }}</td>#}
+{#                        <th>{{ 'label.map_view'|trans }}</th>#}
+{#                        <td>{{ data.mapView }}</td>#}
+{#                    </tr>#}
+                    <tr>
+                        <th>{{ 'label.location_latitude'|trans }}</th>
+                        <td>{{ data.locationLatitude }}</td>
+                        <th>{{ 'label.location_longitude'|trans }}</th>
+                        <td>{{ data.locationLongitude }}</td>
+                    </tr>
+{#                    <tr>#}
+{#                        <th colspan="4"><h4>{{ 'Media'|upper }}</h4></th>#}
+{#                    </tr>#}
+{#                    {% for media in data.trnUploadDocument %}#}
+{#                        <tr>#}
+{#                            {% if media.mstUploadDocumentType == 'Image' %}#}
+{#                            <th>{{ 'label.media'|trans }}</th>#}
+{#                            <td><img src="{{ media.mediaFilePath|imagine_filter('resize_image_200') }}" alt="{{ media.mediaAltText }}" title="{{ media.mediaTitle }}"></td>#}
+{#                            {% else %}#}
+{#                                <th>{{ 'label.media'|trans }}</th>#}
+{#                                <td>{{ media.mediaPath }}</td>#}
+{#                                {% endif %}#}
+{#                            <th>{{ 'label.media_name'|trans }}</th>#}
+{#                            <td>{{ media.mediaName }}</td>#}
+{#                        </tr>#}
+{#                    {% endfor %}#}
+                    <tr>
+                        <td colspan="4"><h4>{{ 'SEO Section'|upper }}</h4></td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'label.meta_title'|trans }}</th>
+                        <td>{{ data.metaTitle }}</td>
+                        <th>{{ 'label.meta_keyword'|trans }}</th>
+                        <td>{{ data.metaKeyword }}</td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'label.meta_description'|trans }}</th>
+                        <td>{{ data.metaDescription }}</td>
+                        <th>{{ 'label.focus_key_phrase'|trans }}</th>
+                        <td>{{ data.focusKeyPhrase }}</td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'label.key_phrase_synonyms'|trans }}</th>
+                        <td>{{ data.keyPhraseSynonyms }}</td>
+                        <th>{{ 'label.schema'|trans }}</th>
+                        <td>{{ data.seoSchema }}</td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'label.canonical_url'|trans }}</th>
+                        <td colspan="3">{{ data.canonicalUrl }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">{{ 'Social Share Section'|upper }}</td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'label.social_title'|trans }}</th>
+                        <td>{{ data.ogTitle }}</td>
+                        <th>{{ 'label.social_description'|trans }}</th>
+                        <td>{{ data.ogDescription }}</td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'label.social_image'|trans }}</th>
+                        <td colspan="3"><img src="{{ data.ogImagePath|imagine_filter('resize_image_200') }}" alt="--"></td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'label.is_active'|trans }}</th>
+                        <td colspan="3">{{ data.isActive ? 'Yes' : 'No' }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <br>
+{% endblock %}

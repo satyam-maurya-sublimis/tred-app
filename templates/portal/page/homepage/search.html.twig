@@ -1,0 +1,166 @@
+{% set projectPrice1 = [] %}
+{% set projectPriceGroup1 = [] %}
+{% set projectPrice2 = [] %}
+{% set projectPriceGroup2 = [] %}
+{% for item in wsearch  %}
+    {% if item.propertyTransactionCategoryId == 1  %}
+        {% for budget in item.budget %}
+            {% set projectPrice1 = projectPrice1|merge([budget.amount]) %}
+            {% set projectPriceGroup1 = projectPriceGroup1|merge({(budget.denomination):projectPrice1|sort}) %}
+        {% endfor %}
+    {% else %}
+        {% for budget in item.budget %}
+            {% set projectPrice2 = projectPrice2|merge([budget|force_to_float]) %}
+        {% endfor %}
+        {% set projectPriceGroup2 = projectPriceGroup2|merge([projectPrice2|sort]) %}
+    {% endif %}
+{% endfor %}
+
+<section class="search_box">
+    <a href="#" class="close-icon" id="close-search"></a>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <nav>
+                    <div class="nav nav-tabs nav-fill" role="tablist">
+                        {% for item in wsearch  %}
+                            <a class="nav-item nav-link {% if loop.first %}active{% else %}{% endif %}" id="{{ item.propertyTransactionCategory|lower }}" href="#nav-{{ item.propertyTransactionCategory|lower }}" role="tab" aria-controls="nav-{{ item.propertyTransactionCategory|lower }}" aria-selected="{% if loop.first %}true{% else %}false{% endif %}">{{ item.propertyTransactionCategory }}</a>
+                        {% endfor %}
+                    </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    {% for key,item in wsearch  %}
+                        <form name="frm{{ item.propertyTransactionCategory|lower }}" id="frm{{ item.propertyTransactionCategory|lower }}" {% if key != 1%}style="display:none"{% endif %} >
+                            <input type="hidden" name="propertyTransactionCategoryId" value="{{ item.propertyTransactionCategoryId }}"/>
+                            <div class="tab-pane fade show {% if loop.first %}active{% endif %}" id="nav-{{ item.propertyTransactionCategory|lower }}" role="tabpanel" aria-labelledby="nav-{{ item.propertyTransactionCategory|lower }}-tab">
+                        <div class="search-widget">
+                            <div class="select-destination residential">
+                                <div class="buy_select select_destination_{{ item.propertyTransactionCategory|lower }}">Select</div>
+                                <div class="roomType_{{ item.propertyTransactionCategory|lower }}"></div>
+                            </div>
+
+                            <div class="buy-section">
+                                <ul class="open-dropdown1">
+                                        {% for productTypeKey,productType in item.productType  %}
+                                            {% if productTypeKey == 2 %}
+                                                <li>
+                                                    <input type="hidden" name="productType[]" value="{{ productTypeKey }}"/>
+                                                    <div class="custom-control custom-radio">
+
+                                                        <input type="radio" id="customRadio{{ productTypeKey }}" name="productType" data-val="{{ productType }}" data-id="{{ productType|lower }}" class="custom-control-input">
+                                                        <label class="custom-control-label" for="customRadio{{ productTypeKey }}">{{ productType }}</label>
+                                                    </div>
+                                                    <ul class="custom-checkbox" id="{{ productType|lower }}-properties" >
+                                                        <li>
+                                                            <a href="#">Flat</a>
+                                                            <div class="open-list">
+                                                                <ul>
+                                                                    <input type="hidden" name="roomConfiguration" class="roomConfiguration" value=""/>
+                                                                    {% for roomConfigurationKey,roomConfiguration in item.roomConfigurations|sort  %}
+                                                                        <li><a class="customSelection roomConfiguration" href="javascript:void(0);" data-id="{{ roomConfigurationKey }}">{{ roomConfiguration }}</a></li>
+                                                                    {% endfor %}
+                                                                </ul>
+                                                            </div>
+                                                            {% if item.propertyTransactionCategoryId == 1 %}
+                                                            <a href="#">Type</a>
+                                                            <div class="open-list">
+                                                                <ul>
+                                                                    <input type="hidden" name="projectStatus" class="projectStatus" value=""/>
+                                                                    {% for projectStatusKey,projectStatus in item.projectStatus  %}
+                                                                        <li><a class="customSelection projectStatus" href="javascript:void(0);" data-id="{{ projectStatusKey }}">{{ projectStatus }}</a></li>
+                                                                    {% endfor %}
+                                                                </ul>
+                                                            </div>
+                                                            {% endif  %}
+                                                            <a href="#" class="btn btn-productType">Done</a>
+                                                        </li>
+                                                    </ul>
+
+                                                </li>
+                                            {% else %}
+                                                <li>
+                                                    <input type="hidden" name="productType[]" value="{{ productTypeKey }}"/>
+                                                    <div class="custom-control custom-radio">
+                                                        <input type="radio" id="customRadio{{ productTypeKey }}" name="customRadio" class="custom-control-input">
+                                                        <label class="custom-control-label" for="customRadio{{ productTypeKey }}">{{ productType }}</label>
+                                                    </div>
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                </ul>
+                            </div>
+
+                            <div class="search_city">
+                                <select multiple="multiple" name="mstPincode[]" class="multiple-select">
+                                        {% for cityLocationKey,cityLocation in item.cityLocation  %}
+                                            <option value="{{ cityLocationKey }}">{{ cityLocation }}</option>
+                                        {% endfor %}
+                                </select>
+                            </div>
+
+
+                            <div class="select-budget">
+                                <div class="budget-section">
+                                    Budget
+                                </div>
+                                <div class="widget-section">
+                                    <div class="open-dropdown1">
+                                        <div class="prz-range">
+                                            <div class="row row-zero">
+                                                <div class="col-md-5 col-sm-5">
+                                                    <input type="text" class="form-control" name="minrange" placeholder="Min" id="minrange_{{ item.propertyTransactionCategory|lower }}">
+                                                </div>
+                                                <div class="col-md-1  col-sm-1 text-center"> - </div>
+                                                <div class="col-md-5 col-sm-5">
+                                                    <input type="text" class="form-control" name="maxrange" placeholder="Max" id="maxrange_{{ item.propertyTransactionCategory|lower }}">
+                                                </div>
+                                            </div>
+                                            <div class="longEnough mCustomScrollbar scrollspy-example" data-mcs-theme="dark">
+                                                <ul class="rangeSlider">
+                                                    {% if item.propertyTransactionCategoryId == 1 %}
+                                                        {% for key,priceGroup in projectPriceGroup1 %}
+                                                            {% for pricerow in priceGroup|batch(4) %}
+                                                                {% set firstPrice = pricerow|first %}
+                                                                {% set lastPrice = pricerow|last %}
+                                                                <li>
+                                                                    <a href="#">
+                                                                        <span class="minRange minRange_{{ item.propertyTransactionCategory|lower }}" data-range="{{ firstPrice }}" data-denomination="{{ key }}"><i class="fa fa-rupee"></i> {{ firstPrice }} {{ key }}</span>
+                                                                        <span class="maxRange maxRange_{{ item.propertyTransactionCategory|lower }}" data-range="{{ lastPrice }}" data-denomination="{{ key }}"><i class="fa fa-rupee"></i> {{ lastPrice }} {{ key }}</span>
+                                                                    </a>
+                                                                </li>
+                                                            {% endfor %}
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        {% for key,priceGroup in projectPriceGroup2 %}
+                                                            {% for pricerow in priceGroup|batch(4) %}
+                                                                {% set firstPrice = pricerow|first %}
+                                                                {% set lastPrice = pricerow|last %}
+                                                                <li>
+                                                                    <a href="#">
+                                                                        <span class="minRange minRange_{{ item.propertyTransactionCategory|lower }}" data-range="{{ firstPrice }}" data-denomination="{{ key }}"><i class="fa fa-rupee"></i> {{ firstPrice }}</span>
+                                                                        <span class="maxRange maxRange_{{ item.propertyTransactionCategory|lower }}" data-range="{{ lastPrice }}" data-denomination="{{ key }}"><i class="fa fa-rupee"></i> {{ lastPrice }}</span>
+                                                                    </a>
+                                                                </li>
+                                                            {% endfor %}
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <a href="#" class="btn btn-done">Done</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="search-btn">
+                                <button type="button" id="btn-{{ item.propertyTransactionCategory|lower }}" class="btn btn-primary"><i class="fa fa-search"></i> Search</button>
+                            </div>
+                        </div>
+                    </div>
+                        </form>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>

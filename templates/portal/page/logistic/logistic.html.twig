@@ -1,0 +1,135 @@
+{% extends 'portal/layout/index.html.twig' %}
+{% set banners = get_cms_page_banner(cmsPage.id) %}
+{% block portal_content %}
+    <div class="wrapper">
+        <div class="breadcrumb abs-position">
+            <div class="container">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ path('portal_index') }}">Home</a></li>
+                        <li class="breadcrumb-item">Interiors</li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ cmsPage.pageName }}</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        {% include 'portal/page/logistic/banner.html.twig' %}
+        <section class="banner-sec">
+            <figure class="home-decor"  data-aos="fade-right" data-aos-delay="200">
+                <img src="/resources/images/logistics.png" alt="" title="" class="img-fluid">
+            </figure>
+            <div class="container">
+                <div class="caption typ2" data-aos="fade-right" data-aos-delay="200">
+                    <h2>Say goodbye to delays, mismanagement, and other hassles with TRED’s logistics providers.</h2>
+                </div>
+                <div class="loan-key-points">
+                    <h2>Logistics</h2>
+                    <p data-aos="fade-right" data-aos-delay="200">If real estate is a mammoth industry, it’s safe to say that logistics is its circulatory system which ensures that things are running smoothly and without operational delays. </p>
+                    <p data-aos="fade-right" data-aos-delay="400">Logistics is the common denominator connecting <b>manufacturing, resource distribution, and consumption</b>.</p>
+                    <p data-aos="fade-right" data-aos-delay="600">With the advent of global trade and commerce on a scale never seen before, the logistics for your business and/or operations has never been more important.</p>
+                    <div class="yellow-box" data-aos="fade-right" data-aos-delay="200">
+                        <a href="#" class="fa fa-close"></a>
+                        <div class="frmEnquiry"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="banner-carousel typ5 no-bg">
+            <div id="mainBanner2" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    {% for content in cmsPage.cmsPageContent %}
+                        <div class="carousel-item {% if loop.first %}active{% endif %}">
+                            {{ content.pageContent|raw }}
+                        </div>
+                    {% endfor %}
+                </div>
+                {% if cmsPage.cmsPageContent|length > 1 %}
+                    <a class="carousel-control-prev" href="#mainBanner2" role="button" data-slide="prev"><i class="fa fa-angle-left"></i></a>
+                    <a class="carousel-control-next" href="#mainBanner2" role="button" data-slide="next"><i class="fa fa-angle-right"></i></a>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{#    <script src="{{ asset('assets/js/captcha.basic.min.js') }}" type="text/javascript"></script>#}
+    <script>
+        function callAjax(form){
+            jQuery.ajax({
+                url: "{{ path('portal_form_enquiry',{'slugName': slugName }) }}",
+                type: "POST",
+                dataType: "HTML",
+                data: form,
+                success: function (data) {
+                    // $(".frmEnquiry").html(data);
+                    window.location.href = "{{ path('portal_form_enquiry_success') }}";
+                }
+            });
+        }
+        function formActition(){
+            /****Form****/
+            function formcontrol(){
+                $(".form-control").filter(function() {
+                    if (this.value.length !==0){
+                        $(this).siblings('label').addClass('clicked');
+                    }
+                });
+            }
+            formcontrol();
+            $('.form-group label').click(function () {
+                $(this).addClass('clicked');
+            });
+            $('.form-control').click(function () {
+                $(this).siblings('label').addClass('clicked');
+            });
+            $('.form-control').keyup(function () {
+                $(this).siblings('label').addClass('clicked');
+            });
+            $('.form-control').blur(function () {
+                if ($(this).val()) {
+                    $(this).siblings('label').addClass('clicked');
+                } else if (!$(this).val()) {
+                    $(this).siblings('label').removeClass('clicked');
+                }
+            });
+            /****Form****/
+        }
+        jQuery("document").ready(function(){
+            AOS.init({
+                delay: 50,
+                duration: 1000,
+                offset:0,
+                once: true
+            })
+            if(width < 991) {
+                $('.mob-filter').click(function(){
+                    $('.top-filter-sec').toggle(500);
+                    $(this).toggleClass('active');
+                });
+            }
+            var totalItemsPop = $('#mainBanner .carousel-item').length;
+            $('#mainBanner').on('slid.bs.carousel', function() {
+                setTimeout(function(){
+                    currentIndexPop = $('#mainBanner .carousel-item.active').index() + 1;
+                    $('.num').html('' + currentIndexPop + ' / ' + totalItemsPop + '');
+                });
+            });
+            jQuery.ajax({
+                url: "{{ path('portal_form_enquiry',{'slugName': slugName } ) }}",
+                type: "GET",
+                dataType: "HTML",
+                success: function (data) {
+                    // $(".frmEnquiry").html(data).captcha({'idCaptchaInput':'captcha','idCaptchaText':'captha-code'});
+                    $(".frmEnquiry").html(data);
+                    formActition();
+                    $('.form').submit(function(event) {
+                        event.preventDefault();
+                        var form = $(this).serialize();
+                        callAjax(form);
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock %}

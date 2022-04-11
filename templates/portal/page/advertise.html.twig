@@ -1,0 +1,77 @@
+{% extends 'portal/layout/index.html.twig' %}
+{% set route =  app.request.get('_route') %}
+{% set cmsPage = get_cms_page_by_route(route) %}
+{% set banners = get_cms_page_banner(cmsPage.id) %}
+{#{% set advertisements = get_cms_page_ads(cmsPage.id) %}#}
+{% block portal_content %}
+    <div class="wrapper">
+        <section class="banner-carousel">
+            <div class="carousel">
+                <div class="carousel-inner">
+                    {% for banner in banners %}
+                    <div class="carousel-item {% if loop.first %}active{% endif %}">
+                        <figure class="advertise"  data-aos="fade-right" data-aos-delay="200">
+                            <img src="{{ banner.bannerDesktopImagePath|imagine_filter('resize_image_scale_268_268') }}" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                        </figure>
+                        <div class="container">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb" data-aos="fade-right" data-aos-delay="200">
+                                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Advertise</li>
+                                </ol>
+                            </nav>
+                            <div class="banner-content">
+                                <div class="caption typ3">
+                                    {{ banner.bannerDescription|raw }}
+                                </div>
+                                <div class="loan-key-points">
+                                    {% for content in cmsPage.cmsPageContent|filter((a)=>a.cmsPageContentPosition =="middle") %}
+                                        {{ content.pageContent|raw }}
+                                    {% endfor %}
+                                </div>
+                                <a href="#" class="btn btn-primary btn-apply-loan">Request Quote Now</a>
+                                <div class="yellow-box typ3" data-aos="fade-right" data-aos-delay="200">
+                                    <a href="#" class="fa fa-close"></a>
+                                    <form class="form">
+                                        <h3>To post a</h3>
+                                        <h2><b>Listing or
+                                                Advertisement,</b></h2>
+                                        <a href="#" class="btn-primary">Click Here</a>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </section>
+        <section>
+            <div class="container">
+                {% for content in cmsPage.cmsPageContent|filter((a)=>a.cmsPageContentPosition =="bottom") %}
+                    {{ content.pageContent|raw }}
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        jQuery("document").ready(function(){
+            AOS.init({
+                delay: 50,
+                duration: 1000,
+                offset:0,
+                once: true
+            })
+            if(width < 991) {
+                $('.mob-filter').click(function(){
+                    $('.top-filter-sec').toggle(500);
+                    $(this).toggleClass('active');
+                });
+            }
+        });
+    </script>
+{% endblock %}

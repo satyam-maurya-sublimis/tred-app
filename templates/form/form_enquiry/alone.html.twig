@@ -1,0 +1,98 @@
+{% extends 'layout/content.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet"  href="{{ asset('assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}" media="all" type="text/css" />
+    <link rel="stylesheet"  href="{{ asset('assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}" media="all" type="text/css" />
+{% endblock %}
+{% block cms_content %}
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">{{label_title|trans}}</h4>
+                </div>
+                <table id="dataTableFrmEnquiry" class="table table-responsive-md table-sm text-sm">
+                    <thead>
+                    <tr>
+                    <tr>
+                        <th>{{ 'label.name'|trans|upper }}</th>
+                        <th>{{ 'label.email'|trans|upper }}</th>
+                        <th>{{ 'label.mobile'|trans|upper }}</th>
+                        <th>{{ 'Create Date and Time'|trans|upper }}</th>
+                        <th>{{ 'Date and Time'|trans|upper }}</th>
+                        <th>{{ 'label.status'|trans|upper }}</th>
+                        <th></th>
+                    </tr>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for formenquiry in form_enquiries %}
+                        <tr>
+                            <td>
+                                    {{ formenquiry.mstSalutation|default('') }}
+                                    {{ formenquiry.enquiryFirstName|default('') }}
+                                    {{ formenquiry.enquiryMiddleName|default('') }}
+                                    {{ formenquiry.enquiryLastName|default('') }}
+                            </td>
+                            <td><a href="mailto:{{ formenquiry.enquiryEmailAddress }}">{{ formenquiry.enquiryEmailAddress}}</a></td>
+                            <td>{{ formenquiry.enquiryMobileNumber }}</td>
+                            <td>{% if formenquiry.enquiryCreateTime is not null %}{{ formenquiry.enquiryCreateTime|date('d M Y') }} {{ formenquiry.enquiryCreateTime|date('H:i') }}{% endif %}</td>
+                            <td>{{ formenquiry.enquiryCreateTime|date('YmdHi') }}</td>
+                            <td>{{ formenquiry.mstLeadStatus }}</td>
+                            <td>
+                                <div class="btn-group-toggle" role="group" aria-label="Action Buttons">
+                                    <a href="{{ path(path_show, {'id': formenquiry.id}) }}"><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-expand"></i></button></a>&nbsp;
+                                    <a href="{{ path(path_edit, {'id': formenquiry.id}) }}"><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i></button></a>&nbsp;
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5">{{'info.no_record_found'|trans}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody></table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{asset('assets/plugins/datatables/jquery.dataTables.min.js')}}"></script>
+    <script src="{{ asset('assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            if ($('#dataTableFrmEnquiry').length > 0) {
+                $('#dataTableFrmEnquiry').DataTable({
+                    "buttons": ["csv", "excel"],
+                    "paging": true,
+                    "lengthChange": true,
+                    "ordering": true,
+                    "order": [[ 4, "desc" ]],
+                    "columnDefs": [
+                        {
+                            "targets": [ 4 ],
+                            "visible": false,
+                            "searchable": false
+                        },
+                    ],
+                    "info": true,
+                    "autoWidth": true,
+                    "oLanguage": {
+                        "sSearch": "Search:",
+                        "sInfo": "Total records(s): _TOTAL_"
+
+                    },
+                    "language": {
+                        "paginate": {
+                            "previous": "&laquo;&nbsp;Previous",
+                            "next": "Next&nbsp;&raquo;"
+                        }
+                    },
+                });
+            }
+       });
+    </script>
+{% endblock %}

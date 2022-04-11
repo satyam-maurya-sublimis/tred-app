@@ -1,0 +1,160 @@
+{% extends 'portal/layout/index.html.twig' %}
+{% set route =  app.request.get('_route') %}
+{% if route == "portal_project_city" or route == "portal_index"  %}
+    {% set route =  "portal_index" %}
+{% endif  %}
+{% set cmsPage = get_cms_page_by_route(route) %}
+{% if  cmsPage %}
+    {% set banners = get_cms_page_banner(cmsPage.id) %}
+{% else %}
+    {% set banners = [] %}
+{% endif %}
+{% set filters = [] %}
+{% if app.request.attributes.get("city") %}
+    {% set gcity = app.request.attributes.get("city") %}
+{% else %}
+    {% if selectedCity %}
+        {% set gcity = selectedCity %}
+    {% else %}
+        {% set gcity = get_parameter("city") %}
+    {% endif %}
+{% endif  %}
+{% set filters = filters|merge({"mstCity": gcity|title }) %}
+{#{% set projects = get_project(null,filters) %}#}
+{% set projects = get_room_configurations(filters) %}
+{% block portal_content %}
+
+    {% include 'portal/page/homepage/banner.html.twig' with {'banners': banners } %}
+    <div class="wrapper">
+        {% include 'portal/page/homepage/search.html.twig' %}
+        {% include 'portal/page/homepage/future.html.twig' %}
+        {% include 'portal/page/homepage/feature_properties.html.twig' %}
+        {% include 'portal/page/homepage/experience_zone.html.twig' %}
+        {% include 'portal/page/homepage/offerofthemonth.html.twig' %}
+        {% include 'portal/page/homepage/propertycollection.html.twig' %}
+        {% include 'portal/page/homepage/topcities.html.twig' %}
+        {% include 'portal/page/homepage/toprealestate.html.twig' %}
+        {% include 'portal/page/homepage/topbuilder.html.twig' %}
+        {% include 'portal/page/homepage/newsdevelopment.html.twig' %}
+        {% include 'portal/page/homepage/tredlove.html.twig' %}
+        {% include 'portal/page/homepage/stories.html.twig' %}
+    </div>
+{% endblock %}
+{% block javascripts %}
+{{ parent() }}
+<script>
+    $(document).ready(function () {
+        AOS.init({
+            duration: 1200,
+            disable:true,
+        })
+        var totalItemsPop = $('#mainBanner .carousel-item').length;
+        $('#mainBanner').on('slid.bs.carousel', function() {
+            setTimeout(function(){
+                currentIndexPop = $('#mainBanner .carousel-item.active').index() + 1;
+                $('.num').html('' + currentIndexPop + ' / ' + totalItemsPop + '');
+            });
+        });
+
+        $('.moreless-button').click(function(e) {
+            e.preventDefault();
+            $('.moretext').slideToggle();
+            if ($('.moreless-button').text() == "Read More...") {
+                $(this).text("Read less...")
+            } else {
+                $(this).text("Read More...")
+            }
+        });
+        $('.txt-more').click(function(e) {
+            e.preventDefault();
+            $(this).siblings("ul.amenities").find("li.amenitiesLi").slideToggle();
+        });
+        $('.social-btn').click(function(e){
+            e.preventDefault();
+           $(this).siblings('.social-media').show();
+        });
+        $('.fa-close').click(function(e){
+            e.preventDefault();
+            $(this).parent('.social-media').hide();
+        });
+
+        $('.thumbs-up').on('click', function(e){
+            e.preventDefault();
+            var item = $(this);
+            var data = {};
+            data['id'] = item.attr("data-id");
+            jQuery.ajax({
+                url: "{{ path('portal_room_configuration_like') }}",
+                type: "POST",
+                dataType: "json",
+                data: data,
+                success: function (result) {
+                    item.find(".fa-thumbs-o-up-count").html(result.data);
+                }
+            });
+        });
+
+        $('.select-destination').click(function() {
+            $('html, body').animate({
+                scrollTop: 700
+            }, 2000, 'easeInOutExpo');
+
+            $(window).scroll(function() {
+                 if ($(this).scrollTop() > 550) {
+                     $('.search_box').addClass('sticky');
+                 } else {
+                     $('.search_box').removeClass('sticky');
+                 }
+            });
+            return false;
+        });
+
+        $('.budget-section').click(function() {
+            $('html, body').animate({
+                scrollTop: 700
+            }, 2000, 'easeInOutExpo');
+
+            $(this).siblings(".widget-section").find(".open-dropdown1").show();
+            $(this).siblings(".widget-section").toggle();
+            $('.buy-section .open-dropdown1').hide();
+            $(window).scroll(function() {
+                if ($(this).scrollTop() > 550) {
+                    $('.search_box').addClass('sticky');
+                } else {
+                    $('.search_box').removeClass('sticky');
+                }
+            });
+            return false;
+        });
+        $('.search_city').click(function() {
+            $('html, body').animate({
+                scrollTop: 700
+            }, 2000, 'easeInOutExpo');
+            $(window).scroll(function() {
+                if ($(this).scrollTop() > 550) {
+                    $('.search_box').addClass('sticky');
+                } else {
+                    $('.search_box').removeClass('sticky');
+                }
+            });
+            return false;
+        });
+        $('.nav-fill a').click(function(e) {
+            e.preventDefault();
+            $('html, body').animate({
+                scrollTop: 700
+            }, 2000, 'easeInOutExpo');
+            $(window).scroll(function() {
+                if ($(this).scrollTop() > 550) {
+                    $('.search_box').addClass('sticky');
+                } else {
+                    $('.search_box').removeClass('sticky');
+                }
+            });
+            return false;
+        });
+
+    });
+    /*Equal Height*/
+</script>
+{% endblock %}

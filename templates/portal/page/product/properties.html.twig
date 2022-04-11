@@ -1,0 +1,709 @@
+{% extends 'portal/layout/index.html.twig' %}
+{% block portal_content %}
+    {% set projects = get_project(null,filters) %}
+    {% set activeProductSubType = [] %}
+    {% set activeProductType = [] %}
+    {% set projectStatuses = get_property_type() %}
+    {% for project in projects %}
+        {% if project.productType not in activeProductType %}
+            {% set activeProductType = [project.productType]|merge(activeProductType) %}
+        {% endif %}
+
+        {% if project.productSubType not in activeProductSubType %}
+            {% set activeProductSubType = [project.productSubType]|merge(activeProductSubType) %}
+        {% endif %}
+    {% endfor %}
+    <section class="banner-carousel slider-item listing-pg">
+        <div class="search-widget">
+            <div class="select-destination residential">
+                <select>
+                    <option>Select</option>
+                    {% for productType in productTypes %}
+                        {% if productType.productType in activeProductType %}
+                        <option>{{ productType.productType }}</option>
+                        {% endif  %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="input">
+                <input type="text" class="form-control" value="Mumbai - South Mumbai">
+            </div>
+            <div class="search-btn">
+                <button type="button" class="btn btn-primary"><i class="fa fa-search"></i> Search</button>
+            </div>
+        </div>
+        <div id="mainBanner" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <figure><img src="/resources/images/HeroBanner01.jpg" alt="" title=""></figure>
+                    <div class="container">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item"><a href="#">Properties</a></li>
+                                <li class="breadcrumb-item"><a href="#">Property In Mumbai</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">All Residential</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="wrapper">
+
+        <section class="top-filter">
+            <div class="container">
+                <a class="mob-filter" href="#">Filter</a>
+                <div class="top-filter-sec">
+                    <ul>
+                        <li class="flat-type">
+                            <a href="#">{{ productTypes[0].productType }}</a>
+                            {% set productTypes = get_product_type('b2c') %}
+                            <ul class="open-dropdown">
+                                {% for productType in productTypes  %}
+                                    {% if productType.productType in activeProductType %}
+                                    {% set productSubTypes = get_product_sub_type(productType.id) %}
+                                <li>
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" id="customRadio{{ productType.id }}" name="customRadio" class="custom-control-input">
+                                        <label class="custom-control-label" for="customRadio{{ productType.id }}">{{ productType.productType }}</label>
+                                    </div>
+
+                                    <ul class="custom-checkbox">
+                                        <li>
+                                            {%  for productSubType in productSubTypes %}
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customCheck{{ productSubType.id }}">
+                                                <label class="custom-control-label" for="customCheck{{ productSubType.id }}">{{ productSubType.productSubType }}</label>
+                                            </div>
+                                            {% endfor %}
+                                        </li>
+                                    </ul>
+                                </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        <li class="new-project">
+                            <a href="#">Property Status</a>
+                            <div class="open-dropdown">
+                                <ul>
+                                    {% for projectStatus in projectStatuses %}
+                                        <li><a class="" href="#">{{ projectStatus.propertyType }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <!-- <select>
+                              <option>Select</option>
+                              <option selected>New Projects</option>
+                            </select> -->
+                        </li>
+                        <li class="budget">
+                            <a href="#">Budget</a>
+                            <div class="open-dropdown">
+                                <div class="prz-range">
+                                    <div class="row row-zero">
+                                        <div class="col-md-5 col-sm-5">
+                                            <input type="text" class="form-control" placeholder="Min" id="minrange">
+                                        </div>
+                                        <div class="col-md-1  col-sm-1 text-center"> - </div>
+                                        <div class="col-md-5 col-sm-5">
+                                            <input type="text" class="form-control" placeholder="Max" id="maxrange">
+                                        </div>
+                                    </div>
+                                    <div class="longEnough mCustomScrollbar scrollspy-example" data-mcs-theme="dark">
+                                        <ul class="rangeSlider">
+                                            <li>
+                                                <a href="#">
+                                                    <span class="minRange"><i class="fa fa-rupee"></i> 0 L</span>
+                                                    <span class="maxRange"><i class="fa fa-rupee"></i> 1 Cr</span>
+                                                </a></li>
+                                            <li>
+                                                <a href="#">
+                                                    <span class="minRange"><i class="fa fa-rupee"></i> 10 L</span>
+                                                    <span class="maxRange"><i class="fa fa-rupee"></i> 1.2 Cr</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <span class="minRange"><i class="fa fa-rupee"></i> 25 L</span>
+                                                    <span class="maxRange"><i class="fa fa-rupee"></i> 1.5 Cr</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <span class="minRange"><i class="fa fa-rupee"></i> 50 L</span>
+                                                    <span class="maxRange"><i class="fa fa-rupee"></i> 1.7 Cr</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <span class="minRange"><i class="fa fa-rupee"></i> 75 L</span>
+                                                    <span class="maxRange"><i class="fa fa-rupee"></i> 2.0 Cr</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <span class="minRange"><i class="fa fa-rupee"></i> 1 Cr</span>
+                                                    <span class="maxRange"><i class="fa fa-rupee"></i> 2.5 Cr</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <span class="minRange"><i class="fa fa-rupee"></i> 1.2 Cr</span>
+                                                    <span class="maxRange"><i class="fa fa-rupee"></i> 2.7 Cr</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <span class="minRange"><i class="fa fa-rupee"></i> 1.5 Cr</span>
+                                                    <span class="maxRange"><i class="fa fa-rupee"></i> 2.9 Cr</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <span class="minRange"><i class="fa fa-rupee"></i> 1.7 Cr</span>
+                                                    <span class="maxRange"><i class="fa fa-rupee"></i> 3.1 Cr</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <span class="minRange"><i class="fa fa-rupee"></i> 1.9 Cr</span>
+                                                    <span class="maxRange"><i class="fa fa-rupee"></i> 3.2 Cr</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <span class="minRange"><i class="fa fa-rupee"></i> 2 Cr</span>
+                                                    <span class="maxRange"><i class="fa fa-rupee"></i> 3.4 Cr</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <span class="minRange"><i class="fa fa-rupee"></i> 2.2 Cr</span>
+                                                    <span class="maxRange"><i class="fa fa-rupee"></i> 3.5 Cr</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <a href="#" class="btn btn-done">Done</a>
+
+                                </div>
+                            </div>
+                        </li>
+                        <li class="bhk">
+                            <a href="#">BHK</a>
+                            <div class="open-dropdown">
+                                <ul>
+                                    <li><a class="" href="#">1 BHK</a></li>
+                                    <li><a class="" href="#">2 BHK</a></li>
+                                    <li><a class="" href="#">2.5 BHK</a></li>
+                                    <li><a class="" href="#">3 BHK</a></li>
+                                    <li><a class="" href="#">4 BHK</a></li>
+                                    <li><a class="" href="#">5 BHK</a></li>
+                                    <li><a class="" href="#">5+ BHK</a></li>
+                                </ul>
+                                <a href="#" class="btn btn-done">Done</a>
+                            </div>
+                        </li>
+                        <li class="possession">
+                            <a href="#">Possession</a>
+                            <div class="open-dropdown">
+                                <ul>
+                                    <li><a class="" href="#">3 Months</a></li>
+                                    <li><a class="" href="#">6 Months</a></li>
+                                    <li><a class="" href="#">1 Year</a></li>
+                                    <li><a class="" href="#">2 Year</a></li>
+                                    <li><a class="" href="#">3 Year</a></li>
+                                    <li><a class="" href="#">3+ Year</a></li>
+                                </ul>
+                                <a href="#" class="btn btn-done">Done</a>
+                            </div>
+                        </li>
+                        <li class="posted-by">
+                            <a href="#">Posted By</a>
+                            <div class="open-dropdown">
+                                <ul>
+                                    <li><a class="" href="#">Builders</a></li>
+                                    <li><a class="" href="#">Agents</a></li>
+                                    <li><a class="" href="#">Owners</a></li>
+                                </ul>
+                                <a href="#" class="btn btn-done">Done</a>
+                            </div>
+                        </li>
+                        <li class="amenities">
+                            <a href="#">Amenities</a>
+                            <div class="open-dropdown">
+                                <div class="filter-vtabs">
+                                    <div id="list-example" class="list-group">
+                                        <a class="list-group-item list-group-item-action" href="#list-item-1">Sports</a>
+                                        <a class="list-group-item list-group-item-action" href="#list-item-2">Leisure</a>
+                                        <a class="list-group-item list-group-item-action" href="#list-item-3">Convenience</a>
+                                        <a class="list-group-item list-group-item-action" href="#list-item-4">Safety</a>
+                                        <a class="list-group-item list-group-item-action" href="#list-item-5">Enviornment</a>
+                                    </div>
+
+
+                                    <div data-spy="scroll" data-target="#list-example" data-offset="40" class="scrollspy-example">
+                                        <ul class="list-type">
+                                            <li id="list-item-1">
+                                                <h4>Sports</h4>
+                                                <ul class="filter-lists">
+                                                    <li><a href="#"><i class="icon-swimming-pool"></i> Swimming Pool </a></li>
+                                                    <li><a href="#"><i class="icon-gym"></i> Gymnasium</a></li>
+                                                    <li><a href="#"><i class="icon_jogging_track"></i> Jogging</a></li>
+                                                    <li><a href="#"><i class="icon-golf"></i> Golf </a></li>
+                                                    <li><a href="#"><i class="icon-kids-play"></i> Kids' Play Area</a></li>
+                                                    <li><a href="#"><i class="icon-tenis-court"></i> Tenis Court</a></li>
+                                                    <li><a href="#"><i class="icon-yoga"></i> Yoga Area </a></li>
+                                                    <li><a href="#"><i class="icon-badminton-court"></i> Badminton Court </a></li>
+                                                    <li><a href="#"><i class="icon-basketball"></i> Basketball </a></li>
+                                                </ul>
+                                            </li>
+                                            <li id="list-item-2">
+                                                <h4>Leisure</h4>
+                                                <ul class="filter-lists">
+                                                    <li><a href="#"><i class="icon-club"></i> Clubhouse </a></li>
+                                                    <li><a href="#"><i class="icon-party-hall"></i> Party Hall </a></li>
+                                                    <li><a href="#"><i class="icon-liabrary"></i> Reading Room/Liabrary</a></li>
+                                                    <li><a href="#"><i class="icon-spa"></i> Spa</a></li>
+                                                    <li><a href="#"><i class="icon-jacuzzi"></i> Jacuzzi </a></li>
+                                                    <li><a href="#"><i class="icon-indoor-games"></i> Indoor Games</a></li>
+                                                    <li><a href="#"><i class="icon-waittinglounge"></i> Waiting Lounge</a></li>
+                                                    <li><a href="#"><i class="icon-confroom"></i> Conference </a></li>
+                                                    <li><a href="#"><i class="icon-daycare"></i> Day Care Centre </a></li>
+                                                    <li><a href="#"><i class="icon-meditation"></i> Meditation Center </a></li>
+                                                    <li><a href="#"><i class="icon-shopppingcenter"></i> Shopping Center </a></li>
+                                                    <li><a href="#"><i class="icon-creche"></i> Creche </a></li>
+                                                </ul>
+                                            </li>
+                                            <li id="list-item-3">
+                                                <h4>Convenience</h4>
+                                                <ul class="filter-lists">
+                                                    <li><a href="#"><i class="icon-swimming-pool"></i> Swimming Pool </a></li>
+                                                    <li><a href="#"><i class="icon-gym"></i> Gymnasium</a></li>
+                                                    <li><a href="#"><i class="icon_jogging_track"></i> Jogging</a></li>
+                                                    <li><a href="#"><i class="icon-golf"></i> Golf </a></li>
+                                                    <li><a href="#"><i class="icon-kids-play"></i> Kids' Play Area</a></li>
+                                                    <li><a href="#"><i class="icon-tenis-court"></i> Tenis Court</a></li>
+                                                    <li><a href="#"><i class="icon-club"></i> Clubhouse </a></li>
+                                                </ul>
+                                            </li>
+                                            <li id="list-item-4">
+                                                <h4>Safety</h4>
+                                                <ul class="filter-lists">
+                                                    <li><a href="#"><i class="icon-swimming-pool"></i> Swimming Pool </a></li>
+                                                    <li><a href="#"><i class="icon-gym"></i> Gymnasium</a></li>
+                                                    <li><a href="#"><i class="icon-jogging-track"></i> Jogging</a></li>
+                                                    <li><a href="#"><i class="icon-golf"></i> Golf </a></li>
+                                                    <li><a href="#"><i class="icon-kids-play"></i> Kids' Play Area</a></li>
+                                                    <li><a href="#"><i class="icon-tenis-court"></i> Tenis Court</a></li>
+                                                    <li><a href="#"><i class="icon-club"></i> Clubhouse </a></li>
+                                                </ul>
+                                            </li>
+                                            <li id="list-item-5">
+                                                <h4>Enviornment</h4>
+                                                <ul class="filter-lists">
+                                                    <li><a href="#"><i class="icon-swimming-pool"></i> Swimming Pool </a></li>
+                                                    <li><a href="#"><i class="icon-gym"></i> Gymnasium</a></li>
+                                                    <li><a href="#"><i class="icon-jogging-track"></i> Jogging</a></li>
+                                                    <li><a href="#"><i class="icon-golf"></i> Golf </a></li>
+                                                    <li><a href="#"><i class="icon-kids-play"></i> Kids' Play Area</a></li>
+                                                    <li><a href="#"><i class="icon-tenis-court"></i> Tenis Court</a></li>
+                                                    <li><a href="#"><i class="icon-club"></i> Clubhouse </a></li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+
+
+                                        <a href="#" class="btn btn-done">Done</a>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </li>
+                        <li class="more-filters">
+                            <a href="#">More Filters</a>
+                            <div class="open-dropdown">
+                                <div class="filter-vtabs">
+                                    <div id="list-example2" class="list-group">
+                                        <a class="list-group-item list-group-item-action" href="#furnishingType">Furnishing Type</a>
+                                        <a class="list-group-item list-group-item-action" href="#bathroom">Bathroom</a>
+                                        <a class="list-group-item list-group-item-action" href="#facing">Facing</a>
+                                        <a class="list-group-item list-group-item-action" href="#propertyArea">Property Area</a>
+                                        <a class="list-group-item list-group-item-action" href="#floor">Floor</a>
+                                        <a class="list-group-item list-group-item-action" href="#properties-in">Properties in</a>
+                                        <a class="list-group-item list-group-item-action" href="#age-property">Age of Property</a>
+                                        <a class="list-group-item list-group-item-action" href="#properties-Offers">Properties with Offers</a>
+                                        <a class="list-group-item list-group-item-action" href="#agents">Agents</a>
+                                    </div>
+                                    <div data-spy="scroll" data-target="#list-example2" data-offset="0" class="scrollspy-example typ2">
+
+                                        <ul class="list-type">
+                                            <li id="furnishingType">
+                                                <h4>Furnishing Type</h4>
+                                                <ul class="filter-lists">
+                                                    <li><a href="#">Unfurnished</a></li>
+                                                    <li><a href="#">Semi-furnished</a></li>
+                                                    <li><a href="#">Fully Furnished</a></li>
+                                                </ul>
+                                            </li>
+                                            <li id="bathroom">
+                                                <h4>Bathroom</h4>
+                                                <ul class="filter-lists">
+                                                    <li><a href="#">1 </a></li>
+                                                    <li><a href="#">2</a></li>
+                                                    <li><a href="#">3</a></li>
+                                                    <li><a href="#">4 </a></li>
+                                                    <li><a href="#">Any</a></li>
+                                                </ul>
+                                            </li>
+                                            <li id="facing">
+                                                <h4>Facing</h4>
+                                                <ul class="filter-lists sm">
+                                                    <li><a href="#">North </a></li>
+                                                    <li><a href="#">East</a></li>
+                                                    <li><a href="#">West</a></li>
+                                                    <li><a href="#">South </a></li>
+                                                    <li><a href="#">North - East</a></li>
+                                                    <li><a href="#">North - West</a></li>
+                                                    <li><a href="#">South - East </a></li>
+                                                    <li><a href="#">South - West </a></li>
+                                                </ul>
+                                            </li>
+                                            <li id="propertyArea">
+                                                <h4 >Property Area</h4>
+                                                <ul class="filter-lists sm">
+                                                    <li>
+                                                      <span>
+                                                        <div class="select-custom">
+                                                          <select>
+                                                            <option>sqft</option>
+                                                            <option>700</option>
+                                                            <option>900</option>
+                                                            <option>1100</option>
+                                                          </select>
+                                                        </div>
+                                                      </span>
+                                                    </li>
+                                                    <li><a href="#">Min</a></li>
+                                                    <li><a href="#">Max</a></li>
+                                                </ul>
+                                            </li>
+                                            <li id="floor">
+                                                <h4>Floor</h4>
+                                                <ul class="filter-lists">
+                                                    <li><a href="#">Basement </a></li>
+                                                    <li><a href="#">Ground</a></li>
+                                                    <li><a href="#">1-4</a></li>
+                                                    <li><a href="#">5-6 </a></li>
+                                                    <li><a href="#">6-8</a></li>
+                                                    <li><a href="#">9-12</a></li>
+                                                    <li><a href="#">13-16 </a></li>
+                                                    <li><a href="#">16-20 </a></li>
+                                                    <li><a href="#">20-24 </a></li>
+                                                    <li><a href="#">25+ </a></li>
+                                                </ul>
+                                            </li>
+                                            <li id="properties-in">
+                                                <h4>Properties in</h4>
+                                                <ul class="filter-lists">
+                                                    <li><a href="#">Upcoming Localities </a></li>
+                                                    <li><a href="#">Developed Localities</a></li>
+                                                    <li><a href="#">Premium Localities</a></li>
+                                                </ul>
+                                            </li>
+                                            <li id="age-property">
+                                                <h4>Age of Property</h4>
+                                                <ul class="filter-lists">
+                                                    <li><a href="#"> New </a></li>
+                                                    <li><a href="#"> 1 - 2 Years</a></li>
+                                                    <li><a href="#">2 - 4 Years</a></li>
+                                                    <li><a href="#">4 - 5 Years </a></li>
+                                                    <li><a href="#">5+</a></li>
+                                                </ul>
+                                            </li>
+                                            <li id="properties-Offers">
+                                                <h4>Properties with Offers</h4>
+                                                <ul class="filter-lists">
+                                                    <li><a href="#">dummy text </a></li>
+                                                    <li><a href="#">dummy text</a></li>
+                                                    <li><a href="#">dummy text</a></li>
+                                                    <li><a href="#">dummy text </a></li>
+                                                </ul>
+                                            </li>
+                                            <li id="agents">
+                                                <h4>Agents</h4>
+                                                <ul class="filter-lists">
+                                                    <li><a href="#">dummy text </a></li>
+                                                    <li><a href="#">dummy text</a></li>
+                                                    <li><a href="#">dummy text</a></li>
+                                                    <li><a href="#">dummy text </a></li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+
+
+
+
+
+
+
+
+
+                                        <a href="#" class="btn btn-done">Done</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="btn-sec">
+                        <ul>
+                            <li><a href="#" id="cancel-filter" class="btn btn-primary">Cancel</a></li>
+                            <li><a href="#" id="save-filter" class="btn btn-primary">Save</a></li>
+                        </ul>
+
+                    </div>
+                    <a class="btn-reset" href="#" data-toggle="modal" data-target="#largeModal"><i class="icon-filter"></i> Selected Filters</a>
+                </div>
+
+            </div>
+        </section>
+        <section class="mt-0">
+            <div class="container">
+                <div class="tbl-style two-col">
+                    <div>
+                        <div class="sort-by-sec">
+                            <ul>
+                                <li><b>542</b> properties for sale in Mumbai - South Mumbai</li>
+                                <li><span class="growth-txt"><i class="fa fa-arrow-circle-up"></i> 18.4%</span> in last six months</li>
+                            </ul>
+                            <div class="sort-by">
+                                <label>Sort by :</label>
+                                <div class="select-custom">
+                                    <select>
+                                        <option>TRED Recommended</option>
+                                        <option>Price - Low to High</option>
+                                        <option>Price - High to Low</option>
+                                        <option>Most Recent</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        {% include('portal/page/product/property-listings.html.twig') %}
+                    </div>
+                    <div>
+                        <div class="form-sec">
+                            <div class="form-group">
+                                <h2>Contact our <span>TRED Experts</span></h2>
+                                <span class="mendatory-field">* All fields are mandatory</span>
+                            </div>
+                            <form class="form">
+                                <div class="form-group">
+                                    <label for="name" class="">Name</label>
+                                    <input type="text" id="name" name="name" required="required" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="email-id" class="">Email ID</label>
+                                    <input type="email" id="email-id" email-id="email-id" required="required" class="form-control">
+                                </div>
+                                <div class="form-group mob-no">
+                                    <div class="input-group-prepend">
+                                        <select>
+                                            <option>+91</option>
+                                            <option>+92</option>
+                                        </select>
+                                    </div>
+                                    <label for="mobile-number">Mobile Number</label>
+                                    <input type="tel" id="mobile-number" name="mobile-number" required="required" minlength="10" maxlength="10" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cause">Location</label>
+                                    <select class="form-control">
+                                        <option>Mumbai</option>
+                                    </select>
+                                </div>
+                                <label class="checkbox-lbl">
+                                    <input type="checkbox">
+                                    Schedule meeting with TRED Expert
+                                </label>
+                                <div class="w-100"></div>
+                                <div class="form-group"><a href="#" class="btn btn-primary">Get A Call Back</a></div>
+
+                            </form>
+                        </div>
+
+
+
+                        <div class="form-sec mt-5">
+                            <div class="form-group">
+                                <h2 class="txt-sm">Join TRED Newsletter</h2>
+                            </div>
+                            <form class="form">
+                                <div class="form-group">
+                                    <label for="email-id" class="">Enter your Email ID</label>
+                                    <input type="email" id="email-id" email-id="email-id" required="required" class="form-control">
+                                </div>
+                                <div class="w-100"></div>
+                                <div class="form-group"><a href="#" class="btn btn-primary btn-subscribe">Subscribe</a></div>
+
+                            </form>
+                        </div>
+
+
+
+                        <div class="proj-dtls typ2 mt-5">
+                            <figure>
+                                <img src="/resources/images/project-img-sm.png">
+                            </figure>
+                            <figcaption>
+                                <div>
+                                    <h2 class="text-uppercase">Limited Lockdown Period Offer</h2>
+                                    <h3><b>We Pay Your<br>
+                                            12 Months PRE-EMI*</b></h3>
+                                    <h4>Kalpataru Vienta</h4>
+                                    <div class="tbl-style">
+                                        <div>
+                                            <h5>Kalpataru Group</h5>
+                                            <h6>Kandivali, Mumbai</h6>
+                                        </div>
+                                        <div>
+                                            <a class="btn btn-primary btn-sm" href="#">Book Now</a>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </figcaption>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </section>
+
+    </div>
+    <div class="modal fade cust-modal" id="largeModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h3>Selected Filters</h3>
+                    <a class="btn-reset" href="#"><i class="fa fa-repeat"></i> Reset Filters</a>
+                </div>
+                <div class="modal-body">
+                    <ul class="filter-lists">
+                        <li><span>75 L - 2.2 Cr <a class="close-filter" href="#">&times;</a></span></li>
+                        <li><span>1 BHK <a class="close-filter" href="#">&times;</a></span></li>
+                        <li><span>2 BHK <a class="close-filter" href="#">&times;</a></span></li>
+                        <li><span>3 BHK <a class="close-filter" href="#">&times;</a></span></li>
+                        <li><span>4 BHK <a class="close-filter" href="#">&times;</a></span></li>
+                        <li><span>Builders <a class="close-filter" href="#">&times;</a></span></li>
+                        <li><span>Owners <a class="close-filter" href="#">&times;</a></span></li>
+                        <li><span><i class="icon-swimming-pool"></i> Swimming Pool <a class="close-filter" href="#">&times;</a></span></li>
+                        <li><span><i class="icon-golf"></i> Golf <a class="close-filter" href="#">&times;</a></span></li>
+                        <li><span><i class="icon-club"></i> Clubhouse <a class="close-filter" href="#">&times;</a></span></li>
+                        <li><span>1, 2, 3 Bathroom <a class="close-filter" href="#">&times;</a></span></li>
+                        <li><span>6 - 8 Floor <a class="close-filter" href="#">&times;</a></span></li>
+                        <li><span>North <a class="close-filter" href="#">&times;</a></span></li>
+                        <li><span>East <a class="close-filter" href="#">&times;</a></span></li>
+                        <li><span>Premium Localities <a class="close-filter" href="#">&times;</a></span></li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+{{ parent() }}
+<script>
+    $(document).ready(function () {
+        $('.maxRange').hide();
+        $('#minrange').focus(function(){
+            $('.maxRange').show();
+            $('.minRange').css("visibility","hidden");
+        });
+
+        AOS.init({
+            duration: 1200,
+        })
+        $('.call-action.active').hide();
+        $('.call-action .closeBtn').hide();
+
+        $('.call-action span a').click(function(){
+            $('.call-action').addClass('active');
+            $('.call-action .closeBtn').show();
+        });
+
+        $('.call-action .closeBtn').click(function(){
+            $('.call-action').removeClass('active');
+            $(this).hide();
+        });
+
+        $("select").click(function(){
+            $(this).parent().addClass('active');
+        });
+
+
+        function formcontrol(){
+            $(".form-control").filter(function() {
+                if (this.value.length !==0){
+                    $(this).siblings('label').addClass('clicked');
+                }
+            });
+        }
+
+        formcontrol();
+        $('.form-group label').click(function () {
+            $(this).addClass('clicked');
+        });
+        $('.form-control').click(function () {
+            $(this).siblings('label').addClass('clicked');
+        });
+        $('.form-control').keyup(function () {
+            $(this).siblings('label').addClass('clicked');
+        });
+        $('.form-control').blur(function () {
+            if ($(this).val()) {
+                $(this).siblings('label').addClass('clicked');
+            } else if (!$(this).val()) {
+                $(this).siblings('label').removeClass('clicked');
+            }
+        });
+
+
+
+        if(width < 991) {
+            $('.mob-filter').click(function(){
+                $('.top-filter-sec').toggle(500);
+                $('.top-filter').toggleClass('active');
+            });
+            $('#cancel-filter').click(function(){
+                $('.top-filter-sec').hide(500);
+                $('.top-filter').removeClass('active');
+            });
+            $('#save-filter').click(function(){
+                $('.top-filter-sec').hide(500);
+                $('.top-filter').removeClass('active');
+            });
+        }
+
+        // $("ul.custom-checkbox:not(:first)").hide();
+        $('[name=customRadio]').click(function(){
+            $('ul.custom-checkbox').hide();
+            $(this).parent().find('.custom-control-label').addClass('active');
+            $(this).parent().siblings('ul.custom-checkbox').show();
+        });
+        $('[name=customRadio]:first').trigger("click");
+
+
+    });
+    /*Equal Height*/
+</script>
+{% endblock %}

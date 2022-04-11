@@ -1,0 +1,33 @@
+{% if cmsPage.cmsPageContent[0] is defined and cmsPage.cmsPageContent[0].isActive %}
+<section class="intro" id="intro">
+    <div class="container">
+        {{ cmsPage.cmsPageContent[0].pageContent|raw }}
+        {% set cities = [] %}
+        {% set trnProject = [] %}
+        {% set developer = [] %}
+        {% set propertyCount = 0 %}
+        {% set sStories = [] %}
+        {% for project in projects %}
+            {% if project.trnProject.mstCity.id not in cities %}
+                {% set cities = [project.trnProject.mstCity.id]|merge(cities) %}
+            {% endif  %}
+            {% if project.id not in trnProject %}
+                {% set trnProject = [project.trnProject.id]|merge(trnProject) %}
+            {% endif  %}
+            {% if project.trnProject.trnVendorPartnerDetails.id not in developer %}
+                {% set developer = [project.trnProject.trnVendorPartnerDetails.id]|merge(developer) %}
+            {% endif  %}
+            {% set propertyCount = propertyCount+ project|length %}
+        {% endfor %}
+{#        <div class="achievment-box">#}
+{#            <ul>#}
+{#                <li data-aos="fade-right" data-aos-delay="200"> <i class="icon-cities"></i> <span> <b>{{ cities|length }}</b> Cities </span> </li>#}
+{#                <li data-aos="fade-right" data-aos-delay="300"> <i class="icon-projects"></i> <span> <b>{{ trnProject|length }}</b> Projects </span> </li>#}
+{#                <li data-aos="fade-right" data-aos-delay="400"> <i class="icon-developers"></i> <span> <b>{{ developer|length }}</b> Developers </span> </li>#}
+{#                <li data-aos="fade-right" data-aos-delay="500"> <i class="icon-properties"></i> <span> <b>{{ propertyCount }}</b> Property </span> </li>#}
+{#                <li data-aos="fade-right" data-aos-delay="600"> <i class="icon-story"></i> <span> <b></b> Success Story </span> </li>#}
+{#            </ul>#}
+{#        </div>#}
+    </div>
+</section>
+{% endif %}

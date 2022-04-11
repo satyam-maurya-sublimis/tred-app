@@ -1,0 +1,55 @@
+{% extends 'layout/content.html.twig' %}
+{% block cms_content %}
+    <div class="card">
+        <div class="card-header">
+            <div class="col-sm-12">
+                <h3 class="card-title"><b>{{label_title|trans}}</b></h3>
+                <h4 class="card-title float-right">
+                    <a href="{{ path(path_edit, {'id': data.id}) }}" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i> {{'label.edit'|trans}}</a>
+                    <a href="{{ path(path_index) }}" class="btn btn-dark btn-sm"><i class="fa fa-list"></i> {{'label.back_to_list' | trans}}</a>
+                </h4>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body" id="record">
+            <div class="row">
+                <table class="table table-responsive-md text-sm">
+                    <tbody>
+                    <tr>
+                        <td class="col-sm-2">{{ 'label.media'|trans }}</td>
+                        <td class="col-sm-4"><img src="{{ data.mediaFilePath|imagine_filter('resize_image_100') }}" alt=".."></td>
+                        <td class="col-sm-2">{{ 'label.category'|trans }}</td>
+                        <td class="col-sm-4">{{ data.mstMediaCategory }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ 'label.name'|trans }}</td>
+                        <td>{{ data.mediaName }}</td>
+                        <td>{{ 'label.type'|trans }}</td>
+                        <td>{{ data.mediaType }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ 'label.alt'|trans }}</td>
+                        <td>{{ data.mediaAlText }}</td>
+                        <td>{{ 'label.title'|trans }}</td>
+                        <td>{{ data.mediaTitle }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ 'label.embedded_url'|trans }}</td>
+                        <td>{{ data.mediaPath }}</td>
+                        <td>{{ 'label.seq_no'|trans }}</td>
+                        <td>{{ data.sequenceNo }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ 'label.is_active'|trans }}</td>
+                        <td colspan="3">{{ data.isActive ? 'Yes': 'No' }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
+

@@ -1,0 +1,68 @@
+{% if cmsPage.cmsPageContent[4] is defined and cmsPage.cmsPageContent[4].isActive %}
+    {% set productTypes =[] %}
+    {% for project in projects %}
+        {% if (project.trnProject.mstProductType.id) not in productTypes %}
+            {% set productTypes = [project.trnProject.mstProductType.id]|merge(productTypes) %}
+        {% endif %}
+    {% endfor %}
+    <section>
+        <div class="container">
+            {{ cmsPage.cmsPageContent[4].pageContent|raw }}
+            <div class="card-deck cust-card property-collection">
+                {% if wsearch.1 is defined %}
+                <div class="card" data-aos="fade-right" data-aos-delay="200">
+                    <a href="{{ path('portal_properties_buy_list',{'slugName': 'residential' }) }}">
+                        <figure class="typ2">
+                            <img src="/resources/images/Residential-Properties.jpg" class="card-img-top" alt="...">
+{#                            <figcaption>#}
+{#                                <div class="bottom-left">#}
+{#                                    <h3>Residential Properties</h3>#}
+{#                                </div>#}
+{#                            </figcaption>#}
+                        </figure>
+
+                    </a>
+                    <div class="textHover">
+                        <h3>Residential Properties</h3>
+                        <p>If you’re looking to buy residential properties, sell residential properties, rent, or invest in residential properties, you’ve come to the right place. As urban living experts, we’re well versed in predictive residential trends across major cities in India and can help you in identifying the right market in your quest to find the right home.</p>
+                        <a class="btn btn-primary" href="{{ path('portal_properties_buy_list',{'slugName': 'residential' }) }}">View All Residential Properties</a>
+                    </div>
+                </div>
+                {% endif %}
+                {% if wsearch.2 is defined %}
+                <div class="card" data-aos="fade-right" data-aos-delay="200">
+                    <a href="{{ path('portal_properties_rent_list',{'slugName': 'residential' }) }}">
+                        <figure class="typ2">
+                            <img src="/resources/images/Rental-Properties.jpg" class="card-img-top" alt="...">
+{#                            <figcaption>#}
+{#                                <div class="bottom-left">#}
+{#                                    <h3>Rental Properties</h3>#}
+{#                                </div>#}
+{#                            </figcaption>#}
+                        </figure>
+                    </a>
+                    <div class="textHover">
+                        <h3>Rental Properties</h3>
+                        <p>Become a part of the TRED - A real estate of tomorrow. We provide a platform to our real-estate agent community & owners to list your property completely free with a hassle-free process & start getting responses from the potential tenants. Register now with TRED & avail all these benefits & conveniently follow up with your clients.</p>
+                        <a class="btn btn-primary" href="{{ path('portal_properties_rent_list',{'slugName': 'residential' }) }}">View All Rental Properties</a>
+                    </div>
+                </div>
+                {% endif  %}
+
+{#                {% for productType in productTypes %}#}
+{#                    {% set mstProductType = get_product_type_by_id(productType) %}#}
+{#                    <div class="card" data-aos="fade-right" data-aos-delay="200">#}
+{#                        <figure class="typ2">#}
+{#                            <img src="{{ mstProductType.productTypeImagePath|imagine_filter("resize_image_scale_380_200") }}" class="card-img-top" alt="...">#}
+{#                            <figcaption>#}
+{#                                <div class="bottom-left">#}
+{#                                    <h3>{{ mstProductType.productType }}</h3>#}
+{#                                </div>#}
+{#                            </figcaption>#}
+{#                        </figure>#}
+{#                    </div>#}
+{#                {% endfor %}#}
+            </div>
+        </div>
+    </section>
+{% endif %}

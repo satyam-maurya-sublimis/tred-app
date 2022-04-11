@@ -1,0 +1,178 @@
+{% if cmsLandingPage.cmsBanners|length > 0 %}
+    <section class="banner-carousel typ3">
+        <div id="mainBanner" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                {% for banner in cmsLandingPage.cmsBanners %}
+                    <div class="carousel-item {% if loop.first %}active{% endif %}">
+                        <figure>
+                            <img src="{{ banner.bannerDesktopImagePath|imagine_filter('resize_image_scale_1280_300') }}" class="desktop-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                            <img src="{{ banner.bannerTabletImagePath|imagine_filter('resize_image_scale_767_350') }}" class="tab-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                            <img src="{{ banner.bannerMobileImagePath|imagine_filter('resize_image_scale_350_250') }}" class="mobile-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                            <div class="container">
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb" data-aos="fade-right" data-aos-delay="200">
+                                        <li class="breadcrumb-item"><a href="{{ path('portal_index') }}">Home</a></li>
+                                        <li class="breadcrumb-item"><a href="{{ path('portal_interior_index') }}">Interiors</a></li>
+                                        <li class="breadcrumb-item active" aria-current="page">{{ cmsLandingPage.mstProductType }}</li>
+                                    </ol>
+                                </nav>
+                                {{ banner.bannerDescription|raw }}
+                            </div>
+                            {#                                    <a href="#intro" class="next-section-arrow"><i class="fa fa-chevron-down"></i></a>#}
+                        </figure>
+                    </div>
+                {% endfor %}
+            </div>
+            {% if cmsLandingPage.cmsBanners|length > 1 %}
+                <a class="carousel-control-prev" href="#mainBanner" role="button" data-slide="prev"> <i class="fa fa-angle-left"></i> </a>
+                <a class="carousel-control-next" href="#mainBanner" role="button" data-slide="next"> <i class="fa fa-angle-right"></i>
+                    <div class="num">1 / {{ cmsLandingPage.cmsBanners|length }}</div>
+                </a>
+            {% endif %}
+        </div>
+    </section>
+{% endif  %}
+<div class="wrapper">
+    <section class="banner-sec">
+        <figure class="interior"  data-aos="fade-right" data-aos-delay="200"><img src="{{ cmsLandingPage.cmsLandingPageImagePath|imagine_filter('resize_image_scale_570_367') }}" alt="" title=""></figure>
+        <div class="container">
+
+            <div class="caption typ2" data-aos="fade-right" data-aos-delay="200">
+                {{ cmsLandingPage.cmsLandingPageBannerTitle|raw }}
+            </div>
+            <div class="loan-key-points">
+                {% set productTypeName = cmsLandingPage.mstProductType.productType|split(" ") %}
+                <h2 data-aos="fade-right" data-aos-delay="200">{{ productTypeName.0 }} <span>{{ productTypeName.1 }}</span></h2>
+                {{ cmsLandingPage.mstProductType.productTypeDescription|raw }}
+                <a href="#" class="btn btn-primary btn-apply-loan">Request Quote Now</a>
+                <div class="card-deck cust-card typ3 mt-5">
+                    {% for content in cmsLandingPage.cmsLandingPageContents %}
+                        {% if content.pageMediaPosition == 'left' %}
+                            <div class="card" data-aos="fade-right" data-aos-delay="200">
+                                <figure class="">
+                                    <a href="#">
+                                        <img src="{{ content.pageImagePath|imagine_filter('resize_image_scale_395_300') }}" class="card-img-top" alt="{{ content.pageImageAlt }}" title="{{ content.pageImageTitle }}">
+                                    </a>
+                                </figure>
+                            </div>
+                        {% endif  %}
+                        {% if content.pageMediaPosition == 'right' %}
+                            <div class="card" data-aos="fade-right" data-aos-delay="400">
+                                <figure class="">
+                                    <a href="#">
+                                        <img src="{{ content.pageImagePath|imagine_filter('resize_image_scale_395_300') }}" class="card-img-top" alt="{{ content.pageImageAlt }}" title="{{ content.pageImageTitle }}">
+                                    </a>
+                                </figure>
+                            </div>
+                        {% endif  %}
+                    {% endfor %}
+                </div>
+                <div class="yellow-box" >
+                    <a href="#" class="fa fa-close"></a>
+                    <div class="frmEnquiry"></div>
+{#                    <form class="form">#}
+{#                        <h3>Request Quote Now</h3>#}
+{#                        <p>Complete this below form</p>#}
+{#                        <span class="mendatory-field">* Mandatory fields</span>#}
+{#                        <div class="form-group">#}
+{#                            <label for="name" class="">Name</label>#}
+{#                            <input type="text" id="name" name="name" required="required" class="form-control">#}
+{#                        </div>#}
+{#                        <div class="form-group">#}
+{#                            <label for="email-id" class="">Email ID</label>#}
+{#                            <input type="email" id="email-id" email-id="email-id" required="required" class="form-control">#}
+{#                        </div>#}
+{#                        <div class="form-group mob-no">#}
+{#                            <div class="input-group-prepend">#}
+{#                                <div class="cust-select">#}
+{#                                    <select class="form-control">#}
+{#                                        <option>+91</option>#}
+{#                                        <option>+92</option>#}
+{#                                    </select>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                            <label for="mobile-number">Mobile Number</label>#}
+{#                            <input type="text" id="mobile-number" name="mobile-number" required="required" minlength="10" maxlength="10" class="form-control">#}
+{#                        </div>#}
+{#                        <div class="form-group">#}
+{#                            <label for="" class="static mb-1">What is the scope of work to be done? *</label>#}
+{#                            <ul class="form-check-inline">#}
+{#                                <li class="custom-control custom-checkbox">#}
+{#                                    <input type="checkbox" class="custom-control-input" id="furniture">#}
+{#                                    <label class="custom-control-label" for="furniture">Furniture</label>#}
+{#                                </li>#}
+{#                                <li class="custom-control custom-checkbox">#}
+{#                                    <input type="checkbox" class="custom-control-input" id="false-ceiling">#}
+{#                                    <label class="custom-control-label" for="false-ceiling">False Ceiling</label>#}
+{#                                </li>#}
+{#                                <li class="custom-control custom-checkbox">#}
+{#                                    <input type="checkbox" class="custom-control-input" id="electrical">#}
+{#                                    <label class="custom-control-label" for="electrical">Electrical</label>#}
+{#                                </li>#}
+{#                                <li class="custom-control custom-checkbox">#}
+{#                                    <input type="checkbox" class="custom-control-input" id="painting">#}
+{#                                    <label class="custom-control-label" for="painting">Painting</label>#}
+{#                                </li>#}
+{#                                <li class="custom-control custom-checkbox">#}
+{#                                    <input type="checkbox" class="custom-control-input" id="bathroom">#}
+{#                                    <label class="custom-control-label" for="bathroom">Bathroom</label>#}
+{#                                </li>#}
+{#                                <li class="custom-control custom-checkbox">#}
+{#                                    <input type="checkbox" class="custom-control-input" id="windows">#}
+{#                                    <label class="custom-control-label" for="windows">Windows</label>#}
+{#                                </li>#}
+{#                                <li class="custom-control custom-checkbox">#}
+{#                                    <input type="checkbox" class="custom-control-input" id="kitchen">#}
+{#                                    <label class="custom-control-label" for="kitchen">Kitchen</label>#}
+{#                                </li>#}
+{#                            </ul>#}
+{#                        </div>#}
+{#                        <div class="form-group">#}
+{#                            <label for="carpet-area" class="">Your Carpet area of your Residence *</label>#}
+{#                            <input type="email" id="carpet-area" required="required" class="form-control">#}
+{#                        </div>#}
+{#                        <!-- <div class="form-group">#}
+
+{#                          <div class="cust-select">#}
+{#                              <select class="form-control">#}
+{#                                  <option selected>Your Carpet area of your Residence * </option>#}
+{#                                  <option>Option 1</option>#}
+{#                                  <option>Option 2</option>#}
+{#                              </select>#}
+{#                          </div>#}
+{#                        </div> -->#}
+{#                        <div class="form-group">#}
+{#                            <div class="cust-select">#}
+{#                                <select class="form-control">#}
+{#                                    <option selected>Your Budget *</option>#}
+{#                                    <option>Option 1</option>#}
+{#                                    <option>Option 2</option>#}
+{#                                </select>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="form-group mb-1">#}
+{#                            <label for="" class="static">Please Mention More Details of Work</label>#}
+{#                        </div>#}
+{#                        <div class="form-group">#}
+{#                            <label for="home-loan-amt" class="">Type here...</label>#}
+{#                            <textarea class="form-control"></textarea>#}
+{#                            <em class="etc-txt">(E.G. how many bedroom, what kind of furniture etc.) total work and location area to give you a proper costing.</em>#}
+{#                        </div>#}
+{#                        <div class="form-group">#}
+{#                            <div class="row">#}
+{#                                <div class="col-md-6 col-sm-6">#}
+{#                                    <label class="captha-code">2 + 5 =</label>#}
+{#                                </div>#}
+{#                                <div class="col-md-6 col-sm-6">#}
+{#                                    <label for="captcha" class="">Verify Captcha</label>#}
+{#                                    <input type="text" id="captcha"  required="required" class="form-control">#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <a href="#" class="btn-primary">Send Request</a>#}
+{#                    </form>#}
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

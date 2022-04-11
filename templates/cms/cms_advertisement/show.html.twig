@@ -1,0 +1,71 @@
+{% extends 'layout/content.html.twig' %}
+{% block cms_content %}
+    <div class="card">
+        <div class="card-header">
+            <div class="col-sm-12">
+                <h3 class="card-title"><b>{{label_title|trans}}</b></h3>
+                <h4 class="card-title float-right">
+                    <a href="{{ path(path_edit, {'id': data.id}) }}/?page_id={{ app.request.get('page_id') }}" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i> {{'label.edit'|trans}}</a>
+                    <a href="{{ path(path_index) }}/?page_id={{ app.request.get('page_id') }}" class="btn btn-dark btn-sm"><i class="fa fa-list"></i> {{'label.back_to_list' | trans}}</a>
+                </h4>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body" id="record">
+            <div class="row">
+                <table class="table table-responsive-md text-sm">
+                        <tbody>
+                            <tr>
+                                <th>Name</th>
+                                <td>{{ data.advertisementName }}</td>
+                                <th>Detail</th>
+                                <td>{{ data.advertisementDescription|raw }}</td>
+                                <th>Valid From Date</th>
+                                <td>{{ data.advertisementValidFromDate ? data.advertisementValidFromDate|date('d M Y') : '' }}</td>
+                                <th>Valid To Date</th>
+                                <td>{{ data.advertisementValidToDate ? data.advertisementValidToDate|date('d M Y') : '' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Advertisements</th>
+                                <td>
+                                    <table class="table table-responsive-md text-sm">
+                                        <tbody>
+                                        <tr>
+                                            <th>Desktop</th>
+                                            <td><img src="{{ data.advertisementDesktopImagePath|imagine_filter('resize_image_200') }}" alt=" "></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Tablet</th>
+                                            <td><img src="{{ data.advertisementTabletImagePath|imagine_filter('resize_image_200') }}" alt=" "></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Mobile</th>
+                                            <td><img src="{{ data.advertisementMobileImagePath|imagine_filter('resize_image_200') }}" alt=" "></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+
+                                </td>
+                                <th>Media Type</th>
+                                <td>{{ data.advertisementMediaType }}</td>
+                                <th>Advertisement Image Name</th>
+                                <td>{{ data.advertisementImageSetName }}</td>
+                                <th>Advertisement Image Alt</th>
+                                <td>{{ data.advertisementImageAlt }}</td>
+                            </tr>
+                            <tr>
+                                <th>Advertisement Image Title</th>
+                                <td>{{ data.advertisementImageTitle }}</td>
+                                <th>Sequence No</th>
+                                <td>{{ data.position }}</td>
+                                <th>Is Active</th>
+                                <td colspan="3">{{ data.isActive ? 'Yes' : 'No' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

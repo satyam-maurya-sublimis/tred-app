@@ -1,0 +1,784 @@
+{% extends 'portal/layout/index.html.twig' %}
+
+{% block portal_content %}
+    <!--Main Wrapper Starts-->
+    <div class="search-widget">
+        <div class="select-destination residential">
+            <select>
+                <option>Select</option>
+                {% for productType in productTypes %}
+                <option>{{ productType.productType }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="input">
+            <input type="text" class="form-control" placeholder="Search by Location or Landmark, Builder, Project">
+        </div>
+        <div class="search-btn">
+            <button type="button" class="btn btn-primary"><i class="fa fa-search"></i> Search</button>
+        </div>
+    </div>
+    <section class="banner-carousel slider-item">
+        <div id="mainBanner" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <figure>
+                        <img src="{{ asset('resources/images/HeroBanner01.jpg') }}" alt="" title="">
+                        <figcaption class="caption">
+                            <div class="container">
+                                <h3>Lorem Ipsum is simply dummy text</h3>
+                                <h2>Lorem Ipsum is simply dummy text of the printing.</h2>
+                                <a class="btn btn-primary-outline-sm" href="#">Know More</a>
+                            </div>
+                        </figcaption>
+                    </figure>
+                </div>
+                <div class="carousel-item">
+                    <figure>
+                        <img src="{{ asset('resources/images/HeroBanner01.jpg') }}" alt="" title="">
+                        <figcaption class="caption">
+                            <div class="container">
+                                <h3>Lorem Ipsum is simply dummy text</h3>
+                                <h2>Lorem Ipsum is simply dummy text of the printing.</h2>
+                                <a class="btn btn-primary-outline-sm" href="#">Know More</a>
+                            </div>
+                        </figcaption>
+                    </figure>
+                </div>
+                <div class="carousel-item">
+                    <figure>
+                        <img src="{{ asset('resources/images/HeroBanner01.jpg') }}" alt="" title="">
+                        <figcaption class="caption">
+                            <div class="container">
+                                <h3>Lorem Ipsum is simply dummy text</h3>
+                                <h2>Lorem Ipsum is simply dummy text of the printing.</h2>
+                                <a class="btn btn-primary-outline-sm" href="#">Know More</a>
+                            </div>
+                        </figcaption>
+                    </figure>
+                </div>
+                <div class="carousel-item">
+                    <figure>
+                        <img src="{{ asset('resources/images/HeroBanner01.jpg') }}" alt="" title="">
+                        <figcaption class="caption">
+                            <div class="container">
+                                <h3>Lorem Ipsum is simply dummy text</h3>
+                                <h2>Lorem Ipsum is simply dummy text of the printing.</h2>
+                                <a class="btn btn-primary-outline-sm" href="#">Know More</a>
+                            </div>
+                        </figcaption>
+                    </figure>
+                </div>
+            </div>
+            <a class="carousel-control-prev" href="#mainBanner" role="button" data-slide="prev">
+                <i class="fa fa-angle-left"></i>
+            </a>
+            <a class="carousel-control-next" href="#mainBanner" role="button" data-slide="next">
+                <i class="fa fa-angle-right"></i>
+                <div class="num">1 / 4</div>
+            </a>
+
+        </div>
+    </section>
+    <div class="wrapper">
+        {% set projects = get_project(null,filters) %}
+        <section class="intro">
+            <div class="container">
+                <h2>We are the <span>Future</span></h2>
+                <h3>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</h3>
+                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                    <span  class="moretext">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos ipsa animi tempora quia magnam odit assumenda, sapiente quas id voluptate mollitia inventore. Assumenda voluptatum reiciendis id consectetur suscipit fugit sit.
+              </span> <a href="#" class="moreless-button">Read More...</a></p>
+                <div class="achievment-box">
+                    <ul>
+                        <li data-aos="fade-down" data-aos-delay="200">
+                            <i class="icon-cities"></i>
+                            <span>
+                      <b>55</b>
+                      Cities
+                  </span>
+                        </li>
+                        <li data-aos="fade-down" data-aos-delay="300">
+                            <i class="icon-projects"></i>
+                            <span>
+                      <b>154</b>
+                      Projects
+                  </span>
+                        </li>
+                        <li data-aos="fade-down" data-aos-delay="400">
+                            <i class="icon-developers"></i>
+                            <span>
+                      <b>345</b>
+                      Developers
+                  </span>
+                        </li>
+                        <li data-aos="fade-down" data-aos-delay="500">
+                            <i class="icon-properties"></i>
+                            <span>
+                      <b>275</b>
+                      Property
+                  </span>
+                        </li>
+                        <li data-aos="fade-down" data-aos-delay="600">
+                            <i class="icon-story"></i>
+                            <span>
+                      <b>1345</b>
+                      Success Story
+                  </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section>
+            <div class="container">
+
+                <h2 class="multi-elm-ttl"  data-aos="fade-down" data-aos-delay="200">Trending <div class="select-destination residential lg">
+                        <select>
+                            <option>Select</option>
+                            {% for productType in productTypes %}
+                                <option>{{ productType.productType }}</option>
+                            {% endfor %}
+                        </select>
+                    </div> Projects in <div class="select-destination destination lg">
+                        <select>
+                            <option>Select</option>
+                            {% for city in cities %}
+                                {% if city.city == gcity %}
+                                    {% set cityCls = 'selected' %}
+                                {% else %}
+                                    {% set cityCls = '' %}
+                                {% endif %}
+                                <option value="{{ city.id }}" {{ cityCls }}>{{ city.city }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <a href="properties-listing.shtml" class="btn btn-primary" data-aos="fade-down" data-aos-delay="200">View All Trending Projects</a>
+                </h2>
+                <h3 data-aos="fade-down" data-aos-delay="400">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</h3>
+                <div class="card-deck cust-card row-md">
+
+                    {% for project in projects %}
+                    <div class="col-md-4" data-aos="fade-down" data-aos-delay="{{ (loop.index) *200 }}">
+                        <div class="card">
+                            <figure>
+                                {% if project.imagePath is defined %}
+                                    <img src="{{ project.imagePath[2] }}" class="card-img-top" alt="...">
+                                {% else %}
+                                    <img src="" class="card-img-top" alt="...">
+                                {% endif %}
+                                <figcaption>
+                                    <div class="top-left">
+                                        <span><i class="fa fa-check"></i> {{ project.company }} Recommended </span>
+                                    </div>
+                                    <div class="center">
+                                        <a href="#" class="play-icn">
+                                            <i class="fa fa-play"></i>
+                                            <small>3d View</small>
+                                        </a>
+                                    </div>
+                                    <div class="bottom-left">
+                                        <ul class="like-view">
+                                            <li>
+                                                <a href="#">
+                                                    <i class="fa fa-thumbs-o-up"></i>
+                                                    <b>55</b>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="fa fa-eye"></i>
+                                                    <b>145</b>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="bottom-right">
+                                        <div class="rera">
+                                            RERA
+                                        </div>
+                                    </div>
+                                </figcaption>
+                            </figure>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ project.projectName}}</h5>
+                                <h2>{{ project.vendorPartnerName }}</h2>
+                                <span class="location">{{ project.area}}, {{ project.city }}</span>
+                                <div class="amenities-sec">
+                                    <ul class="amenities">
+                                        {% for amenities in project.amenities %}
+                                        <li><img src="{{ amenities.src }}" alt="{{ amenities.name }}" title="{{ amenities.name }}" > </li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% if project.amenities|length > 8 %}
+                                    <a href="#" class="txt-more">more +</a>
+                                    {% endif %}
+                                </div>
+                                <div class="view-details">
+                                    <div class="left-sec">
+                                        <h3>
+                                            {% if project.roomConfiguration is defined %}
+                                                    {% for roomConfiguration in project.roomConfiguration %}
+                                                        {{ roomConfiguration|replace({'BHK':''}) }}
+                                                    {% endfor %}
+                                            {% else %}
+                                                1
+                                            {% endif  %}
+                                            BHK Flats
+                                        </h3>
+                                        <span class="prz-sec">
+                                            <b>
+                                                {% if project.price is defined %}
+                                                    <i class="fa fa-rupee"></i> {{ project.price.Amount }}
+                                                {% endif %}
+                                            </b> onwards
+                                        </span>
+                                        <p class="card-text">Marketed by Investor House Infra  India</p>
+                                    </div>
+                                    <div class="rgt-sec">
+                                        <p class="card-text">Possession <b>{{ project.possessionOn }}</b></p>
+                                        <ul class="btn-sec">
+                                            <li><a href="#" class="btn btn-primary">View Details</a></li>
+                                            <li><a href="#" class="fa fa-heart-o"></a></li>
+                                            <li><a href="#" id="share" class="fa fa-share-alt"></a>
+                                                <span class="social-media share-icons" style="display:none;">
+                              <a href="#" target="_blank"><img src="{{ asset('resources/images/icons/facebook.png') }}" alt="Facebook" title="Facebook"></a>
+                              <a href="#" target="_blank"><img src="{{ asset('resources/images/icons/twitter.png') }}" alt="Twitter" title="Twitter"></a>
+                              <a href="#" target="_blank"><img src="{{ asset('resources/images/icons/instagram.png') }}" alt="Instagram" title="Instagram"></a>
+                              <a href="#" target="_blank"><img src="{{ asset('resources/images/icons/youtube.png') }}" alt="YouTube" title="YouTube"></a>
+                            </span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </section>
+        <section class="experience-zone">
+            <div class="container">
+                <h2 data-aos="fade-down" data-aos-delay="200">Experience <span>Zone</span></h2>
+                <h3 data-aos="fade-down" data-aos-delay="400">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</h3>
+                <ul class="experience-dtls">
+                    <li data-aos="fade-down" data-aos-delay="200">
+                        <a href="#">
+                            <span class="icon"><i class="icon-video"></i></span>
+                            <div class="experience-txt">
+                                <h3>Virtual Video</h3>
+                                <p>Take a virtual 3D Tour from the comfort of your Home</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li data-aos="fade-down" data-aos-delay="300">
+                        <a href="#">
+                            <span class="icon"><i class="icon-brochure"></i></span>
+                            <div class="experience-txt">
+                                <h3>Online Brochure</h3>
+                                <p>Lorem Ipsum is simply dummy text of the printing </p>
+                            </div>
+                        </a>
+                    </li>
+                    <li data-aos="fade-down" data-aos-delay="400">
+                        <a href="#">
+                            <span class="icon"><i class="icon-images"></i></span>
+                            <div class="experience-txt">
+                                <h3>Images</h3>
+                                <p>Lorem Ipsum is simply dummy text of the printing </p>
+                            </div>
+                        </a>
+                    </li>
+                    <li data-aos="fade-down" data-aos-delay="500">
+                        <a href="#">
+                            <span class="icon"><i class="icon-poll"></i></span>
+                            <div class="experience-txt">
+                                <h3>Trending Polls & Opinions </h3>
+                                <p>Lorem Ipsum is simply dummy text of the printing </p>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </section>
+        <section>
+            <div class="container">
+                <h2 data-aos="fade-down" data-aos-delay="200">Latest <span>Offers</span> of the Month</h2>
+                <h3 data-aos="fade-down" data-aos-delay="400">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</h3>
+                <div class="row">
+                    <div class="col-md-6" data-aos="fade-down" data-aos-delay="200">
+                        <div class="proj-dtls">
+                            <figure>
+                                <img src="{{ asset('resources/images/proj-thmb-1.png') }}">
+                            </figure>
+                            <figcaption>
+                                <div>
+                                    <h2 class="text-uppercase">Limited Lockdown Period Offer</h2>
+                                    <h3><b>We Pay Your
+                                            12 Months PRE-EMI*</b></h3>
+                                    <h2>Kalpataru Vienta</h2>
+                                    <h5>Kalpataru Group</h5>
+                                    <h6>Kandivali, Mumbai</h6>
+                                    <a class="btn btn-primary btn-sm" href="#">Know More</a>
+                                </div>
+                            </figcaption>
+                        </div>
+                    </div>
+                    <div class="col-md-6" data-aos="fade-down" data-aos-delay="400">
+                        <div class="proj-dtls">
+                            <figure>
+                                <img src="{{ asset('resources/images/proj-thmb-2.png') }}">
+                            </figure>
+                            <figcaption>
+                                <div>
+                                    <h2>Price <s><i class="fa fa-rupee"></i> 19.13 Lakhs</s></h2>
+                                    <h3><b>Now <i class="fa fa-rupee"></i> 16.13 Lakhs</b> Onwards</h3>
+                                    <h2>Shapoorji Pallonji Northern Lights</h2>
+                                    <h5>Shapoorji Pallonji Real Estate</h5>
+                                    <h6>Vaghela Estate, Thane</h6>
+                                    <a class="btn btn-primary btn-sm" href="#">Know More</a>
+                                </div>
+                            </figcaption>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section>
+            <div class="container">
+                <h2 data-aos="fade-down" data-aos-delay="200">Explore Property <span>Collections</span></h2>
+                <h3 data-aos="fade-down" data-aos-delay="400">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</h3>
+                <div class="card-deck cust-card">
+                    <div class="card" data-aos="fade-down" data-aos-delay="200">
+                        <figure class="typ2">
+                            <img src="{{ asset('resources/images/residential-property.jpg') }}" class="card-img-top" alt="...">
+                            <figcaption>
+                                <div class="bottom-left">
+                                    <h3>Residential Properties</h3>
+                                </div>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="card" data-aos="fade-down" data-aos-delay="400">
+                        <figure class="typ2">
+                            <img src="{{ asset('resources/images/commercial-property.jpg') }}" class="card-img-top" alt="...">
+                            <figcaption>
+                                <div class="bottom-left">
+                                    <h3>Commercial Properties</h3>
+                                </div>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="card" data-aos="fade-down" data-aos-delay="600">
+                        <figure class="typ2">
+                            <img src="{{ asset('resources/images/farm-house.jpg') }}" class="card-img-top" alt="...">
+                            <figcaption>
+                                <div class="bottom-left">
+                                    <h3>Farm House</h3>
+                                </div>
+                            </figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+        <section class="bg-container text-center add-sec">
+            <div class="container" data-aos="fade-down" data-aos-delay="200">
+                <img src="{{ asset('resources/images/add-img.jpg') }}">
+            </div>
+        </section>
+
+        <section>
+            <div class="container">
+                <h2 data-aos="fade-down" data-aos-delay="200">Find Properties in Top <span>Cities</span> </h2>
+                <h3 data-aos="fade-down" data-aos-delay="400">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</h3>
+                <div class="properties-location">
+                    <ul class="properties">
+                        <li data-aos="fade-down" data-aos-delay="200">
+                            <a href="#">
+                                <figure><img src="{{ asset('resources/images/delhi.jpg') }}"></figure>
+                                <b>Delhi</b>
+                            </a>
+                        </li>
+                        <li data-aos="fade-down" data-aos-delay="300">
+                            <a href="#">
+                                <figure><img src="{{ asset('resources/images/mumbai.jpg') }}"></figure>
+                                <b>Mumbai</b>
+                            </a>
+                        </li>
+                        <li data-aos="fade-down" data-aos-delay="400">
+                            <a href="#">
+                                <figure><img src="{{ asset('resources/images/chennai.jpg') }}"></figure>
+                                <b>Chennai</b>
+                            </a>
+                        </li>
+                        <li data-aos="fade-down" data-aos-delay="500">
+                            <a href="#">
+                                <figure><img src="{{ asset('resources/images/banglore.jpg') }}"></figure>
+                                <b>Banglore</b>
+                            </a>
+                        </li>
+                        <li data-aos="fade-down" data-aos-delay="600">
+                            <a href="#">
+                                <figure><img src="{{ asset('resources/images/hydrabad.jpg') }}"></figure>
+                                <b>Hydrabad</b>
+                            </a>
+                        </li>
+                        <li data-aos="fade-down" data-aos-delay="700">
+                            <a href="#">
+                                <figure><img src="{{ asset('resources/images/kolkata.jpg') }}"></figure>
+                                <b>Kolkata</b>
+                            </a>
+                        </li>
+                        <li data-aos="fade-down" data-aos-delay="800">
+                            <a href="#">
+                                <figure><img src="{{ asset('resources/images/pune.jpg') }}"></figure>
+                                <b>Pune</b>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="btn-sec" data-aos="fade-down" data-aos-delay="900">
+                        <a href="#" class="btn-view-more">
+                            <i class="fa fa-custom-plus"></i>
+                            <b>View More Cities</b>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="container">
+                <h2 data-aos="fade-down" data-aos-delay="200">Featured Property Agents in <span><div class="select-destination destination lg">
+            <select>
+              <option>Select</option>
+              <option selected>Mumbai</option>
+              <option>Delhi</option>
+              <option>New Delhi</option>
+              <option>Bangalore</option>
+              <option>Ahmedabad</option>
+              <option>Greater Noida</option>
+            </select>
+          </div></span> </h2>
+                <h3 data-aos="fade-down" data-aos-delay="400">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</h3>
+                <div class="properties-location">
+                    <ul class="properties typ2">
+                        <li data-aos="fade-down" data-aos-delay="200">
+                            <a href="#">
+                                <figure><img src="{{ asset('resources/images/max-properties-finance.jpg') }}"></figure>
+                                <b>Max Properties & Finance
+                                    Bandra West</b>
+                            </a>
+                        </li>
+                        <li data-aos="fade-down" data-aos-delay="300">
+                            <a href="#">
+                                <figure><img src="{{ asset('resources/images/raj-properties.jpg') }}"></figure>
+                                <b>Raj Properties Pvt. Ltd.
+                                    Andheri West</b>
+                            </a>
+                        </li>
+                        <li data-aos="fade-down" data-aos-delay="400">
+                            <a href="#">
+                                <figure><img src="{{ asset('resources/images/astitva-properties.jpg') }}"></figure>
+                                <b>Atisaya Property Consultants
+                                    Andheri West</b>
+                            </a>
+                        </li>
+                        <li data-aos="fade-down" data-aos-delay="500">
+                            <a href="#">
+                                <figure><img src="{{ asset('resources/images/poojary-estate.jpg') }}"></figure>
+                                <b>Pujari Estate Agency
+                                    Goregaon</b>
+                            </a>
+                        </li>
+                        <li data-aos="fade-down" data-aos-delay="600">
+                            <a href="#">
+                                <figure><img src="{{ asset('resources/images/rasal-associates.jpg') }}"></figure>
+                                <b>Rasal Associates
+                                    Nalasopara (E)</b>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="btn-sec" data-aos="fade-down" data-aos-delay="700">
+                        <a href="#" class="btn-view-more">
+                            <i class="fa fa-custom-plus"></i>
+                            <b>View More Cities</b>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="container">
+                <h2 data-aos="fade-down" data-aos-delay="200">India's Top <span>Real Estate Builders</span> </h2>
+                <h3 data-aos="fade-down" data-aos-delay="400">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</h3>
+                <div class="properties-location">
+                    <ul class="properties">
+                        <li data-aos="fade-down" data-aos-delay="200">
+                            <a href="#">
+                                <figure><img src="{{ asset('resources/images/godrej-properties.jpg') }}"></figure>
+                            </a>
+                        </li>
+                        <li data-aos="fade-down" data-aos-delay="300">
+                            <a href="#">
+                                <figure><img src="{{ asset('resources/images/reputed-builder.jpg') }}"></figure>
+                            </a>
+                        </li>
+                        <li data-aos="fade-down" data-aos-delay="400">
+                            <a href="#">
+                                <figure><img src="{{ asset('resources/images/lodha.jpg') }}"></figure>
+                            </a>
+                        </li>
+                        <li data-aos="fade-down" data-aos-delay="500">
+                            <a href="#">
+                                <figure><img src="{{ asset('resources/images/prestige-group.jpg') }}"></figure>
+                            </a>
+                        </li>
+                        <li data-aos="fade-down" data-aos-delay="600">
+                            <a href="#">
+                                <figure><img src="{{ asset('resources/images/sobha.jpg') }}"></figure>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="btn-sec" data-aos="fade-down" data-aos-delay="700">
+                        <a href="#" class="btn-view-more">
+                            <i class="fa fa-custom-plus"></i>
+                            <b>View More Cities</b>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+        <section class="news-events-sec">
+            <div class="container">
+                <h2 class="multi-elm-ttl" data-aos="fade-down" data-aos-delay="200">News & <span>Events</span>
+                    <a href="#" class="btn btn-primary">Read All News & Events</a>
+                </h2>
+                <h3 data-aos="fade-down" data-aos-delay="400">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</h3>
+                <div class="row row-lg">
+                    <div class="col-md-6" data-aos="fade-down" data-aos-delay="200">
+                        <figure class="news-events-img">
+                            <img src="{{ asset('resources/images/news-events.jpg') }}">
+                            <figcaption>
+                                <div class="left-sec">
+                                    <div class="date">July 15, 2020</div>
+                                    <span>
+                      <i class="fa fa-file-text-o"></i>
+                      <h6>News</h6>
+                    </span>
+                                </div>
+                                <div class="right-sec">
+                                    <b>Real estate developers rely on drones for site visits</b>
+                                </div>
+                            </figcaption>
+                        </figure>
+
+                    </div>
+                    <div class="col-md-6" data-aos="fade-down" data-aos-delay="200">
+                        <ul class="news-dtls-sec">
+                            <li>
+                                <figure data-aos="fade-down" data-aos-delay="400">
+                                    <img src="{{ asset('resources/images/news-thumb.jpg') }}">
+                                </figure>
+                                <div>
+                                    <div class="date" data-aos="fade-down" data-aos-delay="500">July 15, 2020</div>
+                                    <div class="news-wrapper" data-aos="fade-down" data-aos-delay="500">
+                        <span class="icon">
+                          <i class="fa fa-file-text-o"></i>
+                        </span>
+                                        <div>
+                                            <h6>News</h6>
+                                            <h5>Special situation funds, NBFCs eye investment opportunities in stressed real estate</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <figure data-aos="fade-down" data-aos-delay="400">
+                                    <img src="{{ asset('resources/images/news-thumb2.jpg') }}">
+                                </figure>
+                                <div data-aos="fade-down" data-aos-delay="500">
+                                    <div class="date">July 15, 2020</div>
+                                    <div class="news-wrapper">
+                        <span class="icon">
+                          <i class="fa fa-calendar"></i>
+                        </span>
+                                        <div>
+                                            <h6>Events</h6>
+                                            <h5>This pandemic, can PropTech help break real estate barriers</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-container">
+            <div class="container">
+                <h2 class="multi-elm-ttl" data-aos="fade-down" data-aos-delay="200">Why you'll Love <span>TRED</span></h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3 data-aos="fade-down" data-aos-delay="300">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</h3>
+                        <p data-aos="fade-down" data-aos-delay="400">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,</p>
+                        <a href="#" class="btn btn-read-more" data-aos="fade-down" data-aos-delay="500">Read More</a>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="tred-list">
+                            <li data-aos="fade-down" data-aos-delay="200">
+                                <span class="icon"><img src="{{ asset('resources/images/icons/circle-placeholder.png') }}"></span>
+                                <span>Lorem Ipsum is simply dummy</span>
+                            </li>
+                            <li data-aos="fade-down" data-aos-delay="300">
+                                <span class="icon"><img src="{{ asset('resources/images/icons/circle-placeholder.png') }}"></span>
+                                <span>Lorem Ipsum is simply dummy</span>
+                            </li>
+                            <li data-aos="fade-down" data-aos-delay="400">
+                                <span class="icon"><img src="{{ asset('resources/images/icons/circle-placeholder.png') }}"></span>
+                                <span>Lorem Ipsum is simply dummy</span>
+                            </li>
+                            <li data-aos="fade-down" data-aos-delay="500">
+                                <span class="icon"><img src="{{ asset('resources/images/icons/circle-placeholder.png') }}"></span>
+                                <span>Lorem Ipsum is simply dummy</span>
+                            </li>
+                            <li data-aos="fade-down" data-aos-delay="600">
+                                <span class="icon"><img src="{{ asset('resources/images/icons/circle-placeholder.png') }}"></span>
+                                <span>Lorem Ipsum is simply dummy</span>
+                            </li>
+                            <li data-aos="fade-down" data-aos-delay="700">
+                                <span class="icon"><img src="{{ asset('resources/images/icons/circle-placeholder.png') }}"></span>
+                                <span>Lorem Ipsum is simply dummy</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section class="">
+            <div class="container">
+                <h2 class="multi-elm-ttl" data-aos="fade-down" data-aos-delay="200">Success <span>Stories</span>
+                    <a href="#" class="btn btn-primary" data-aos="fade-down" data-aos-delay="300">Read All Success Stories</a>
+                </h2>
+                <h3 data-aos="fade-down" data-aos-delay="400">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h3>
+                <div class="card-deck cust-card sucess-stories">
+                    <div class="card" data-aos="fade-down" data-aos-delay="200">
+                        <figure>
+                            <img src="{{ asset('resources/images/rahul-mehta.jpg') }}" class="card-img-top" alt="...">
+                        </figure>
+                        <div class="card-body">
+                            <div class="customer-comments">
+                                <h2>Rahul Mehata</h2>
+                                <h6>Mumbai</h6>
+                                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" data-aos="fade-down" data-aos-delay="400">
+                        <figure>
+                            <img src="{{ asset('resources/images/mohan-pathak.jpg') }}" class="card-img-top" alt="...">
+                        </figure>
+                        <div class="card-body">
+                            <div class="customer-comments">
+                                <h2>Mohan Pathak</h2>
+                                <h6>Delhi</h6>
+                                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" data-aos="fade-down" data-aos-delay="600">
+                        <figure>
+                            <img src="{{ asset('resources/images/arvind-shah.jpg') }}" class="card-img-top" alt="...">
+                        </figure>
+                        <div class="card-body">
+                            <div class="customer-comments">
+                                <h2>Arvind Shah</h2>
+                                <h6>Jaipur</h6>
+                                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row row-lg">
+                    <div class="col-md-6" data-aos="fade-down" data-aos-delay="200">
+                        <figure class="vendor-world">
+                            <img src="{{ asset('resources/images/vendor-world.jpg') }}">
+                            <figcaption>
+                                <h2>Vendor World</h2>
+                                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. </p>
+                                <a href="#" class="btn btn-primary btn-sm">Explore More</a>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-md-6" data-aos="fade-down" data-aos-delay="400">
+                        <figure class="news-events-img">
+                            <img src="{{ asset('resources/images/add2.jpg') }}">
+                        </figure>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!--Main Wrapper Starts-->
+{% endblock %}
+{% block javascripts %}
+{{ parent() }}
+<script>
+    $(document).ready(function () {
+        AOS.init({
+            duration: 1200,
+        })
+        var totalItemsPop = $('#mainBanner .carousel-item').length;
+        $('#mainBanner').on('slid.bs.carousel', function() {
+            setTimeout(function(){
+                currentIndexPop = $('#mainBanner .carousel-item.active').index() + 1;
+                $('.num').html('' + currentIndexPop + ' / ' + totalItemsPop + '');
+            });
+        });
+
+        $('.call-action.active').hide();
+        $('.call-action .closeBtn').hide();
+
+        $('.call-action span a').click(function(){
+            $('.call-action').addClass('active');
+            $('.call-action .closeBtn').show();
+        });
+
+        $('.call-action .closeBtn').click(function(){
+            $('.call-action').removeClass('active');
+            $(this).hide();
+        });
+
+
+        $('.moreless-button').click(function(e) {
+            e.preventDefault();
+            $('.moretext').slideToggle();
+            if ($('.moreless-button').text() == "Read More...") {
+                $(this).text("Read less...")
+            } else {
+                $(this).text("Read More...")
+            }
+        });
+    });
+    /*Equal Height*/
+</script>
+{% endblock %}

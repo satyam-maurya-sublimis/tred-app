@@ -1,0 +1,82 @@
+{% extends 'layout/content.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{asset('assets/plugins/kartik-v/bootstrap-fileinput/css/fileinput.min.css')}}">
+{% endblock %}
+{% block cms_content %}
+    {% set back_to_list = app.request.server.get('HTTP_REFERER') %}
+    {{ form_start(form) }}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">
+                {% if mode == 'add' %}<i class="fa fa-plus"></i> {% else%} <i class="fa fa-edit"></i> {% endif%}  <b>{{label_title|trans|upper}}</b>
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.mstProductType) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.uniqueValuePreposition) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mediaTitle) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mediaAlText) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.mediaIcon) }}
+                </div>
+                <div class="col-sm-3">
+                    {% if master_furniture_uvp_.mediaIcon and master_furniture_uvp_.mediaIcon.iconImage != '' and master_furniture_uvp_.mediaIcon.iconImage != 'files/' %}
+                        <img src="{{ master_furniture_uvp_.mediaIcon.iconImage|imagine_filter('resize_image_200') }}" width="50" height="50" alt="{{ 'label.icon'|trans }}" >
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-sm-3">
+                    {{ form_row(form.isActive) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <button type="submit" class="{{ button_css|default("btn btn-dark btn-sm") }}">
+            <i class="fa fa-save" aria-hidden="true"></i> {{ label_button|trans }}
+        </button>
+        <a href="{{ back_to_list }}" class="btn btn-link"><i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}</a>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{asset('assets/plugins/kartik-v/bootstrap-fileinput/js/fileinput.min.js')}}"></script>
+    <script src="{{asset('assets/plugins/kartik-v/bootstrap-fileinput/themes/fa/theme.min.js')}}"></script>
+    <script>
+        $("document").ready(function(){
+            $('label[for=mst_furniture_unique_value_preposition_mediaIcon_iconImage]').remove();
+            $("#mst_furniture_unique_value_preposition_mediaIcon_iconImage").fileinput({
+                theme: "fa",
+                overwriteInitial: true,
+                maxFileSize: 512,
+                showClose: false,
+                showCaption: false,
+                showBrowse: false,
+                browseOnZoneClick: true,
+                removeLabel: '',
+                defaultPreviewContent: '<h6 class="text-muted">Click to upload icon</h6>',
+                layoutTemplates: {main2: '{preview} {remove} {browse}'},
+                allowedFileExtensions: ["ico","png"]
+            });
+            $("#mst_furniture_unique_value_preposition_uniqueValuePreposition").keyup(function(){
+                var Text = $(this).val();
+                $("#mst_furniture_unique_value_preposition_mediaAlText").val(Text);
+                $("#mst_furniture_unique_value_preposition_mediaTitle").val(Text);
+            });
+        });
+    </script>
+{% endblock %}

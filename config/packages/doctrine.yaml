@@ -1,0 +1,35 @@
+doctrine:
+    dbal:
+        default_connection: default
+        connections:
+            default:
+                dbname: tred-app
+                user: 'root'
+#                user: 'admin'
+                password: ''
+#                password: 'cIrspSq9ytzGWDplq9so'
+#                port: 3307
+                port: 3306
+                host: localhost
+#                host: tred-b2c-db-server.cpz7hpjweuim.ap-south-1.rds.amazonaws.com
+                driver: 'pdo_mysql'
+                server_version: 'mariadb-10.4.11'
+                default_table_options:
+                charset: utf8mb4
+                mapping_types:
+                    enum: string
+            #                url: '%env(resolve:DATABASE_URL)%'
+
+
+    orm:
+        default_entity_manager: default
+        entity_managers:
+            default:
+                connection: default
+                mappings:
+                    Admin:
+                        is_bundle: false
+                        type: annotation
+                        dir: '%kernel.project_dir%/src/Entity'
+                        prefix: 'App\Entity'
+                        alias: default

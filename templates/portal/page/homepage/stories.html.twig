@@ -1,0 +1,33 @@
+{% if cmsPage.cmsPageContent[10] is defined and cmsPage.cmsPageContent[10].isActive %}
+    <section >
+        <div class="container">
+            {{ cmsPage.cmsPageContent[10].pageContent|raw }}
+            <div class="card-deck cust-card sucess-stories">
+                <div class="card" data-aos="fade-right" data-aos-delay="200">
+                    <figure> <img src="/resources/images/rahul-mehta.jpg" class="card-img-top" alt="..."> </figure>
+                    <div class="card-body">
+                        <div class="customer-comments">
+                            <h2>Rahul Mehata</h2>
+                            <h6>Mumbai</h6>
+                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                                Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row row-lg">
+                <div class="col-md-6" data-aos="fade-right" data-aos-delay="200">
+                    <figure class="vendor-world"> <img src="resources/images/vendor-world.jpg">
+                        <figcaption>
+                            <h2>Construction Suppliers</h2>
+                            <p>Need a vendor for one of your many requirements? Explore your options in terms of services, prices, and dates. </p>
+                            <a href="#" class="btn btn-primary btn-sm">Explore More</a> </figcaption>
+                    </figure>
+                </div>
+                <div class="col-md-6" data-aos="fade-right" data-aos-delay="400">
+                    <figure class="news-events-img"> <img src="resources/images/add2.jpg"> </figure>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endif %}

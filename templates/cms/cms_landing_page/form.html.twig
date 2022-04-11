@@ -1,0 +1,305 @@
+{% extends 'layout/content.html.twig' %}
+{% macro Content(form) %}
+    <div class="cmsPageContent">
+        <div class="row">
+            <div class="col-sm-8">
+                {{ form_row(form.pageContent ) }}
+            </div>
+            <div class="col-sm-4">
+                {{ form_row(form.pageMediaType) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                {{ form_row(form.pageMediaPosition ) }}
+            </div>
+            <div class="col-sm-4">
+                {{ form_row(form.pageImage) }}
+            </div>
+            {% if form.vars.data is not empty %}
+                <div class="col-sm-4">
+                    <img src="{{ form.vars.data.pageImagePath|imagine_filter('resize_image_200') }}" alt="{{ form.vars.data.pageImageName }}">
+                </div>
+            {% endif %}
+        </div>
+        <div class="row mt-4 contentImage">
+            <div class="col-sm-4">
+                {{ form_row(form.pageImageName) }}
+            </div>
+            <div class="col-sm-4">
+                {{ form_row(form.pageImageTitle) }}
+            </div>
+            <div class="col-sm-4">
+                {{ form_row(form.pageImageAlt) }}
+            </div>
+        </div>
+
+        <div class="row contentVideo" style="display: none">
+            <div class="col-sm-4">
+                {{ form_row(form.pageVideo) }}
+            </div>
+            <div class="col-sm-4">
+                {{ form_row(form.pageVideoPath) }}
+            </div>
+        </div>
+        <div class="col-sm-4 removebutton"> <br>
+            <button type="button" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Remove Content Block</button>
+        </div>
+    </div>
+{% endmacro %}
+{% import _self as formMacro %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assets/plugins/summernote/summernote-bs4.css') }}" media="all" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="{{asset('assets/plugins/kartik-v/bootstrap-fileinput/css/fileinput.min.css')}}">
+{% endblock %}
+{% block cms_content %}
+    {% set back_to_list = app.request.server.get('HTTP_REFERER') %}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">
+                {% if mode == 'add' %}<i class="fa fa-plus"></i> {% else%} <i class="fa fa-edit"></i> {% endif%}  <b>{{label_title|trans|upper}}</b>
+            </h5>
+        </div>
+        {{ form_start(form) }}
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-4">
+                    {{ form_row(form.mstProductCategory) }}
+                </div>
+                <div class="col-sm-4">
+                    {{ form_row(form.mstProductType) }}
+                </div>
+                <div class="col-sm-4">
+                    {{ form_row(form.cmsLandingPageMediaType) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    {{ form_row(form.cmsLandingPageBannerTitle) }}
+                </div>
+                <div class="col-sm-3 bannerImage">
+                    {{ form_row(form.cmsLandingPageImage) }}
+                </div>
+                <div class="col-sm-3 bannerImage">
+                    {% if cms_landing_page.cmsLandingPageMediaType == 'image' and cms_landing_page.cmsLandingPageImage is not empty %}
+                        <img src="{{ cms_landing_page.cmsLandingPageImagePath|imagine_filter('resize_image_200') }}" alt="..">
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row bannerImage">
+                <div class="col-sm-3">
+                    {{ form_row(form.cmsLandingPageImageName) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.cmsLandingPageImageTitle) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.cmsLandingPageImageAlt) }}
+                </div>
+            </div>
+            <div class="row bannerVideo" style="display: none">
+                <div class="col-sm-4">
+                    {{ form_row(form.cmsLandingPageVideo) }}
+                </div>
+                <div class="col-sm-4">
+                    {{ form_row(form.cmsLandingPageVideoPath) }}
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-sm-4">
+                    {{ form_row(form.isActive) }}
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">
+                    <h3 class="card-title"><b>{{ 'Content'|upper }}</b></h3>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row" data-prototype="{{ formMacro.Content(form.cmsLandingPageContents.vars.prototype)|e('html_attr') }}">
+                    <div class="col" id="pageContent" >
+                        {% for row in form.cmsLandingPageContents %}
+                            {{ formMacro.Content(row) }}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="button" id="addContent" class="btn btn-dark btn-sm"><i class="fa fa-plus"></i> Add Content</button>
+            </div>
+        </div>
+    </div>
+        <div class="card-footer">
+            <button type="submit" class="{{ button_css|default("btn btn-dark btn-sm") }}">
+                <i class="fa fa-save" aria-hidden="true"></i> {{ label_button|trans }}
+            </button>
+            <a href="{{ back_to_list }}" class="btn btn-link"><i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}</a>
+        </div>
+        {{ form_end(form) }}
+    <br>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{asset('assets/plugins/kartik-v/bootstrap-fileinput/js/fileinput.min.js')}}"></script>
+    <script src="{{asset('assets/plugins/kartik-v/bootstrap-fileinput/themes/fa/theme.min.js')}}"></script>
+    <script src="{{ asset('assets/plugins/summernote/summernote-bs4.min.js') }}" type="text/javascript"></script>
+    <script type="text/javascript">
+        var $collectionHolder;
+        var $pageURL = $(location).attr("href");
+        function addRowContentForm($collectionHolder) {
+            // Get the data-prototype explained earlier
+            var prototype = $collectionHolder.data('prototype');
+
+            // get the new index
+            var index = $collectionHolder.data('index');
+            var newForm = prototype;
+            newForm = newForm.replace(/__name__/g, index);
+            // increase the index with one for the next item
+            $collectionHolder.data('index', index + 1);
+
+            // Display the form in the page in an li, before the "Add a tag" link li
+            jQuery("#pageContent").append(newForm)
+            // Select2 for selectbox
+            $('select').select2({
+                theme: 'bootstrap4'
+            })
+
+            // Summernote
+            $('.textarea').summernote();
+            $('#cms_landing_page_cmsLandingPageContents_'+index+'_pageMediaType').change(function(){
+               var parentContainer = $(this).closest(".cmsPageContent");
+               if($(this).val() == "image"){
+                   parentContainer.find(".contentImage").show();
+                   parentContainer.find(".contentVideo").hide();
+                   $('label[for=cms_landing_page_cmsLandingPageContents_'+index+'_pageImageName]').addClass("required");
+                   $('#cms_landing_page_cmsLandingPageContents_'+index+'_pageImageName').prop("required","required");
+               }else{
+                   parentContainer.find(".contentImage").hide();
+                   parentContainer.find(".contentVideo").show();
+                   $('label[for=cms_landing_page_cmsLandingPageContents_'+index+'_pageImageName]').removeClass("required");
+                   $('#cms_landing_page_cmsLandingPageContents_'+index+'_pageImageName').prop("required","");
+               }
+            });
+            $('#cms_landing_page_cmsLandingPageContents_'+index+'_pageImageName').keyup(function(){
+                $('#cms_landing_page_cmsLandingPageContents_'+index+'_pageImageTitle').val($('#cms_landing_page_cmsLandingPageContents_'+index+'_pageImageName').val());
+                $('#cms_landing_page_cmsLandingPageContents_'+index+'_pageImageAlt').val($('#cms_landing_page_cmsLandingPageContents_'+index+'_pageImageName').val());
+            });
+
+            $('label[for=cms_landing_page_cmsLandingPageContents_'+index+'_pageImage]').remove();
+            $('#cms_landing_page_cmsLandingPageContents_'+index+'_pageImage').fileinput({
+                theme: "fa",
+                overwriteInitial: true,
+                maxFileSize: 1024,
+                showClose: false,
+                showCaption: false,
+                showBrowse: false,
+                browseOnZoneClick: true,
+                removeLabel: '',
+                defaultPreviewContent: '<h6 class="text-muted">Click to upload more images</h6>',
+                layoutTemplates: {main2: '{preview} {remove} {browse}'},
+                allowedFileExtensions: ["jpg",'jpeg', "png"]
+            });
+        }
+        $(function () {
+
+            $collectionHolder = jQuery('#pageContent').parent();
+            $collectionHolder.data('index', jQuery('#pageContent').find('.row').length);
+
+            // Summernote
+            $('.textarea').summernote();
+            // $mediaContent = jQuery('#mediaContent').parent();
+            // $mediaContent.data('index', jQuery('#mediaContent').find('.CmsBannerMedia').length);
+
+            $('label[for=cms_landing_page_cmsLandingPageImage]').remove();
+            $("#cms_landing_page_cmsLandingPageImage").fileinput({
+                theme: "fa",
+                overwriteInitial: true,
+                maxFileSize: 1024,
+                showClose: false,
+                showCaption: false,
+                showBrowse: false,
+                browseOnZoneClick: true,
+                removeLabel: '',
+                defaultPreviewContent: '<h6 class="text-muted">Click to landing page banner</h6>',
+                layoutTemplates: {main2: '{preview} {remove} {browse}'},
+                allowedFileExtensions: ["jpg", "png"]
+            });
+
+            // Copy the intro text to alt and title
+            $("#cms_landing_page_cmsLandingPageImageName").keyup(function(){
+                var Text = $(this).val();
+                $("#cms_landing_page_cmsLandingPageImageAlt").val(Text);
+                $("#cms_landing_page_cmsLandingPageImageTitle").val(Text);
+            });
+
+            $("#cms_landing_page_cmsLandingPageMediaType").change(function(){
+                if ($(this).val() == 'image'){
+                    $(".bannerVideo").hide();
+                    $(".bannerImage").show();
+                }else{
+                    $(".bannerImage").hide();
+                    $(".bannerVideo").show();
+                }
+            });
+
+            jQuery("#cms_landing_page_mstProductCategory").change(function () {
+                var data = {};
+                data['q'] = jQuery(this).val();
+                jQuery.ajax({
+                    url: "{{ path('location_productType') }}",
+                    data: data,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (data) {
+                        var product = $("#cms_landing_page_mstProductType");
+                        product.html('');
+                        // add options
+                        product.append('<option value="" >Select ProductType</option>');
+                        $.each(data, function (id, productType) {
+                            product.append('<option value="'+ productType.id +'">'+ productType.productType + '</option>');
+                        });
+                    }
+                });
+            });
+
+            jQuery(document).on('click', '.btn-danger', function (e) {
+                jQuery(this).closest(".cmsPageContent").remove();
+            });
+            jQuery("#addContent").on('click', function (e) {
+                addRowContentForm($collectionHolder);
+            });
+            $("#cms_page_pageTitle").keyup(function(){
+                var Text = $(this).val();
+                $("#cms_page_pageSlugName").val(slugify(Text));
+            });
+            if ($pageURL.search(/add/i) > 0) {
+                jQuery("#addContent").trigger("click");
+                //$('.removebutton').hide();
+            }else{
+                jQuery('.custom-file-input').map(function(index,item){
+                    $('label[for='+$(this).attr("id")+']').removeClass("required");
+                    $(this).prop("required","");
+                    $('label[for='+$(this).attr("id")+']').remove();
+                    $(this).fileinput({
+                        theme: "fa",
+                        overwriteInitial: true,
+                        maxFileSize: 1024,
+                        showClose: false,
+                        showCaption: false,
+                        showBrowse: false,
+                        browseOnZoneClick: true,
+                        removeLabel: '',
+                        defaultPreviewContent: '<h6 class="text-muted">Click to landing page banner</h6>',
+                        layoutTemplates: {main2: '{preview} {remove} {browse}'},
+                        allowedFileExtensions: ["jpg", "png"]
+                    });
+                });
+
+            }
+
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% if filters["priceRangeMin"] is defined and filters["priceRangeMax"] is defined %}
+    <li data-id="budget" data-value="{{ filters["priceRangeMin"] }}|{{ filters["priceRangeMax"] }}"><span>{{ filters["priceRangeMin"] }} {{ filters["priceRangeMinDenomination"] }} - {{ filters["priceRangeMax"] }} {{ filters["priceRangeMaxDenomination"] }} <a class="close-filter" href="#">&times;</a></span></li>
+{% endif  %}
+{%  if filters["projectRoomConfigurations"] is defined %}
+    {% for rooms in filters["projectRoomConfigurations"] %}
+        {% set roomConfiguration = get_room_configuration_by_id(rooms) %}
+        <li data-id="bhkrooms" data-value="{{ rooms }}"><span>{{ roomConfiguration.roomConfiguration }}<a class="close-filter" href="#">&times;</a></span></li>
+    {% endfor %}
+{% endif  %}
+{%  if filters["projectStatus"] is defined %}
+    {% for projectStatus in filters["projectStatus"] %}
+        {% set mstprojectStatus = get_projectstatus(projectStatus) %}
+        <li data-id="projectStatus" data-value="{{ projectStatus }}"><span>{{ mstprojectStatus.propertyType }}<a class="close-filter" href="#">&times;</a></span></li>
+    {% endfor %}
+{% endif  %}
+
+{%  if filters["projectPossessions"] is defined %}
+    {% for possession in filters["projectPossessions"] %}
+        {% set possessionsKey = possession|split("~").0 %}
+        {% set possessions = possession|split("~").1 %}
+        <li class="possession" data-id="possession" data-value="{{ possessionsKey }}"><span>{{ get_possession_format(possessionsKey) }}<a class="close-filter" href="#">&times;</a></span></li>
+    {% endfor %}
+{% endif  %}
+{%  if filters["projectPostedBy"] is defined %}
+    {% for postedby in filters["projectPostedBy"] %}
+        {% set vendorType = get_vendor_type_by_id(postedby) %}
+        <li data-id="posted-by" data-value="{{ postedby }}"><span>{{ vendorType.vendorType }} <a class="close-filter" href="#">&times;</a></span></li>
+    {% endfor %}
+{% endif  %}
+{%  if filters["projectAmenities"] is defined %}
+    {% for amenities in filters["projectAmenities"] %}
+        {% set amenity = get_amenities_by_id(amenities) %}
+        <li data-id="amenities" data-value="{{ amenities }}">
+            <span>
+                {% if amenity.mediaIcon %}
+                    <img src="{{ amenity.mediaIcon.iconImage|imagine_filter('resize_icon_image_30_40') }}" class="card-img-top" alt="...">
+                {% endif %}
+                {{ amenity.projectAmenities }}
+                <a class="close-filter" href="#">&times;</a>
+            </span>
+        </li>
+    {% endfor %}
+{% endif  %}
+{%  if filters["noOfBathRooms"] is defined %}
+    {% set bathrooms = [] %}
+    {% for bathroom in filters["noOfBathRooms"] %}
+        {% set bathrooms = bathrooms|merge([bathroom]) %}
+    {% endfor %}
+    <li data-id="bathrooms" data-value="{{ bathrooms|join(",") }}"><span>{{ bathrooms|join(",") }} Bathroom <a class="close-filter" href="#">&times;</a></span></li>
+{% endif  %}
+
+
+{%  if filters["productSubType"] is defined %}
+    {% for productSubType in filters["productSubType"] %}
+        {% set mstProductSubType = get_productSubType(productSubType) %}
+        <li data-id="productSubType" data-value="{{ productSubType }}"><span>{{ mstProductSubType.productSubType }}<a class="close-filter" href="#">&times;</a></span></li>
+    {% endfor %}
+{% endif  %}
+
+{%  if filters["propertyAreaValue"] is defined and filters["propertyAreaRange"] is defined  %}
+        <li data-id="propertyAreaRangeValue" data-value="{{ filters["propertyAreaRange"] }}"><span>{{ filters["propertyAreaRange"] }}:{{ filters["propertyAreaValue"] }}<a class="close-filter" href="#">&times;</a></span></li>
+{% endif  %}
+
+{%  if filters["projectAvailabilityFromDate"] is defined %}
+    {% for projectAvailabilityFromDate in filters["projectAvailabilityFromDate"] %}
+        {% set labelprojectAvailabilityFromDate = projectAvailabilityFromDate|split("~") %}
+        <li data-id="projectAvailabilityFromDate" data-value="{{ labelprojectAvailabilityFromDate.1 }}"><span>{{ labelprojectAvailabilityFromDate.0 }}<a class="close-filter" href="#">&times;</a></span></li>
+    {% endfor %}
+{% endif  %}

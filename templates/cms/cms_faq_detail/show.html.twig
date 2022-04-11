@@ -1,0 +1,41 @@
+{% extends 'layout/content.html.twig' %}
+{% block cms_content %}
+    <div class="card">
+        <div class="card-header">
+            <div class="col-sm-12">
+                <h3 class="card-title"><b>{{label_title|trans}}</b></h3>
+                <h4 class="card-title float-right">
+                    <a href="{{ path(path_edit, {'id': data.id}) }}" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i> {{'label.edit'|trans}}</a>
+                    <a href="{{ path(path_index) }}" class="btn btn-dark btn-sm"><i class="fa fa-list"></i> {{'label.back_to_list' | trans}}</a>
+                </h4>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body" id="record">
+            <div class="row">
+                    <table class="table table-responsive-md text-sm">
+                        <tbody>
+                            <tr>
+                                <td class="col-sm-2">{{ 'label.faq'|trans }}</td>
+                                <td class="col-sm-4" colspan="3">{{ data.cmsFaq.faq }}</td>
+                            </tr>
+                            <tr>
+                                <td class="col-sm-2">{{ 'label.question'|trans }}</td>
+                                <td class="col-sm-4">{{ data.faqQuestion }}</td>
+                                <td class="col-sm-2">{{ 'label.answer'|trans }}</td>
+                                <td class="col-sm-4">{{ data.faqAnswer|raw }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ 'label.seq_no'|trans }}</td>
+                                <td>{{ data.sequenceNo }}</td>
+                                <td>{{ 'label.is_active'|trans }}</td>
+                                <td>{{ data.isActive ? 'Yes' : 'No' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

@@ -1,0 +1,1028 @@
+{% extends 'portal/layout/index.html.twig' %}
+{% set office = get_office_list() %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assets/plugins/summernote/summernote-bs4.css') }}" media="all" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="{{asset('assets/plugins/kartik-v/bootstrap-fileinput/css/fileinput.min.css')}}">
+{% endblock %}
+{% block portal_content %}
+    {% set price =[] %}
+    {% set noOfBedRoom =[] %}
+    {% set noOfBathRooms =[] %}
+    {% set propertyTransactionCategory =[] %}
+    {%  for key,roomConfiguration in project.trnProjectRoomConfigurations %}
+        {% set price = {("roomId_"~roomConfiguration.id):roomConfiguration.agreementAmount}|merge(price) %}
+        {% if roomConfiguration.mstPropertyTransactionCategory.propertyTransactionCategory not in propertyTransactionCategory %}
+            {% set propertyTransactionCategory = propertyTransactionCategory|merge([roomConfiguration.mstPropertyTransactionCategory.propertyTransactionCategory]) %}
+        {% endif %}
+        {% if roomConfiguration.noOfBathRooms not in noOfBathRooms %}
+            {% set noOfBathRooms = noOfBathRooms|merge([roomConfiguration.noOfBathRooms]) %}
+        {% endif %}
+        {% if roomConfiguration.noOfBedRoom not in noOfBedRoom %}
+            {% set noOfBedRoom = noOfBedRoom|merge([roomConfiguration.noOfBedRoom]) %}
+        {% endif %}
+    {% endfor %}
+    {% set priceGroup = []|merge({("id_"~project.id): price|sort }) %}
+    {% set additionalDetails =[] %}
+    {% set projectAmenities = [] %}
+    {% set projectAmenitiesIcons = [] %}
+    {% set projectAmenitiesCategories = [] %}
+
+    {%  for trnProjectAdditionalDetail in project.trnProjectAdditionalDetail %}
+        {% if trnProjectAdditionalDetail.additionalDetailType not in additionalDetails %}
+            {% set additionalDetails = [trnProjectAdditionalDetail.additionalDetailType]|merge(additionalDetails) %}
+        {% endif  %}
+    {% endfor %}
+    {% for amenities in project.trnProjectAmenities|filter((a)=>a.isActive) %}
+        {% if ("%02d"|format(amenities.mstSubCategory.id)~"|"~amenities.mstSubCategory.subCategory~"|"~"%02d"|format(amenities.id)~"|"~amenities.trnAmenitiesDescription~"|"~"%02d"|format(amenities.mstProjectAmenities.id)~"|"~amenities.mstProjectAmenities
+            ) not in projectAmenities %}
+            {% set projectAmenities = ["%02d"|format(amenities.mstSubCategory.id)~"|"~amenities.mstSubCategory.subCategory~"|"~"%02d"|format(amenities.id)~"|"~amenities.trnAmenitiesDescription~"|"~"%02d"|format(amenities.mstProjectAmenities.id)~"|"~amenities.mstProjectAmenities]|merge(projectAmenities) %}
+        {% endif %}
+        {% if ("%02d"|format(amenities.mstSubCategory.id)~"|"~amenities.mstSubCategory.subCategory) not in projectAmenitiesCategories %}
+            {% set projectAmenitiesCategories = ["%02d"|format(amenities.mstSubCategory.id)~"|"~amenities.mstSubCategory.subCategory]|merge(projectAmenitiesCategories) %}
+        {% endif %}
+        {% if amenities.mstProjectAmenities.mediaIcon %}
+            {% if attribute(projectAmenitiesIcons,"id_"~amenities.id) is not defined %}
+                {% set projectAmenitiesIcons = {("id_"~amenities.id) : amenities.mstProjectAmenities.mediaIcon.iconImage}|merge(projectAmenitiesIcons) %}
+            {% endif %}
+        {% endif  %}
+    {% endfor %}
+    {% set similarProjects = get_other_project(project.trnVendorPartnerDetails,project.id) %}
+    <div class="wrapper">
+        <section>
+            <div class="container">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ path('portal_index') }}">Home</a></li>
+                        {% if propertyTransactionCategory.0 == "Buy" %}
+                            <li class="breadcrumb-item"><a href="{{ path('portal_properties_buy_list',{'slugName': project.mstProductType.productType|lower }) }}">{{ propertyTransactionCategory.0 }} - {{ project.mstProductType.productType }} Projects in {{ project.mstCity.city }}</a></li>
+                        {% else %}
+                            <li class="breadcrumb-item"><a href="{{ path('portal_properties_rent_list',{'slugName': project.mstProductType.productType|lower }) }}">{{ propertyTransactionCategory.0 }} - {{ project.mstProductType.productType }} Projects in {{ project.mstCity.city }}</a></li>
+                        {% endif %}
+{#                        <li class="breadcrumb-item"><a href="{{ path('portal_properties_buy_list',{'slugName':project.mstProductType }) }}">{{ project.mstProductType }}</a></li>#}
+{#                        <li class="breadcrumb-item"><a href="#">Property In {{ project.mstCity }}</a></li>#}
+                        <li class="breadcrumb-item active" aria-current="page">{{ project.projectName }}</li>
+                    </ol>
+                </nav>
+            </div>
+        </section>
+        <section class="flat-dtls-bar mt-2">
+
+
+
+            {% for roomConfiguration in project.trnProjectRoomConfigurations %}
+
+                {% if loop.first %}
+                    <div class="container">
+                        <ul class="flat-dtls">
+                            {% if roomConfiguration.mstPropertyTransactionCategory.id == 1 %}
+                                <li>
+                                    <div>
+                                        <b>{{ roomConfiguration.noOfBedRoom }} BHK {{ project.mstProductSubType.productSubType }}</b> in {{ project.projectName }}
+                                        <span class="location"><b>{{ project.trnVendorPartnerDetails.vendorPartnerName }},</b> {{ project.mstPincode.officeName }}, {{ project.mstCity.city }} - {{ project.mstPincode }}</span>
+                                    </div>
+                                    <ul>
+                                        <li>
+                                            <div>
+                                                <small>{{ roomConfiguration.mstProjectAreaCategory }}</small>
+                                                <span><b class="amt">{{ roomConfiguration.areaValue }}</b> {{ roomConfiguration.mstProjectArea }}</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="prz">
+                                    <span>
+                                      <i class="fa fa-rupee"></i>
+                                      <b>
+                                          {% if roomConfiguration.mstPropertyTransactionCategory.id == 1 %}
+                                          {{ roomConfiguration.agreementAmount|replace({'.00':'' }) }} </b> {{ roomConfiguration.mstDenomination.abbreviation }}
+                                        {% else %}
+                                            {{ roomConfiguration.rentPerMonth }}
+                                        {% endif %}
+                                    </span>
+                                                <small>onwards</small>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                            {% else %}
+                                <li>
+
+                                    <div>
+                                        <b>{{ roomConfiguration.noOfBedRoom }} BHK {{ project.mstProductSubType.productSubType }}</b> For Rent in {{ project.projectName }}
+                                        <span class="location"><b>{{ project.trnVendorPartnerDetails.vendorPartnerName }},</b> {{ project.mstPincode.officeName }}, {{ project.mstCity.city }} - {{ project.mstPincode }}</span>
+                                    </div>
+                                    <ul>
+                                        <li>
+                                            <div class="prz">
+                                                <span>
+                                                  <i class="fa fa-rupee"></i>
+                                                  <b>{{ roomConfiguration.rentPerMonth|replace({'.00':''}) }}</b>/M
+                                                </span>
+                                                <small>{{ roomConfiguration.isNegotiable?"Negotiable":"" }}</small>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="prz">
+                                                <span>
+                                                  <b>{{ roomConfiguration.areaValue }}</b>
+                                                </span>
+                                                <small>{{ roomConfiguration.mstProjectArea }}</small>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="prz">
+                                                <span>
+                                                  <i class="fa fa-rupee"></i>
+                                                  <b>{{ roomConfiguration.deposit|replace({'.00':''}) }} {{ roomConfiguration.mstDenomination }}</b>
+                                                </span>
+                                                <small>Deposit</small>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            {% endif %}
+                            <li>
+                                <ul>
+                                    <li class="share">
+                                        <div>
+                                            <a href="#" class="fa fa-share-alt"></a>
+                                        </div>
+                                        <div class="share-widget">
+                                            <label>Share On</label>
+                                            <ul>
+                                                <li><a href="https://www.facebook.com/sharer/sharer.php?u={{ app.request.schemeAndHttpHost ~ app.request.requestUri }}" target="_blank"><i class="fa fa-facebook"></i></a></li>
+{#                                                <li><a href="#" class="fa-instagram"></a></li>#}
+                                                <li><a href="https://www.linkedin.com/shareArticle?mini=true&title={{ project.projectName }}&url={{ app.request.schemeAndHttpHost ~ app.request.requestUri }}" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+                                                <li><a href="https://api.whatsapp.com/send?phone=918291890911&text={{ app.request.schemeAndHttpHost ~ app.request.requestUri }}" target="_blank"><i class="fa fa-whatsapp"></i></a></li>
+                                            </ul>
+                                            <a class="close-share" href="javascript:;"><i class="fa fa-times"></i></a>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                {% endif  %}
+            {% endfor %}
+        </section>
+        <section class="mt-2">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-9">
+                        {% set uploadImageCount = project.trnUploadDocuments|length %}
+                        <div id="sync1" class="slider owl-carousel">
+                            {% for  upload in project.trnUploadDocuments|sort((a,b)=>a.position <=> b.position) %}
+                            <div class="item">
+                                <div class="card-deck cust-card">
+                                    <div class="card">
+                                        <figure class="">
+                                            <img src="{{ upload.mediaFilePath|imagine_filter('gallery_image_image_900_450') }}" class="card-img-top" alt="...">
+                                            <figcaption>
+                                                <div class="top-left">
+                                                    {% if project.isTredRecommended %}
+                                                        <span><i class="fa fa-check"></i> {{ project.orgCompany.company }} Recommended </span>
+                                                    {% endif  %}
+                                                </div>
+
+{#                                                <div class="center">#}
+{#                                                    <a href="#" class="play-icn">#}
+{#                                                        <i class="fa fa-play"></i>#}
+{#                                                        <small>3d View</small>#}
+{#                                                    </a>#}
+{#                                                </div>#}
+                                                <div class="bottom-left">
+                                                    <ul class="like-view">
+                                                        <li>
+                                                            <a href="#" data-id="{{ project.id }}" class="thumbs-up" >
+                                                                <i class="fa fa-thumbs-o-up"></i>
+                                                                <b class="fa-thumbs-o-up-count">{% if project.projectlikes %}{{ project.projectlikes }}{% else %}0{% endif %}</b>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#">
+                                                                <i class="fa fa-eye"></i>
+                                                                <b>{% if project.projectViews %}{{ project.projectViews }}{% else %}0{% endif %}</b>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                {% if project.isRera %}
+                                                    <div class="bottom-right">
+                                                        <div class="rera">
+                                                            RERA
+                                                        </div>
+                                                    </div>
+                                                {% endif  %}
+                                            </figcaption>
+                                        </figure>
+                                    </div>
+                                </div>
+                            </div>
+                            {% else %}
+                                <div class="item">
+                                    <div class="card-deck cust-card">
+                                        <div class="card">
+                                            <figure class="">
+                                                <img src="{{ asset('resources/images/no_image.jpg') }}" class="card-img-top" title="No Image" alt="No Image">
+                                                <figcaption>
+                                                    <div class="top-left">
+                                                        {% if project.isTredRecommended %}
+                                                            <span><i class="fa fa-check"></i> {{ project.orgCompany.company }} Recommended </span>
+                                                        {% endif  %}
+                                                    </div>
+
+{#                                                <div class="center">#}
+{#                                                    <a href="#" class="play-icn">#}
+{#                                                        <i class="fa fa-play"></i>#}
+{#                                                        <small>3d View</small>#}
+{#                                                    </a>#}
+{#                                                </div>#}
+                                                    <div class="bottom-left">
+                                                        <ul class="like-view">
+                                                            <li>
+                                                                <a href="#" data-id="{{ project.id }}" class="thumbs-up" >
+                                                                    <i class="fa fa-thumbs-o-up"></i>
+                                                                    <b class="fa-thumbs-o-up-count">{% if project.projectlikes %}{{ project.projectlikes }}{% else %}0{% endif %}</b>
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a href="#">
+                                                                    <i class="fa fa-eye"></i>
+                                                                    <b>{% if project.projectViews %}{{ project.projectViews }}{% else %}0{% endif %}</b>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    {% if project.isRera %}
+                                                        <div class="bottom-right">
+                                                            <div class="rera">
+                                                                RERA
+                                                            </div>
+                                                        </div>
+                                                    {% endif  %}
+                                                </figcaption>
+                                            </figure>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <div class="item">
+                                <a href="#" class="btn-view-more">
+                                    <i class="fa fa-camera"></i>
+                                    <b>{{ uploadImageCount }} Photos</b>
+                                </a>
+                            </div>
+                        </div>
+                        <div id="sync2" class="navigation-thumbs owl-carousel">
+                            {% for  upload in project.trnUploadDocuments|sort((a,b)=>a.position <=> b.position) %}
+                            <div class="item">
+                                <img src="{{ upload.mediaFilePath|imagine_filter('gallery_image_image_100_80') }}" class="card-img-top" alt="...">
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% if propertyTransactionCategory.0 != "Buy" %}
+                            <div class="rent-details">
+                            <ul class="flat-dtls property-dtls">
+                                <li>
+                                <span class="icon"><img src="/resources/images/icons/icon-Furniture-sm.png">
+                                </span>
+                                    <span>
+                                        {{ noOfBedRoom|join(',') }}
+                                    <small>No. of Bedroom </small>
+                                </span>
+                                </li>
+                                <li>
+                                <span class="icon"><img src="/resources/images/icons/icon-property-sm.png">
+                                </span>
+                                    <span>
+                                    {{ project.mstProductSubType }}
+                                    <small>Property Type</small>
+                                </span>
+
+                                </li>
+                                <li>
+                                <span class="icon"><img src="/resources/images/icons/icon-Family.png">
+                                </span>
+                                    <span>
+                                    {% set preferedTenants = '' %}
+                                    {% for roomConfiguration in project.trnProjectRoomConfigurations %}
+                                        {% set preferedTenants = roomConfiguration.mstPreferredTenant|join(',') %}
+                                    {% endfor %}
+                                    {{ preferedTenants}}
+                                    <small>Preferred Tenants</small>
+                                </span>
+
+                                </li>
+                                <li>
+                                <span class="icon"><i class="fa fa-calendar-o"></i>
+                                </span>
+                                    <span>
+                                    {{ project.availabilityFromDate|date('d M Y') }}
+                                    <small>Possession</small>
+                                </span>
+                                </li>
+                                <li>
+                                <span class="icon"><img src="/resources/images/icons/Icon-Parking.png">
+                                </span>
+                                    <span>
+                                  None
+                                    <small>Parking</small>
+                                </span>
+                                </li>
+                                <li>
+                                <span class="icon"><img src="/resources/images/icons/icon-AgeProperty.png">
+                                </span>
+                                    <span>
+                                    {{ project.propertyAge }}
+                                    <small>Age of Property</small>
+                                </span>
+
+                                </li>
+                                <li>
+                                <span class="icon"><img src="/resources/images/icons/Icon-Balcony.png">
+                                </span>
+                                    <span>
+                                    {% set balcony = '' %}
+                                    {% for roomConfiguration in project.trnProjectRoomConfigurations %}
+                                        {% set balcony = roomConfiguration.noOfBalcony|join(',') %}
+                                    {% endfor %}
+                                    {{ balcony }}
+                                    <small>Balcony</small>
+                                </span>
+
+                                </li>
+                                <li>
+                                <span class="icon"><i class="fa fa-flag-o"></i>
+                                </span>
+                                    <span>
+                                    {{ project.availabilityFromDate|date('d M Y') }}
+                                    <small>Posted On</small>
+                                </span>
+                                </li>
+                            </ul>
+                        </div>
+                        {% endif  %}
+                        <div class="scroll-container">
+                            <div class="project-dtls">
+                            {% if propertyTransactionCategory.0 == "Buy" %}
+                            <div id="secondary-nav" class="secondary-nav">
+                                <nav class="vam nav scroll dragger scroller" id="main-menu">
+                                    <li class="nav-item"><a class="nav-link active" href="#overview" data-id="overview" aria-controls="overview">Overview</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#floor-plan">Floor Plan</a></li>
+                                    {% if project.mstProjectFeature|length %} <li class="nav-item"><a class="nav-link" href="#features">Features</a></li> {% endif %}
+                                    {% if projectAmenities|length %}
+                                        <li class="nav-item"><a class="nav-link" href="#amenities">Amenities</a></li>
+                                    {% endif  %}
+                                    <li class="nav-item"><a class="nav-link" href="#project-details">Project Details</a></li>
+                                    {% if 'surroundings' in additionalDetails %}
+                                        <li class="nav-item"><a class="nav-link" href="#surroundings">Surroundings</a></li>
+                                    {% endif  %}
+                                    {% if 'price_and_payment_terms' in additionalDetails %}
+                                        <li class="nav-item"><a class="nav-link" href="#price">Price</a></li>
+                                    {% endif  %}
+                                    {% if 'terms_and_conditions' in additionalDetails %}
+                                        <li class="nav-item"><a class="nav-link" href="#tnc">Terms & Conditions</a></li>
+                                    {% endif  %}
+                                    {% if 'contact_details' in additionalDetails %}
+                                        <li class="nav-item"><a class="nav-link" href="#contact-details">Contact Details</a></li>
+                                    {% endif  %}
+                                    {% if 'general' in additionalDetails %}
+                                        <li class="nav-item"><a class="nav-link" href="#general">General</a></li>
+                                    {% endif  %}
+                                    {% if similarProjects|length %}
+                                    <li class="nav-item"><a class="nav-link" href="#similar-projects">Similar Projects</a></li>
+                                    {% endif %}
+                                </nav>
+                            </div>
+                            {% endif %}
+                            <div  class="">
+                                <div id="overview" class="section scrollspy">
+                                    {% if propertyTransactionCategory.0 != "Buy" %}
+                                    <h2>Overview</h2>
+                                    {% endif  %}
+                                    <ul class="overview-list">
+                                        {% for roomConfiguration in project.trnProjectRoomConfigurations %}
+
+                                            {% if loop.first and roomConfiguration.mstPropertyTransactionCategory.id == 1  %}
+                                                <li>Project Type<b>{{ project.mstPropertyType }}</b></li>
+                                                <li>Project Status<b>{{ project.mstProjectStatus.propertyType }}</b></li>
+                                                <li>Possession on
+                                                    <b>
+                                                        {% if project.possessionDate != null %}
+                                                            {{ project.possessionDate|date('M - Y') }}
+                                                        {% elseif project.possessionYear != "" and project.possessionMonth  %}
+                                                            {{ project.possessionMonth[:3] }} - {{ project.possessionYear }}
+                                                        {% endif %}
+                                                    </b>
+                                                </li>
+                                                <li>Configurations<b>{% for rooms in project.mstRoomConfiguration %}{{ rooms }}{% endfor %}</b></li>
+                                                <li>Developer<b>{{ project.trnVendorPartnerDetails }}</b></li>
+                                                <li>Project <b>{{ project.projectName }}</b></li>
+                                                <li>{{ roomConfiguration.mstProjectAreaCategory }}<b>{{ roomConfiguration.areaValue }} {{ roomConfiguration.mstProjectArea }}</b><small>₹ {{ roomConfiguration.price }}/{{ roomConfiguration.mstProjectArea }}</small></li>
+{#                                                <li>Carpet area<b>700 sqft</b><small>₹ 41,125/sqft</small></li>#}
+{#                                                <li>Loading<b>39%</b></li>#}
+{#                                                <li>Floor<b>49 (Out of 65 Floors)</b></li>#}
+                                                <li>Car parking<b>1 Covered</b></li>
+                                                <li>RERA ID
+                                                <b>
+                                                    {% if project.isRera %}
+                                                        {% if project.mahaReraRegisterationNo %}
+                                                            {{ project.mahaReraRegisterationNo }}
+                                                        {% else %}
+                                                            Yes
+                                                        {% endif %}
+                                                    {% else %}
+                                                        No
+                                                    {% endif %}
+                                                </b></li>
+                                                <li>Bedrooms<b>{{ noOfBedRoom|join(',') }}</b></li>
+                                                <li>Bathrooms<b>{{ noOfBathRooms|join(',') }}</b></li>
+                                                <li>Bank Approved <b>{{ project.bankApproved ? 'Yes' : 'No' }}</b></li>
+                                            {% elseif loop.first and roomConfiguration.mstPropertyTransactionCategory.id == 2 %}
+                                                <li>Project Type<b>{{ project.mstPropertyType }}</b></li>
+                                                <li>Floor<b>{{ roomConfiguration.floor }}</b></li>
+                                                <li>Furnished Status<b>{{ roomConfiguration.mstFurnishing }}</b></li>
+                                                <li>Status of Electricity<b>{{ project.electricityStatus }}</b></li>
+                                                <li>Bathrooms <b>{{ noOfBathRooms|join(',') }}</b></li>
+                                                <li>Lifts <b>{{ project.noOfLifts  }}</b></li>
+                                                <li>Facing <b>{{ roomConfiguration.mstFacing }}</b></li>
+                                                <li>Water Availability <b>{{ project.waterAvailibility  }}</b></li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                {% if propertyTransactionCategory.0 == "Buy" %}
+                                <div id="floor-plan" class="floor-plan section scrollspy">
+                                    <h2>Floor Plan</h2>
+                                    <ul class="nav nav-tabs h-tabs" id="myTab" role="tablist">
+                                        {% set floorPlan = [] %}
+                                        {% for roomConfiguration in project.trnProjectRoomConfigurations %}
+                                            {% if roomConfiguration.mstroomConfiguration.roomConfiguration not in floorPlan %}
+                                                {% set floorPlan = [roomConfiguration.mstroomConfiguration.roomConfiguration]|merge(floorPlan) %}
+                                            {% endif %}
+                                        {% endfor %}
+
+                                        {% for fplan in floorPlan|sort %}
+                                        <li class="nav-item" role="presentation">
+                                            <a class="nav-link {% if loop.first %}active{% endif %}" id="tab-{{ loop.index }}" data-toggle="tab" href="#tab{{ loop.index }}" role="tab" aria-controls="home" aria-selected="true">{{ fplan }}</a>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                    <div class="tab-content tabs-container" id="myTabContent">
+                                        {% for fplan in floorPlan|sort %}
+                                            <div class="tab-pane fade show {% if loop.first %}active{% endif %}" id="tab{{ loop.index }}" role="tabpanel" aria-labelledby="tab-{{ loop.index }}">
+                                            <table class="table table-borderless flpln-dtls">
+                                                <thead>
+                                                <tr>
+                                                    <th>Floor Blue Print</th>
+                                                    <th>Area</th>
+                                                    <th>Agreement Price</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for roomConfiguration in project.trnProjectRoomConfigurations|filter((a)=>a.mstroomConfiguration.roomConfiguration == fplan ) %}
+                                                        <tr>
+                                                            <td>
+                                                                <figure class="floor-plan-img">
+                                                                    <img src="{{ roomConfiguration.mediaFilePath|imagine_filter("gallery_image_image_100_80") }}">
+                                                                    <a href="#" data-source="{{ asset('images/files') }}/{{ roomConfiguration.mediaFileName}}"  data-toggle="modal" data-target="#floor-plan-modal" class="fa fa-search btn-search floorPlanOriginalImage"></a>
+                                                                </figure>
+                                                            </td>
+                                                            <td>
+                                                                <div class="area-prz">
+                                                                    <span><b>{{ roomConfiguration.areaValue }}</b> {{ roomConfiguration.mstProjectArea }}</span>
+                                                                    <span><i class="fa fa-rupee"></i> {{ roomConfiguration.price }}/{{ roomConfiguration.mstProjectArea }}</span>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="area-prz">
+                                                                    <span class="amt-lg"><i class="fa fa-rupee"></i> <b>{{ roomConfiguration.agreementAmount }}</b> {{ roomConfiguration.mstDenomination.abbreviation }}</span>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                            </div>
+                                        {% endfor  %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if project.mstProjectFeature|length %}
+                                <div id="features" class="section scrollspy">
+                                    <h2>Features</h2>
+                                    <ul class="bullet-list-typ1">
+                                        {% for feature in project.mstProjectFeature %}
+                                        <li>{{ feature }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                {% endif %}
+                                {% if projectAmenities|length %}
+                                <div id="amenities" class="section scrollspy">
+                                    <h2>Amenities</h2>
+                                    <ul class="amenities-listing">
+                                        {% for projectAmenitiesCategory in projectAmenitiesCategories|sort %}
+                                            {% set tmpcategory = projectAmenitiesCategory|split("|") %}
+                                        <li>
+                                            <span>{{ tmpcategory.1 }}</span>
+                                            <ul>
+                                                {% for amenities in projectAmenities|sort %}
+                                                    {% set tmpamenities = amenities|split("|") %}
+                                                    {% if tmpamenities.0 == tmpcategory.0 %}
+                                                        <li>
+                                                            {% set iconName = "" %}
+                                                            {% for key,icon in projectAmenitiesIcons %}
+                                                                {% set keyValue = ("id_"~tmpamenities.2|trim('0','left')) %}
+                                                                {% if key == keyValue %}
+                                                                    {% set iconName = icon %}
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                            {% if iconName != "" %}
+                                                                {% set amentites_title = tmpamenities.3?tmpamenities.3:tmpamenities.5 %}
+                                                                <span class="icon"><img src="{{ iconName|imagine_filter('resize_icon_image_30_40') }}" data-toggle="tooltip" alt="{{ amentites_title }}" title="{{ amentites_title }}"></span>
+                                                            {% endif %}
+                                                            <span>{% if tmpamenities.3 !="" %}{{ tmpamenities.3 }}{% else %}{{ tmpamenities.5 }}{% endif %} </span>
+
+                                                        </li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </ul>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+{#                                    <div class="dtls">#}
+{#                                        {% for trnProjectAdditionalDetail in project.trnProjectAdditionalDetail %}#}
+{#                                            {% if trnProjectAdditionalDetail.additionalDetailType == 'amenities'%}#}
+{#                                                {{ trnProjectAdditionalDetail.additionalDetail|raw }}#}
+{#                                            {% endif %}#}
+{#                                        {% endfor %}#}
+{#                                    </div>#}
+                                </div>
+                                {% endif %}
+                                {% if propertyTransactionCategory.0 == "Buy" %}
+                                <div id="project-details" class="project-details section scrollspy">
+                                    <h2>Project Details</h2>
+                                    <h3>{{ project.projectName }}</h3>
+                                    <h4>Developer <span>{{ project.trnVendorPartnerDetails }}</span></h4>
+                                    <p>{{ project.projectOverview|raw }}</p>
+                                    {% if project.mstProjectHighlights|length > 0  %}
+                                        <h5>Highlights</h5>
+                                        <ul class="bullet-list-typ1 typ2">
+                                            {% for mstProjectHighlights in project.mstProjectHighlights %}
+                                                    <li>{{ mstProjectHighlights }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif  %}
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <figure class="developer-logo">
+                                                <img src="{{ project.trnVendorPartnerDetails.companyLogo|imagine_filter('resize_logo_100') }}" title=""  alt=""/>
+                                            </figure>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="developer-dtls">
+                                                <ul>
+                                                    <li>
+                                                        <b>{{ project.trnVendorPartnerDetails.experience }}</b>
+                                                        <span>Years of Experience</span>
+                                                    </li>
+                                                    {% if project.trnVendorPartnerDetails.projectsCompleted %}
+                                                    <li>
+                                                        <b>{{ project.trnVendorPartnerDetails.projectsCompleted }}</b>
+                                                        <span>Total Projects</span>
+                                                    </li>
+                                                    {% endif %}
+
+                                                </ul>
+                                                <a href="#" class="btn btn-primary">All {{ project.trnVendorPartnerDetails }} Projects</a>
+                                            </div>
+                                            <p>{{ project.trnVendorPartnerDetails.introduction|raw }} {# <a href="#" class="moreless-button">Read More...</a> #}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if 'surroundings' in additionalDetails %}
+                                    <div id="surroundings">
+                                    <h2>Surroundings</h2>
+                                    <div class="dtls">
+                                    {% for trnProjectAdditionalDetail in project.trnProjectAdditionalDetail %}
+                                        {% if trnProjectAdditionalDetail.additionalDetailType == 'surroundings'%}
+                                            {{ trnProjectAdditionalDetail.additionalDetail|raw }}
+                                        {% endif %}
+                                    {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if 'terms_and_conditions' in additionalDetails %}
+                                    <div id="tnc" class="section scrollspy">
+                                    <h2>Terms & Condition</h2>
+                                    <div class="dtls">
+                                    {% for trnProjectAdditionalDetail in project.trnProjectAdditionalDetail %}
+                                        {% if trnProjectAdditionalDetail.additionalDetailType == 'terms_and_conditions'%}
+                                            {{ trnProjectAdditionalDetail.additionalDetail|raw }}
+                                        {% endif %}
+                                    {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif  %}
+                                {% if 'price_and_payment_terms' in additionalDetails %}
+                                <div id="price" class="section scrollspy">
+                                    <h2>Price & Payment Terms</h2>
+                                    <div class="dtls">
+                                        {% for trnProjectAdditionalDetail in project.trnProjectAdditionalDetail %}
+                                            {% if trnProjectAdditionalDetail.additionalDetailType == 'price_and_payment_terms'%}
+                                                {{ trnProjectAdditionalDetail.additionalDetail|raw }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if 'contact_details' in additionalDetails %}
+                                    <div id="contact-details" class="section scrollspy">
+                                    <h2>Contact Details</h2>
+                                    <div class="dtls">
+                                    {% for trnProjectAdditionalDetail in project.trnProjectAdditionalDetail %}
+                                        {% if trnProjectAdditionalDetail.additionalDetailType == 'contact_details'%}
+                                            {{ trnProjectAdditionalDetail.additionalDetail|raw }}
+                                        {% endif %}
+                                    {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif  %}
+
+{#                                <div id="compare" class="">#}
+{#                                    <h2>Compare</h2>#}
+{#                                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. </p>#}
+{#                                    <a href="#" class="btn btn-primary">Compare Now</a>#}
+{#                                </div>#}
+
+                                {% if 'general' in additionalDetails %}
+                                    <div id="general" class="section scrollspy" >
+                                    <h2>General</h2>
+                                    <div class="dtls">
+                                        {% for trnProjectAdditionalDetail in project.trnProjectAdditionalDetail %}
+                                            {% if trnProjectAdditionalDetail.additionalDetailType == 'general'%}
+                                                {{ trnProjectAdditionalDetail.additionalDetail|raw }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif  %}
+
+                                {% if similarProjects|length %}
+                                    <div id="similar-projects" class="section scrollspy">
+                                        <h2>Similar Projects</h2>
+                                        {% include "portal/page/product/similar-project.html.twig" %}
+                                    </div>
+                                    {% endif  %}
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="rhs-sec mob-hide">
+                            <div class="form-sec with-bg">
+                                <div class="bdr-sec contact-tred-expert">
+{#                                    {%  include("portal/page/product/tred-expert.html.twig") %}#}
+                                    {#            <div class="otp-form" style="display:none">#}
+                                    {#                <div class="form-group">#}
+                                    {#                    <h2>Verify <span>Mobile Number</span></h2>#}
+                                    {#                    <span class="verify-code">Enter 6 digit Verification Code#}
+                                    {#                                        sent on <b>9865456250</b> <span>Edit</span></span>#}
+                                    {#                </div>#}
+                                    {#                <div class="form-group mt-3 mb-4">#}
+                                    {#                    <div class="input-group otp-input">#}
+                                    {#                        <input type="password" class="form-control" maxlength="1">#}
+                                    {#                        <input type="password" class="form-control" maxlength="1">#}
+                                    {#                        <input type="password" class="form-control" maxlength="1">#}
+                                    {#                        <input type="password" class="form-control" maxlength="1">#}
+                                    {#                        <input type="password" class="form-control" maxlength="1">#}
+                                    {#                        <input type="password" class="form-control" maxlength="1">#}
+                                    {#                    </div>#}
+                                    {#                </div>#}
+                                    {#                <div class="w-100"></div>#}
+                                    {#                <div class="form-group mb-3"><a href="#" class="btn btn-primary">Verify Now</a></div>#}
+                                    {#                <div class="otp-timer">#}
+                                    {#                    <span id="timerBlock">You will receive OTP via SMS within <b id="timer">45</b> <span>min</span></span>#}
+                                    {#                </div>#}
+                                    {#                <div class="resend-otp">#}
+                                    {#                    <p>Did not get Verification Code?</p>#}
+                                    {#                    <span id="resendLink">#}
+                                    {#                                            <a href="#" class="red-link"><i class="fa fa-undo"></i>  Resend OTP</a>#}
+                                    {#                                            <a href="#"><i class="fa fa-phone"></i> Verify on Call</a>#}
+                                    {#                                        </span>#}
+                                    {#                </div>#}
+                                    {#            </div>#}
+
+                                </div>
+                            </div>
+
+                            <div class="btn-sec">
+                                <a href="#" class="btn btn-primary" id="call-back">Get A Call Back</a>
+{#                                <a href="#" class="btn btn-primary" id="call-back">Get A Call Back</a>#}
+{#                                <a class="btn btn-primary-outline" href="#contact-details">#}
+{#                                    <span class="fa-stack fa-lg">#}
+{#                                      <i class="fa fa-user-circle-o"></i>#}
+{#                                    </span>#}
+{#                                    <span>Contact Certified Agent</span>#}
+{#                                </a>#}
+                                {% if project.brochure %}
+                                <a class="btn btn-primary-outline" target="_blank" href="{{ absolute_url(asset(project.brochurePath)) }}">
+                                    <span class="fa-stack fa-lg">
+                                      <i class="fa fa-file-o"></i>
+                                      <i class="fa fa-long-arrow-down"></i>
+                                    </span>
+                                    <span> Download Brochure</span>
+                                </a>
+                                {% endif  %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{asset('assets/plugins/kartik-v/bootstrap-fileinput/js/fileinput.min.js')}}"></script>
+    <script src="{{asset('assets/plugins/kartik-v/bootstrap-fileinput/themes/fa/theme.min.js')}}"></script>
+{#    <script src="{{ asset('assets/plugins/summernote/summernote-bs4.min.js') }}" type="text/javascript"></script>#}
+    <script src="{{asset('resources/js/simple-scrollspy.min.js')}}"></script>
+    <script>
+        var url = "";
+        {% for roomConfiguration in project.trnProjectRoomConfigurations %}
+                {% if loop.first %}
+                    url = "{{ path('portal_tred_experts_room',{'mstPropertyTransactionCategory':roomConfiguration.mstPropertyTransactionCategory.propertyTransactionCategory,'trnProjectRoomConfiguration':roomConfiguration.id}) }}"
+                {% endif %}
+        {% endfor %}
+        jQuery("document").ready(function(){
+
+            $("body").attr("data-spy", "scroll");
+            $("body").attr("data-target", "#secondary-nav");
+
+            $('.social-btn').on('click', function(e){
+                e.preventDefault();
+                $(this).siblings('.social-media').slideToggle();
+            });
+            $('.fa-close').on('click', function(e){
+                e.preventDefault();
+                $(this).parent('.social-media').slideToggle();
+            });
+            $('.thumbs-up').on('click', function(e){
+                e.preventDefault();
+                var item = $(this);
+                var data = {};
+                data['id'] = item.attr("data-id");
+                jQuery.ajax({
+                    url: "{{ path('portal_project_like') }}",
+                    type: "POST",
+                    dataType: "json",
+                    data: data,
+                    success: function (result) {
+                        item.find(".fa-thumbs-o-up-count").html(result.data);
+                    }
+                });
+            });
+
+            jQuery.ajax({
+                url: url,
+                type: "GET",
+                dataType: "HTML",
+                success: function (data) {
+                    $(".contact-tred-expert").html(data);
+                    //formActition();
+                    // $('.form').submit(function(event) {
+                    //     event.preventDefault();
+                    //     var form = $(this).serialize();
+                    //     callAjax(form,url);
+                    // });
+                }
+            });
+
+            /****Gallery Slider****/
+            var sync1 = $(".slider");
+            var sync2 = $(".navigation-thumbs");
+
+            var thumbnailItemClass = '.owl-item';
+
+            var slides = sync1.owlCarousel({
+                video:true,
+                startPosition: 0,
+                items:1,
+                loop:true,
+                margin:10,
+                autoplay:false,
+                autoplayTimeout:6000,
+                autoplayHoverPause:false,
+                nav: false,
+                dots: true
+            }).on('changed.owl.carousel', syncPosition);
+
+            function syncPosition(el) {
+                $owl_slider = $(this).data('owl.carousel');
+                var loop = $owl_slider.options.loop;
+
+                if(loop){
+                    var count = el.item.count-1;
+                    var current = Math.round(el.item.index - (el.item.count/2) - .5);
+                    if(current < 0) {
+                        current = count;
+                    }
+                    if(current > count) {
+                        current = 0;
+                    }
+                }else{
+                    var current = el.item.index;
+                }
+                var owl_thumbnail = sync2.data('owl.carousel');
+                var itemClass = "." + owl_thumbnail.options.itemClass;
+
+
+                var thumbnailCurrentItem = sync2
+                    .find(itemClass)
+                    .removeClass("synced")
+                    .eq(current);
+
+                thumbnailCurrentItem.addClass('synced');
+
+                if (!thumbnailCurrentItem.hasClass('active')) {
+                    var duration = 300;
+                    sync2.trigger('to.owl.carousel',[current, duration, true]);
+                }
+            }
+            var thumbs = sync2.owlCarousel({
+                //startPosition: 12,
+                items:8,
+                loop:false,
+                margin:10,
+                autoplay:false,
+                nav: false,
+                dots: false,
+                responsive: {
+                    0: {
+                        items: 5
+                    },
+                    600: {
+                        items: 8
+                    },
+                    1000: {
+                        items: 8
+                    }
+                },
+                onInitialized: function (e) {
+                    var thumbnailCurrentItem =  $(e.target).find(thumbnailItemClass).eq(this._current);
+                    thumbnailCurrentItem.addClass('synced');
+                },
+
+            })
+                .on('click', thumbnailItemClass, function(e) {
+                    e.preventDefault();
+                    var duration = 300;
+                    var itemIndex =  $(e.target).parents(thumbnailItemClass).index();
+                    sync1.trigger('to.owl.carousel',[itemIndex, duration, true]);
+                }).on("changed.owl.carousel", function (el) {
+                    var number = el.item.index;
+                    $owl_slider = sync1.data('owl.carousel');
+                    $owl_slider.to(number, 100, true);
+                });
+            /****Gallery Slider****/
+
+            // $('#mainBanner').owlCarousel({
+            //     loop:true,
+            //     margin:10,
+            //     nav:true,
+            //     responsive:{
+            //         0:{
+            //             items:1
+            //         },
+            //         600:{
+            //             items:3
+            //         },
+            //         1000:{
+            //             items:5
+            //         }
+            //     }
+            // })
+            $("a.floorPlanOriginalImage").click(function(e){
+                e.preventDefault();
+                $(".floorPlanOriginalImage").attr("src",$(this).attr("data-source"));
+            });
+
+            // $(".secondary-nav a[href^='#']").on('click', function(event) {
+            //
+            //     var target = this.hash;
+            //     event.preventDefault();
+            //     //$('.dtls-content>div').removeClass('top-scroll');
+            //     //$(target).css('margin-top','270px');
+            //     var flatDtls = $('.flat-dtls-bar');
+            //     var navOffset = $('.secondary-nav').height() + flatDtls.height();
+            //
+            //
+            //     return $('html, body').animate({
+            //         scrollTop: $(this.hash).offset().top - navOffset
+            //     }, 300, function() {
+            //         return window.history.pushState(null, null, target);
+            //     });
+            // });
+            //
+            // $(".secondary-nav li").click(function() {
+            //     centerLI(this, '.vam');
+            //     $(".secondary-nav li a").removeClass('active');
+            //     $(this).find("a").addClass("active");
+            //     var secondaryNav = $(".secondary-nav li a").map(function () {
+            //         var obj = $(this).attr("href");
+            //         $(obj).css("padding-top","0");
+            //     });
+            //     $($(this).find("a").attr("href")).css("padding-top","80px");
+            //     if(!$(this).hasClass('dropdown')){
+            //         $('.nav-link').removeClass('visible');
+            //         $('.submenu').removeClass('visible');
+            //     }
+            // });
+
+
+
+        });
+        window.onload = function () {
+            scrollSpy('#main-menu', {
+                sectionClass: '.scrollspy',
+                menuActiveTarget: '.nav-link',
+                offset: 100,
+                scrollContainer: '.scroll-container',
+                // smooth scroll
+                smoothScroll: true,
+                smoothScrollBehavior: function(element) {
+                    $(element).addClass('scrollspy-stick').siblings().removeClass('scrollspy-stick');
+                    element.scrollIntoView({ behavior: 'smooth', offset:200 })
+                }
+            })
+        }
+        function centerLI(target, outer) {
+            var out = $(outer);
+            var tar = $(target);
+            var x = out.width() - 50;
+            var y = tar.outerWidth(true);
+            var z = tar.index();
+            var q = 0;
+            var m = out.find('li');
+            for (var i = 0; i < z; i++) {
+                q += $(m[i]).outerWidth(true);
+            }
+
+            out.animate({
+                scrollLeft: Math.max(0, q - (x - y) / 2)
+            }, 500);
+
+        }
+        function callAjax(form,url){
+            jQuery.ajax({
+                url: url,
+                type: "POST",
+                dataType: "HTML",
+                data: form,
+                success: function (data) {
+                    // $(".contact-tred-expert").html(data);
+                    window.location.href = "{{ path('portal_form_enquiry_success') }}";
+                }
+            });
+        }
+        function formActition(){
+            /****Form****/
+            function formcontrol(){
+                $(".form-control").filter(function() {
+                    if (this.value.length !==0){
+                        $(this).siblings('label').addClass('clicked');
+                    }
+                });
+            }
+            formcontrol();
+            $('.form-group label').click(function () {
+                $(this).addClass('clicked');
+            });
+            $('.form-control').click(function () {
+                $(this).siblings('label').addClass('clicked');
+            });
+            $('.form-control').keyup(function () {
+                $(this).siblings('label').addClass('clicked');
+            });
+            $('.form-control').blur(function () {
+                if ($(this).val()) {
+                    $(this).siblings('label').addClass('clicked');
+                } else if (!$(this).val()) {
+                    $(this).siblings('label').removeClass('clicked');
+                }
+            });
+
+            $('.h-tabs li a').click(function(e){
+                e.preventDefault();
+                $(this).parent().addClass('active').siblings().removeClass('active');
+            })
+            /****Form****/
+        }
+    </script>
+{% endblock %}

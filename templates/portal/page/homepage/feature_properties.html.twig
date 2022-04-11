@@ -1,0 +1,175 @@
+{% if cmsPage.cmsPageContent[1] is defined and cmsPage.cmsPageContent[1].isActive %}
+    {% set priceGroup =[] %}
+    {% set minimunPriceGroup =[] %}
+    {% set price =[] %}
+    {% for project in projects|filter((a)=>a.trnProject.isFeatured == true and a.trnProject.isActive == true ) %}
+            {% if filters.priceRangeMin is defined %}
+                {% if project.agreementAmount >= filters.priceRangeMin %}
+                    {% set price = {("roomId_"~project.id):project.agreementAmount}|merge(price) %}
+                {% endif %}
+            {% else %}
+                {% set price = {("roomId_"~project.id):project.agreementAmount}|merge(price) %}
+            {% endif %}
+            {% set priceGroup = priceGroup|merge({("id_"~project.trnProject.id): price }) %}
+    {% endfor %}
+    {% if priceGroup|length > 0 %}
+        <section>
+            <div class="container">
+                {{ cmsPage.cmsPageContent[1].pageContent|raw }}
+                <div class="card-deck cust-card row-md">
+                    {% for projectBatch in projects|filter((a)=>a.trnProject.isFeatured == true and a.trnProject.isActive == true )|batch(3) %}
+                        {% for project in projectBatch %}
+                            {% if loop.parent.loop.index == 1 %}
+                           <div class="col-md-4" data-aos="fade-down" data-aos-delay="{{ (loop.index) *200 }}">
+                            <div class="card">
+                                {% set roomConfigurationRooms = priceGroup["id_"~project.trnProject.id] %}
+                                {% set minimum_roomConfigurationPrice = min(roomConfigurationRooms) %}
+                                {% set minimumRoomConfiguration = null %}
+                                {% if project.agreementAmount == minimum_roomConfigurationPrice %}
+                                    {% set minimumRoomConfiguration = project %}
+                                {% endif  %}
+                                <figure>
+                                    <a href="{{ path("portal_properties_detail",{"id":project.id,'projectId':project.trnProject.id}) }}">
+                                    {% set uploadImageCount = 0 %}
+                                    {% for  upload in project.trnProject.trnUploadDocument %}
+                                        {% set uploadImageCount = uploadImageCount+1 %}
+                                        {% if upload.mediaFileName and loop.first %}
+                                            <img src="{{ upload.mediaFilePath|imagine_filter('resize_image_scale_330_220') }}" class="card-img-top" alt="..">
+                                        {% endif  %}
+                                    {% else %}
+                                        <img src="{{ asset('resources/images/no_image.jpg') }}" class="card-img-top" title="No Image" alt="No Image">
+                                    {% endfor  %}
+                                    </a>
+                                    <figcaption>
+                                        <div class="top-left">
+                                            {% if project.trnProject.isTredRecommended %}
+                                                <span><i class="fa fa-check"></i> {{ project.trnProject.orgCompany.company }} Recommended </span>
+                                            {% endif  %}
+                                        </div>
+                                        <div class="bottom-left">
+                                            <ul class="like-view">
+                                                <li>
+                                                    <a href="#" data-id="{{ project.id }}" class="thumbs-up" >
+                                                        <i class="fa fa-thumbs-o-up"></i>
+                                                        <b class="fa-thumbs-o-up-count">{% if project.roomConfigurationlikes %}{{ project.roomConfigurationlikes }}{% else %}0{% endif %}</b>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#">
+                                                        <i class="fa fa-eye"></i>
+                                                        <b>{% if project.roomConfigurationViews %}{{ project.roomConfigurationViews }}{% else %}0{% endif %}</b>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="bottom-center">
+                                            <ul class="like-view">
+                                                <li>
+                                                    <a href="#">
+                                                        <i class="fa fa-camera"></i>
+                                                        <b>{{ uploadImageCount }}</b>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        {% if project.trnProject.isRera %}
+                                            <div class="bottom-right">
+                                                <div class="rera">
+                                                    RERA
+                                                </div>
+                                            </div>
+                                        {% endif  %}
+                                    </figcaption>
+                                </figure>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ project.trnProject.projectName}}</h5>
+                                    <h2>{{ project.trnProject.trnVendorPartnerDetails.vendorPartnerName }}</h2>
+
+                                    <span class="location">{{ project.trnProject.mstPincode.officeName }}, {{ project.trnProject.mstCity.city }}</span>
+                                    <div class="amenities-sec">
+                                        {% set projectAmenities = [] %}
+                                        {% set projectAmenitiesIcons = [] %}
+                                        {% set projectAmenitiesCategories = [] %}
+                                        {% for amenities in project.trnProject.trnProjectAmenities|filter((a)=>a.isActive) %}
+                                            {% if ("%02d"|format(amenities.mstSubCategory.id)~"|"~amenities.mstSubCategory.subCategory~"|"~"%02d"|format(amenities.id)~"|"~amenities.trnAmenitiesDescription~"|"~"%02d"|format(amenities.mstProjectAmenities.id)~"|"~amenities.mstProjectAmenities
+                                                ) not in projectAmenities %}
+                                                {% set projectAmenities = ["%02d"|format(amenities.mstSubCategory.id)~"|"~amenities.mstSubCategory.subCategory~"|"~"%02d"|format(amenities.id)~"|"~amenities.trnAmenitiesDescription~"|"~"%02d"|format(amenities.mstProjectAmenities.id)~"|"~amenities.mstProjectAmenities]|merge(projectAmenities) %}
+                                            {% endif %}
+                                            {% if ("%02d"|format(amenities.mstSubCategory.id)~"|"~amenities.mstSubCategory.subCategory) not in projectAmenitiesCategories %}
+                                                {% set projectAmenitiesCategories = ["%02d"|format(amenities.mstSubCategory.id)~"|"~amenities.mstSubCategory.subCategory]|merge(projectAmenitiesCategories) %}
+                                            {% endif %}
+                                            {% if amenities.mstProjectAmenities.mediaIcon %}
+                                                {% if attribute(projectAmenitiesIcons,"id_"~amenities.id) is not defined %}
+                                                    {% set projectAmenitiesIcons = {("id_"~amenities.id) : amenities.mstProjectAmenities.mediaIcon.iconImage}|merge(projectAmenitiesIcons) %}
+                                                {% endif %}
+                                            {% endif  %}
+                                        {% endfor %}
+                                        <ul class="amenities">
+                                            {% for amenitiesBatch in projectAmenities|sort|batch(7) %}
+                                                {% if loop.first %}
+                                                    {% set display = 1 %}
+                                                {% else %}
+                                                    {% set display = 0 %}
+                                                {% endif %}
+                                                {% for amenities in amenitiesBatch %}
+                                                    {% set tmpamenities = amenities|split("|") %}
+                                                    <li {% if display == 0 %} class="amenitiesLi" style="display:none;" {% endif %}>
+                                                        {% set iconName = "" %}
+                                                        {% for key,icon in projectAmenitiesIcons %}
+                                                            {% set keyValue = ("id_"~tmpamenities.2|trim('0','left')) %}
+                                                            {% if key == keyValue %}
+                                                                {% set iconName = icon %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        {% if iconName != "" %}
+                                                            {% set amentites_title = tmpamenities.3?tmpamenities.3:tmpamenities.5 %}
+                                                            <span class="icon"><img src="{{ iconName|imagine_filter('resize_icon_image_30_40') }}" class="card-img-top" data-toggle="tooltip" title="{{ amentites_title }}"></span>
+                                                        {% else %}
+                                                            <span class="icon"><img src="" class="card-img-top" alt="..." title="{{ amenities.projectAmenities }}"></span>
+                                                        {% endif %}
+                                                    </li>
+                                                {% endfor %}
+                                            {% endfor %}
+                                        </ul>
+                                        {% if project.trnProject.mstAmenities|length > 7  %}
+                                            <a href="#" class="txt-more">more <i class="fa fa-plus"></i></a>
+                                        {% endif  %}
+                                    </div>
+                                    <div class="view-details">
+                                        <div class="left-sec">
+                                            <h3>{{ project.mstRoomConfiguration }}</h3>
+                                            {% if project.mstPropertyTransactionCategory.id == 1 %}
+                                                <span class="prz-sec"><b>{{ project.agreementAmount }}</b> {{ project.mstDenomination.abbreviation }} onwards</span>
+                                            {% elseif project.mstPropertyTransactionCategory.id == 2 %}
+                                                <span class="prz-sec"><b>{{ project.rentPerMonth }}</b> onwards</span>
+                                                <span class="prz-sec">Rent</span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="rgt-sec featureProperties">
+                                            <ul class="btn-sec">
+                                                <li>
+                                                    {% set title = project.noOfBedRoom~" bhk "~project.trnProject.mstProductSubType.productSubType~" "~project.trnProject.projectName  %}
+                                                    {% set title = title|lower|replace({" ":"-",",":""})  %}
+                                                    {% set city = project.trnProject.mstcity|lower %}
+                                                    {% if project.mstPropertyTransactionCategory|lower == 'buy' %}
+                                                        <a href="{{ path("portal_properties_buy_detail",{'slugName': project.trnProject.mstProductType.productTypeSlugName,'city':city,'title':title,'id':project.id}) }}" class="btn btn-primary">View Details</a>
+                                                    {% endif %}
+                                                    {% if project.mstPropertyTransactionCategory|lower == 'rent' %}
+                                                        <a href="{{ path("portal_properties_rent_detail",{'slugName':project.trnProject.mstProductType.productTypeSlugName,'city':city,'title':title,'id':project.id}) }}" class="btn btn-primary">View Details</a>
+                                                    {% endif %}
+{#                                                <a href="{{ path("portal_properties_detail",{"id":project.id,'projectId':project.trnProject.id}) }}" class="btn btn-primary">View Details</a>#}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            {% endif  %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    {% endif %}
+{% endif %}

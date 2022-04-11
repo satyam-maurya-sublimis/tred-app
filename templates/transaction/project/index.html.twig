@@ -1,0 +1,124 @@
+{% extends 'layout/content.html.twig' %}
+{% block cms_content %}
+    <!-- Small boxes (Stat box) -->
+    <div class="row">
+        <div class="col">
+            <div class="card">
+{#                <div class="card-header">#}
+{#                    <h4 class="card-title"><a href="{{ path(path_add) }}" class="btn btn-dark btn-sm"><i class="fa fa-plus"></i> {{label_title|trans}}</a></h4>#}
+{#                </div>#}
+                <nav class="card-content collapse show">
+                    <div class="card-body card-dashboard ">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="input-group">
+                                    <input type="number" id="pincode" name="pincode" placeholder="Type pincode" required="required" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="input-group">
+                                    <select id="mstPincode" name="mstPincode" required="required" class="form-control">
+                                        <option value="" selected="selected">Select pincode wise area</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="input-group">
+                                    <input type="text" id="projectName" placeholder="Project Name" name="projectName" required="required" class="form-control">
+                                    <div class="input-group-append">
+                                        <div class="input-group-text">
+                                            <span class="fas fa-search searchbutton"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="row propertylisting"><img src="{{ asset('assets/img/loading_lines.gif') }}" class="loading" alt="loading" style="display: none"></div>
+
+{#                    <div class="card-footer">#}
+{#                        <div class="row">#}
+{#                            <div class="col-sm-5">#}
+{#                                <div class="text-muted">{{ 'info.total_records'|trans }} {{ projects.getTotalItemCount }}</div>#}
+{#                            </div>#}
+{#                            <div class="col-sm-7">#}
+{#                                <nav aria-label="Page navigation example">#}
+{#                                    <ul class="pagination justify-content-end">#}
+{#                                        {{ knp_pagination_render(projects) }}#}
+{#                                    </ul>#}
+{#                                </nav>#}
+{#                            </div>#}
+{#                        </div>#}
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        jQuery("document").ready(function(){
+            var pincodesearch = $('#pincode');
+            var mstPincode = $('#mstPincode');
+            var projectName = $('#projectName');
+            var searchbutton = $('.searchbutton');
+            projectName.attr('disabled', 'disabled');
+            mstPincode.change(function () {
+                if ($(this).val() !== '') {
+                    projectName.removeAttr("disabled");
+                } else {
+                    projectName.attr('disabled', 'disabled');
+                }
+            });
+            searchbutton.click(function(){
+                propertylisting();
+            })
+            pincodesearch.keyup(function(){
+                var data = {};
+                data['pincode'] = pincodesearch.val();
+                $('.loading').show();
+                $.ajax({
+                    url: '{{ path('pincode_list') }}',
+                    type: 'GET',
+                    data: data,
+                    dataType: "json",
+                    success: (function (formdata) {
+                        $('.loading').hide();
+                        mstPincode.html('');
+                        // add options
+                        mstPincode.append('<option value="" >Select pincode wise area</option>');
+                        $.each(formdata, function (id, name) {
+                            mstPincode.append('<option value="'+ name.id +'">'+ name.name + '</option>');
+                        });
+                    }),
+                });
+            });
+
+            projectName.keyup(function(e) {
+                if(e.keyCode === 13) {
+                    propertylisting();
+                }
+            });
+
+            function propertylisting() {
+                var data = {};
+                data['mstPincode'] = mstPincode.val();
+                data['projectName'] = projectName.val();
+                var propertylisting = $('.propertylisting');
+                $('.loading').show();
+                $.ajax({
+                    url: '{{ path('product_project_search') }}',
+                    type: 'GET',
+                    data: data,
+                    dataType: "html",
+                    success: (function (formdata) {
+                        $('.loading').hide();
+                        propertylisting.html(formdata);
+                        propertylisting.show();
+                    }),
+                });
+            }
+        });
+    </script>
+{% endblock %}

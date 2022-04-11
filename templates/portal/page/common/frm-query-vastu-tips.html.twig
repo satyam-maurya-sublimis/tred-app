@@ -1,0 +1,46 @@
+{{ form_start(form,{'attr':{"class":"form","id":"frmEnquiry"}}) }}
+    <h3>Request Quote Now</h3>
+    <p>Complete this below form.</p>
+    <span class="mendatory-field">* Mandatory Fields</span>
+    <!-- Show Flash Messages -->
+    {% block cms_messages %}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    {{ message|trans}}
+                </div>
+            {% endfor %}
+        {% endfor %}
+    {% endblock %}
+    {# End Flash message section #}
+    {{ form_row(form.firstName) }}
+    {{ form_row(form.enquiryEmailAddress) }}
+    <div class="row row-zero">
+        <div class="col-md-3">
+            {{ form_row(form.mstCountry) }}
+        </div>
+        <div class="col-md-9">
+            {{ form_row(form.enquiryMobileNumber) }}
+        </div>
+    </div>
+    {{ form_row(form.mstCity) }}
+    <div class="form-group mb-1">
+        <label for="" class="static">Any Comments</label>
+    </div>
+    {{ form_row(form.enquiryDescription) }}
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <label class="captha-code" id="captha-code">2 + 5 =</label>
+            </div>
+            <div class="col-md-6 col-sm-6">
+                <label for="captcha" class="">Verify Captcha</label>
+                <input type="text" id="captcha"  required="required" class="form-control">
+            </div>
+        </div>
+    </div>
+    <button type="submit" class="btn-primary">Send Request</button>
+{{ form_end(form) }}

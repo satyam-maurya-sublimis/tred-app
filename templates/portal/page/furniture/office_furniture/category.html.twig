@@ -1,0 +1,101 @@
+{% extends 'portal/layout/index.html.twig' %}
+{% block portal_content %}
+    <div class="wrapper typ2">
+        <section class="explore-properties">
+            <div class="container">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ path('portal_index') }}">Home</a></li>
+{#                        <li class="breadcrumb-item">Furniture</li>#}
+                        <li class="breadcrumb-item"><a href="{{ path('portal_furniture_office') }}">Furniture - Office Furniture</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ mstProductSubType }}</li>
+                    </ol>
+                </nav>
+                <h2>Home Furnitures - <span>{{ mstProductSubType }}</span> </h2>
+            </div>
+        </section>
+        <div class="container">
+            <div class="row">
+                {% for furnitureCategory in mstFurnitureCategory %}
+                    {% set products = get_product_furniture_by_category_id(furnitureCategory.id) %}
+                    {% if products|length > 0 %}
+                        {% set medias = get_media_by_furniture_id(products.0.id) %}
+                        <div class="col-md-4">
+                            <a href="{{ path('portal_furniture_office_product',{'mstProductSubTypeSlugName': mstProductSubType.productSubTypeSlugName,'mstFurnitureCategorySlugName': furnitureCategory.furnitureCategorySlugName }) }}" class="product-box typ2">
+                                <figure>
+                                    <img src="/images/{{ medias.0.mediaFilePath }}" class="card-img-top" alt="{{ furnitureCategory }}" title="{{ furnitureCategory }}">
+                                </figure>
+                                <figcaption>
+                                    <h4>{{ furnitureCategory }}</h4>
+                                </figcaption>
+                            </a>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+            </div>
+        </div>
+        <section class="">
+            <div class="container furniture-expert">
+                <div class="col-sm-6 mx-auto text-center">
+                    <h2 data-aos="fade-right" data-aos-delay="200">Find a TRED <span>Furniture Expert</span> Near You</h2>
+                    <p>To avail personalized furniture design consultation please share your details.</p>
+                    {{ render(controller('App\\Controller\\Portal\\FurnitureController::furnitureLeadForm',{'filter':{'mstProductSubType':mstProductSubType.id}})) }}
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/plugins/jquery-validation/jquery.validate.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/plugins/jquery-validation/additional-methods.min.js') }}" type="text/javascript"></script>
+    <script>
+        jQuery("document").ready(function(){
+            $("#furniture_tred_experts_mstCity").select2({
+                theme: 'bootstrap4',
+                placeholder: 'City',
+                text: 'City'
+            })
+            $.validator.setDefaults({
+                submitHandler: function () {
+                    $(form).submit();
+                }
+            });
+            $.validator.addMethod("alpha", function(value, element) {
+                return this.optional(element) || value == value.match(/[a-zA-Z\s]+$/);
+            });
+            $("#tred_furniture_form").validate({
+                rules: {
+                    'furniture_tred_experts[furnitureEnquiryFullName]': {
+                        required: true,
+                        alpha: true,
+                        minlength: 1
+                    },
+                    'furniture_tred_experts[furnitureEnquiryEmailAddress]': {
+                        required: true,
+                    },
+                    'furniture_tred_experts[furnitureEnquiryMobileNumber]': {
+                        required: true,
+                    },
+                },
+                messages: {
+                    'furniture_tred_experts[furnitureEnquiryFullName]': {
+                        alpha: "Please enter only alphabets with spaces"
+                    },
+                },
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+        });
+    </script>
+{% endblock %}

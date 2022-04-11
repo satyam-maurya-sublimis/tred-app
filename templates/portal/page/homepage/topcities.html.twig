@@ -1,0 +1,31 @@
+{% if cmsPage.cmsPageContent[5] is defined and cmsPage.cmsPageContent[5].isActive %}
+{#    {% set topCities =[] %}#}
+{#    {% for project in projects %}#}
+{#        {% if (project.mstCity.id) not in topCities %}#}
+{#            {% set topCities = [project.mstCity.id]|merge(topCities) %}#}
+{#        {% endif %}#}
+{#    {% endfor %}#}
+    <section>
+        <div class="container">
+            {{ cmsPage.cmsPageContent[5].pageContent|raw }}
+            <div class="properties-location">
+                <ul class="properties">
+                    {% for topCity in cities %}
+                        {% set mstCity = get_city_by_id(topCity.id) %}
+                        <li data-aos="fade-right" data-aos-delay="200">
+                            <a href="{{ path('portal_properties_buy_city_list',{'slugName':'residential','city':topCity.city|lower}) }}">
+                                <figure><img src="/resources/images/{{ topCity.city|lower }}.png"></figure>
+                                <b>{{ mstCity.city }}</b>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                {% if cities|length > 5 %}
+                    <div class="btn-sec" data-aos="fade-right" data-aos-delay="900">
+                        <a href="#" class="btn-view-more"> <i class="fa fa-custom-plus"></i> <b>View More Cities</b> </a>
+                    </div>
+                {% endif  %}
+            </div>
+        </div>
+    </section>
+{% endif %}

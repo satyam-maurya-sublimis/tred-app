@@ -1,0 +1,5 @@
+{% for city in cities %}
+   <li><a href="{{ path('portal_top_agents_city',{'city':city|lower}) }}">{{ city.city }}</a></li>
+{% else %}
+   <li>No City found</li>
+{% endfor %}

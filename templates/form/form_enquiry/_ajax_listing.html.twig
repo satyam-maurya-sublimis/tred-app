@@ -1,0 +1,42 @@
+<table id="dataTable" class="table table-responsive-md table-sm text-sm">
+    <thead>
+    <tr>
+    <tr>
+{#        <th>{{ 'label.name'|trans|upper }}</th>#}
+        <th>{{ 'label.email'|trans|upper }}</th>
+        <th>{{ 'label.mobile'|trans|upper }}</th>
+        <th>{{ 'label.phone'|trans|upper }}</th>
+        <th>{{ 'Create Date and Time'|trans|upper }}</th>
+        <th>{{ 'label.status'|trans|upper }}</th>
+        <th></th>
+    </tr>
+    </tr>
+</thead>
+<tbody>
+{% for formenquiry in form_enquiries %}
+    <tr>
+        <td><a href="{{ path(path_show, {'id': formenquiry.id}) }}">
+                {{ formenquiry.mstSalutation|default('') }}
+                {{ formenquiry.enquiryFirstName|default('') }}
+                {{ formenquiry.enquiryMiddleName|default('') }}
+                {{ formenquiry.enquiryLastName|default('') }}
+            </a>
+        </td>
+        <td><a href="mailto:{{ formenquiry.enquiryEmailAddress }}">{{ formenquiry.enquiryEmailAddress}}</a></td>
+        <td>{{ formenquiry.enquiryMobileNumber }}</td>
+        <td>{{ formenquiry.enquiryPhoneNumber }}</td>
+        <td>{{ formenquiry.enquiryCreateTime|date('d M Y') }} {{ formenquiry.enquiryCreateTime|date('H:i') }}</td>
+        <td>{{ formenquiry.mstLeadStatus }}</td>
+        <td>
+            <div class="btn-group-toggle" role="group" aria-label="Action Buttons">
+                <a href="{{ path(path_show, {'id': formenquiry.id}) }}"><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-expand"></i></button></a>&nbsp;
+                <a href="{{ path(path_edit, {'id': formenquiry.id}) }}"><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i></button></a>&nbsp;
+            </div>
+        </td>
+    </tr>
+{% else %}
+    <tr>
+        <td colspan="5">{{'info.no_record_found'|trans}}</td>
+    </tr>
+{% endfor %}
+</tbody></table>

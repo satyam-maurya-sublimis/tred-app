@@ -1,0 +1,24 @@
+{% extends 'portal/layout/index.html.twig' %}
+{% set route =  app.request.get('_route') %}
+{% set page_content = get_cms_page_by_route(route) %}
+{% block portal_content %}
+    <div class="wrapper">
+        <div class="container">
+            <nav aria-label="breadcrumb" data-aos="fade-right" data-aos-delay="500">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ path('portal_index') }}"><i class="fa fc-home"></i>Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">User Agreement</li>
+                </ol>
+            </nav>
+            <h2 data-aos="fade-right" class="aos-init aos-animate">User Agreement</h2>
+{#            <ul class="content-list aos-init aos-animate" data-aos="fade-right">#}
+                {% if page_content %}
+                    {% for content in page_content.cmsPageContent %}
+{#                        <li>{{ content.pageContent|raw }}</li>#}
+                        {{ content.pageContent|raw }}
+                    {% endfor %}
+                {% endif  %}
+{#            </ul>#}
+        </div>
+    </div>
+{% endblock %}

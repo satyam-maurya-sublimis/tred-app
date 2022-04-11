@@ -1,0 +1,76 @@
+{% extends 'portal/layout/index.html.twig' %}
+{% set route =  app.request.get('_route') %}
+{% set cmsPage = get_cms_page_by_route(route) %}
+{% set page = get_pagecontent_by_route(route) %}
+{% set banners = get_cms_page_banner(cmsPage.id) %}
+{% set advertisements = get_cms_page_ads(cmsPage.id) %}
+{% block portal_content %}
+    <section class="banner-carousel typ2">
+        <div id="mainBanner" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                {% for banner in banners %}
+                <div class="carousel-item active">
+                    <figure class="static">
+                        <img src="{{ asset('images/files') }}/{{ banner.bannerDesktopImage}}" class="desktop-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                        <img src="{{ asset('images/files') }}/{{ banner.bannerTabletImage}}" class="tab-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                        <img src="{{ asset('images/files') }}/{{ banner.bannerMobileImage}}" class="mobile-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                    </figure>
+                    <div class="container">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{{ path('portal_index') }}">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">About</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    <div class="wrapper typ2">
+        <section class="explore-properties">
+            <div class="container">
+                {% for content in cmsPage.cmsPageContent|filter((a)=>a.cmsPageContentPosition =="title") %}
+                    {{ content.pageContent|raw }}
+                {% endfor %}
+            </div>
+        </section>
+        <section>
+            <div class="container">
+                <div class="dsc-box mb-5">
+                    <div class="content py-5"  data-aos="fade-right" data-aos-delay="400">
+                        {% for content in cmsPage.cmsPageContent|filter((a)=>a.cmsPageContentPosition =="middle") %}
+                            {{ content.pageContent|raw }}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% for content in cmsPage.cmsPageContent|filter((a)=>a.cmsPageContentPosition =="bottom") %}
+                    {{ content.pageContent|raw }}
+                {% endfor %}
+            </div>
+        </section>
+
+
+
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        jQuery("document").ready(function(){
+            AOS.init({
+                delay: 50,
+                duration: 1000,
+                offset:0,
+                once: true
+            })
+            if(width < 991) {
+                $('.mob-filter').click(function(){
+                    $('.top-filter-sec').toggle(500);
+                    $(this).toggleClass('active');
+                });
+            }
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,135 @@
+<!--Header Starts-->
+<header class="dark">
+    <nav class="navbar  navbar-expand-lg fixed-top">
+        <div class="container"> <a class="navbar-brand" href="{{ path('portal_index') }}"><img src="/resources/images/logo-tred.png" alt="TRED" title="TRED"></a>
+            <div class="top-nav-sec">
+                <div class="top-links">
+                    <div class="float-left">
+                        <div class="select-location">
+                            <select class="hpgcity">
+                                {% for city in cities %}
+                                        <option value="{{ city.city|lower }}" {% if app.session.get("city") == city.city|lower %}selected{% endif %} >{{ city.city }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="top-nav">
+                    <a href="javascript:void(0);" id="mob-menu" class="ic menu" tabindex="1"> <span class="line"></span> <span class="line"></span> <span class="line"></span> </a> <a href="javascript:void(0);" class="ic close"></a>
+                    <ul class="main-nav">
+
+                            <li class="nav-properties"><a class="nav-link" href="#"><i></i> Buy</a>
+                                <ul class="sub-menu-block">
+                                    <li>
+                                        {% if wsearch.1 is defined %}
+                                        <ul class="bullet-list">
+                                            {% for item in wsearch.1.productType  %}
+                                                <li><a href="{{ path('portal_properties_buy_list',{'slugName': item|lower }) }}">{{ item }} Properties</a></li>
+                                            {% endfor %}
+                                        </ul>
+                                        {% endif %}
+                                    </li>
+                                </ul>
+                            </li>
+                        {% if wsearch.2 is defined %}
+                            <li class="nav-rental"><a class="nav-link" href="#"><i></i> Rent</a>
+                                <ul class="sub-menu-block">
+                                    <li>
+                                        <ul class="bullet-list">
+                                            {% for keyitem,item in wsearch.2.productType  %}
+                                                <li><a href="{{ path('portal_properties_rent_list',{'slugName': item|lower }) }}">{{ item }} Properties</a></li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        {% endif %}
+                        {% set mcity = [] %}
+                        {% for city in get_top_agents_cities() %}
+                            {% if city.city not in mcity %}
+                                {% set mcity = mcity|merge([city.city]) %}
+                            {% endif  %}
+                        {% endfor %}
+                        {% if mcity|length > 0 %}
+                        <li class="nav-agents">
+                            <a class="nav-link" href="{{ path('portal_top_agents_index') }}"><i></i> Top Agents</a>
+                            <ul class="sub-menu-block typ2">
+                                <li>
+                                    <ul class="bullet-list">
+                                        <li><span>Real Estate Agent In Top Cities </span></li>
+                                        <li>
+                                            <ul class="">
+                                                {% for acity in mcity %}
+                                                    <li><a href="{{ path('portal_top_agents_city',{'city':acity|lower }) }}">{{ acity }}</a></li>
+                                                {% endfor %}
+{#                                                <li class="active"><a href="{{ path('portal_top_agents_index') }}" class="btn btn-primary-outline">View All Cities</a></li>#}
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        {% endif %}
+
+                        <!---<li class="nav-homeloans"><a class="nav-link" href="/home-loans.shtml"><i></i> Home Loans</a></li>--->
+                        <li class="nav-interiors"><a class="nav-link" href="{{ path('portal_interior_designer') }}"><i></i> Interiors</a></li>
+                        <li class="nav-furnishing"><a class="nav-link" href="{{ path('portal_interior_furnishing') }}"><i></i> Furnishing</a></li>
+                        <li class="nav-decor"><a class="nav-link" href="{{ path('portal_interior_decor') }}"><i></i> Décor</a></li>
+{#                        <li class="nav-interiors"><a class="nav-link" href="#"><i></i> Interiors</a>#}
+{#                            <ul class="sub-menu-block">#}
+{#                                <li>#}
+{#                                    <ul class="bullet-list">#}
+{#                                        <li><a href="{{ path('portal_interior_designer') }}">Interior Designer</a></li>#}
+{#                                        <li><a href="{{ path('portal_interior_furnishing') }}">Home Furnishing</a></li>#}
+{#                                        <li><a href="{{ path('portal_interior_decor') }}">Home Decor</a></li>#}
+{#                                    </ul>#}
+{#                                </li>#}
+{#                            </ul>#}
+{#                        </li>#}
+                        <li class="nav-furniture"><a class="nav-link" href="#"><i></i> Furniture</a>
+                            <ul class="sub-menu-block">
+                                <li>
+                                    <ul class="bullet-list">
+                                        <li><a href="{{ path('portal_furniture_home') }}">Home Furniture</a></li>
+                                        <li><a href="{{ path('portal_furniture_office') }}">Office Furniture</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+{#                        <li class="nav-logistics"><a class="nav-link" href="{{ path('portal_logistic_index') }}"><i></i> Logistics</a></li>#}
+                        <!--<li class="nav-offers"><a class="nav-link" href="/offers.shtml"><i></i> Offers</a></li> --->
+                        <!--li class="top_menu">
+                          <ul>
+                              <li><a class="nav-link" href="#">Experience Zone</a></li>
+                              <li><a class="nav-link" href="#">Advertise</a></li>
+                              <li><a class="nav-link" href="#">List Your Property</a></li>
+                              <li><a href="#" class="btn btn-primary">Construction Material Suppliers</a></li>
+                          </ul>
+                        </li-->
+                        <li class="mob-fixed">
+                            <div class="tbl-style">
+                                <div>
+                    <span class="social-media">
+                      <p>Follow us</p>
+                          <a href="https://www.facebook.com/profile.php?id=100064141147619" target="_blank"><img src="/resources/images/icons/facebook.png" alt="Facebook" title="Facebook"></a>
+                          <a href="https://www.linkedin.com/company/tredproptech/" target="_blank"><img src="/resources/images/icons/linkedin.png" alt="Linkedin" title="Linkedin"></a>
+                          <a href="https://www.instagram.com/tredproptech/" target="_blank"><img src="/resources/images/icons/instagram.png" alt="Instagram" title="Instagram"></a>
+                          <a href="https://www.youtube.com/channel/UCz71S3i206HXFGsQL9WW6Kw" target="_blank"><img src="/resources/images/icons/youtube.png" alt="Youtube" title="Youtube"></a>
+                    </span>
+                                </div>
+                            </div>
+                            <ul class="mob-info">
+                                <li><a href="tel:8433949855"><i class="fa fa-phone"></i> +91 8433949855</a></li>
+                                <li><a href="mailto:info@tred.co.in"><i class="fa fa-envelope-o"></i>info@tred.co.in</a></li>
+                                <li><a href="https://api.whatsapp.com/send?phone=918291890911" target="_blank"><i class="fa fa-whatsapp"></i> WhatsApp</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<!--Header Ends-->

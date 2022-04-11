@@ -1,0 +1,123 @@
+{% extends 'layout/content.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block cms_content %}
+    {% set back_to_list = app.request.server.get('HTTP_REFERER') %}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">
+                {% if mode == 'add' %}<i class="fa fa-plus"></i> {% elseif mode == 'convert'%} <i class="fa fa-cog"></i> {% else%} <i class="fa fa-edit"></i> {% endif%}  <b>{{label_title|trans|upper}}</b>
+            </h5>
+        </div>
+        {{ form_start(form) }}
+        <div class="card-body">
+{#            <div class="row">#}
+{#                <div class="col-sm-3">#}
+{#                    {{ form_row(form.orgCompany) }}#}
+{#                </div>#}
+{#            </div>#}
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.mstSalutation) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.residentialEnquiryFirstName) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.residentialEnquiryMiddleName) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.residentialEnquiryLastName) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.residentialEnquiryEmailAddress) }}
+                </div>
+{#                <div class="col-sm-3">#}
+{#                    {{ form_row(form.residentialEnquiryPhoneNumber) }}#}
+{#                </div>#}
+                <div class="col-sm-3">
+                    {{ form_row(form.residentialEnquiryMobileNumber) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mstLeadStatus) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    {{ form_row(form.residentialEnquiryDescription) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">{{ 'Address'|upper }}</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.residentialEnquiryAddressOne) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.residentialEnquiryAddressTwo) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.residentialEnquiryPincode) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.mstCountry) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mstState) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mstCity) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">{{ 'Enquiry'|upper }}</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.residentialEnquiryTitle) }}
+                </div>
+                <div class="col-sm-6">
+                    {{ form_row(form.trnProjectRoomConfiguration) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.mstRoomConfiguration) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.residentialEnquiryBudget) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.residentialEnquiryLocation) }}
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="card-footer">
+            <button type="submit" class="{{ button_css|default("btn btn-dark btn-sm") }}">
+                <i class="fa fa-save" aria-hidden="true"></i> {{ label_button|trans }}
+            </button>
+            <a href="{{ back_to_list }}" class="btn btn-link"><i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}</a>
+        </div>
+        {{ form_end(form) }}
+    <br>
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/form/form_residentialEnquiry/index.js') }}"></script>
+{% endblock %}

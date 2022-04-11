@@ -1,0 +1,950 @@
+{% extends 'portal/layout/index.html.twig' %}
+{% set route =  app.request.get('_route') %}
+{% if route == "portal_properties_buy_city_list" or "portal_properties_buy_list"  %}
+    {% set cmsPage = get_cms_page_by_route('portal_properties_buy_list') %}
+{% endif %}
+{% set ads = [] %}
+{% if cmsPage %}
+    {% set ads = get_cms_page_ads(cmsPage.id) %}
+{% endif  %}
+{% block portal_content %}
+    {% set projectStatuses = [] %}
+    {% set projectRoomConfigurations = [] %}
+    {% set projectProjectType = [] %}
+    {% set projectPossessions = get_possession_date() %}
+    {% set projectAmenities = [] %}
+    {% set projectAmenitiesIcons = [] %}
+    {% set projectAmenitiesCategories = [] %}
+    {% set projectProductSubType = [] %}
+    {% set projectPostedBy = [] %}
+    {% set projectMoreFilter = [] %}
+    {% set noOfBathRooms = [] %}
+    {% set projectArea = [] %}
+    {% set projectAreaValue = [] %}
+    {% set projectPrice = [] %}
+    {% set projectPriceGroup = [] %}
+
+    {% for project in projectData %}
+        {% if loop.first %}
+{#            {{ dump(project) }}#}
+        {% endif %}
+        {% if ("%02d"|format(project.trnProject.mstProjectStatus.id)~"|"~project.trnProject.mstProjectStatus.propertyType) not in projectStatuses %}
+            {% set projectStatuses = ["%02d"|format(project.trnProject.mstProjectStatus.id)~"|"~project.trnProject.mstProjectStatus.propertyType]|merge(projectStatuses) %}
+        {% endif %}
+
+        {% if ("%02d"|format(project.trnProject.mstPropertyType.id)~"|"~project.trnProject.mstPropertyType.projectType) not in projectProjectType %}
+            {% set projectProjectType = ["%02d"|format(project.trnProject.mstPropertyType.id)~"|"~project.trnProject.mstPropertyType.projectType]|merge(projectProjectType) %}
+        {% endif %}
+        {% if ("%02d"|format(project.trnProject.mstPropertyType.id)~"|"~"%02d"|format(project.trnProject.mstProductSubType.id)~"|"~project.trnProject.mstProductSubType.productSubType) not in projectProductSubType %}
+            {% set projectProductSubType = ["%02d"|format(project.trnProject.mstPropertyType.id)~"|"~"%02d"|format(project.trnProject.mstProductSubType.id)~"|"~project.trnProject.mstProductSubType.productSubType]|merge(projectProductSubType) %}
+        {% endif %}
+
+{#        {% if project.possessionDate %}#}
+{#            {% if project.possessionDate|date("Ymd") not in projectPossessions %}#}
+{#                {% set projectPossessions = [project.possessionDate|date("Ymd")]|merge(projectPossessions) %}#}
+{#            {% endif %}#}
+{#        {% endif %}#}
+
+        {% for rooms in project.trnProject.mstRoomConfiguration %}
+                {% if (rooms.roomConfiguration~"|"~"%02d"|format(rooms.id)) not in projectRoomConfigurations %}
+                    {% set projectRoomConfigurations = [rooms.roomConfiguration~"|"~"%02d"|format(rooms.id)]|merge(projectRoomConfigurations) %}
+                {% endif %}
+        {% endfor%}
+
+        {% for amenities in project.trnProject.trnProjectAmenities|filter((a)=>a.isActive) %}
+            {% if ("%02d"|format(amenities.mstSubCategory.id)~"|"~amenities.mstSubCategory.subCategory~"|"~"%02d"|format(amenities.id)~"|"~amenities.trnAmenitiesDescription~"|"~"%02d"|format(amenities.mstProjectAmenities.id)~"|"~amenities.mstProjectAmenities
+                ) not in projectAmenities %}
+                {% set projectAmenities = ["%02d"|format(amenities.mstSubCategory.id)~"|"~amenities.mstSubCategory.subCategory~"|"~"%02d"|format(amenities.id)~"|"~amenities.trnAmenitiesDescription~"|"~"%02d"|format(amenities.mstProjectAmenities.id)~"|"~amenities.mstProjectAmenities]|merge(projectAmenities) %}
+            {% endif %}
+            {% if ("%02d"|format(amenities.mstSubCategory.id)~"|"~amenities.mstSubCategory.subCategory) not in projectAmenitiesCategories %}
+                {% set projectAmenitiesCategories = ["%02d"|format(amenities.mstSubCategory.id)~"|"~amenities.mstSubCategory.subCategory]|merge(projectAmenitiesCategories) %}
+            {% endif %}
+            {% if amenities.mstProjectAmenities.mediaIcon %}
+                {% if attribute(projectAmenitiesIcons,"id_"~amenities.id) is not defined %}
+                    {% set projectAmenitiesIcons = {("id_"~amenities.id) : amenities.mstProjectAmenities.mediaIcon.iconImage}|merge(projectAmenitiesIcons) %}
+                {% endif %}
+            {% endif  %}
+        {% endfor%}
+        {% if project.trnProject.trnVendorPartnerDetails|length > 0 %}
+            {% if ("%02d"|format(project.trnProject.trnVendorPartnerDetails.mstVendorType.id)~"|"~project.trnProject.trnVendorPartnerDetails.mstVendorType.vendorType) not in projectPostedBy %}
+                {% set projectPostedBy = ["%02d"|format(project.trnProject.trnVendorPartnerDetails.mstVendorType.id)~"|"~project.trnProject.trnVendorPartnerDetails.mstVendorType.vendorType]|merge(projectPostedBy) %}
+            {% endif %}
+        {% endif %}
+        {% if project.trnProject.mstProductSubType %}
+            {% if ("%02d"|format(project.trnProject.mstProductSubType.id)~"|"~project.trnProject.mstProductSubType.productSubType) not in projectProductSubType %}
+                {% set projectProductSubType = ["%02d"|format(project.trnProject.mstProductSubType.id)~"|"~project.trnProject.mstProductSubType.productSubType]|merge(projectProductSubType) %}
+            {% endif %}
+        {% endif %}
+{#        {% for trnProjectRoomConfigurations in project %}#}
+                {% if project.mstPropertyTransactionCategory.id == transactionCategoryId %}
+                    {% if (project.noOfBathRooms) not in noOfBathRooms %}
+                        {% set noOfBathRooms = noOfBathRooms|merge([project.noOfBathRooms]) %}
+                    {% endif  %}
+                    {% if (project.mstProjectArea.projectArea) not in projectArea %}
+                        {% set projectArea = projectArea|merge([project.mstProjectArea.projectArea]) %}
+                    {% endif  %}
+                    {% if (project.areaValue) not in projectAreaValue %}
+                        {% set projectAreaValue = projectAreaValue|merge([project.areaValue]) %}
+                    {% endif  %}
+                    {% if (project.agreementAmount) not in projectPrice %}
+                        {#                {% set projectPrice = projectPrice|merge([trnProjectRoomConfigurations.agreementAmount~"|"~trnProjectRoomConfigurations.mstDenomination]) %}#}
+                        {% set projectPrice = projectPrice|merge([project.agreementAmount]) %}
+                        {% set projectPriceGroup = projectPriceGroup|merge({(project.mstDenomination.denomination):projectPrice|sort}) %}
+                    {% endif  %}
+                    {#            {% if attribute(aprices,"p_"~product.prdProductVariant[0].productVariantPrice) is not defined %}#}
+                    {#                {% set aprices = aprices|merge({ ("p_"~product.prdProductVariant[0].productVariantPrice) : [product.prdProductVariant[0].productVariantPrice,product.prdProductVariant[0].productVariantPrice] }) %}#}
+                    {#            {% endif %}#}
+
+                {% endif  %}
+{#        {% endfor %}#}
+    {% endfor %}
+{#    {{ dump(projectAmenitiesIcons) }}#}
+{#    {{ dump(projectAmenitiesCategories) }}#}
+    {% set projectMoreFilter = projectMoreFilter|merge({ 'Bathroom' : noOfBathRooms,'Property_Area':{'Area':projectArea,'AreaValue':projectAreaValue|sort} }) %}
+    <section class="banner-carousel slider-item listing-pg">
+        {% include 'portal/page/product/search.html.twig' %}
+        <div id="mainBanner" class="carousel slide" data-ride="carousel">
+            {% if cmsPage %}
+                {% set banners = get_cms_page_banner(cmsPage.id) %}
+            {% else %}
+                {% set banners = [] %}
+            {% endif %}
+            <div class="carousel-inner">
+                {% for banner in banners %}
+                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                    <figure>
+                        <img src="{{ banner.bannerDesktopImagePath|imagine_filter('resize_image_scale_1280_300') }}" class="desktop-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                        <img src="{{ banner.bannerTabletImagePath|imagine_filter('resize_image_scale_767_350') }}" class="tab-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                        <img src="{{ banner.bannerMobileImagePath|imagine_filter('resize_image_scale_350_250') }}" class="mobile-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                    </figure>
+                    <div class="container">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{{ path('portal_index') }}">Home</a></li>
+                                {% if route == 'portal_properties_buy_list' %}
+                                    <li class="breadcrumb-item"><a href="{{ path('portal_properties_buy_list',{'slugName': 'buy' }) }}">Buy</a></li>
+                                {% elseif route == 'portal_properties_rent_list' %}
+                                    <li class="breadcrumb-item"><a href="{{ path('portal_properties_buy_list',{'slugName': 'rent' }) }}">Rent</a></li>
+                                {% endif %}
+{#                                <li class="breadcrumb-item active" aria-current="page">All Residential</li>#}
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    <div class="wrapper">
+
+        <section class="top-filter">
+            <div class="container">
+                <a class="mob-search" href="#"><i class="fa fa-search"></i></a>
+                <a href="#" class="btn btn-primary" id="call-back">Get A Call Back</a>
+                <a class="mob-filter" href="#">Filter</a>
+                <div class="top-filter-sec">
+                    <ul>
+                        <li class="new-project">
+                            {% set get_status =  app.request.get('status') %}
+                            <a href="#">Property Status</a>
+                            <div class="open-dropdown">
+                                <ul class="filter-lists">
+                                    {% for projectStatus in projectStatuses %}
+                                        {% set tmpprojectStatus = projectStatus|split("|") %}
+                                        {% set projectStatusId = tmpprojectStatus.0|trim('0','left') %}
+                                        <li><a class="projectStatus {% if projectStatusId==get_status %}active{% endif %}" data-id="{{ tmpprojectStatus.0 }}" href="#">{{ tmpprojectStatus.1 }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                                <a href="#" class="btn btn-done">Done</a>
+                            </div>
+                        </li>
+                        <li class="budget">
+                            <a href="#">Budget</a>
+                            <div class="open-dropdown">
+                                <div class="prz-range">
+                                    <div class="row row-zero">
+                                        <div class="col-md-5 col-sm-5">
+                                            <input type="text" class="form-control" placeholder="Min" id="minrange" data-value="" value="" data-denomination="">
+                                        </div>
+                                        <div class="col-md-1  col-sm-1 text-center"> - </div>
+                                        <div class="col-md-5 col-sm-5">
+                                            <input type="text" class="form-control" placeholder="Max" id="maxrange" data-value="" value="" data-denomination="">
+                                        </div>
+                                    </div>
+                                    <div class="longEnough mCustomScrollbar scrollspy-example typ3" data-mcs-theme="dark">
+
+                                        <ul class="rangeSlider">
+                                            {% for key,priceGroup in projectPriceGroup %}
+                                                {% for pricerow in priceGroup|batch(4) %}
+                                                    {% set firstPrice = pricerow|first %}
+                                                    {% set lastPrice = pricerow|last %}
+                                                    <li>
+                                                        <a href="#">
+                                                            <span class="minRange" data-range="{{ firstPrice }}" data-denomination="{{ key }}"><i class="fa fa-rupee"></i> {{ firstPrice }} {{ key }}</span>
+{#                                                            {% if firstPrice != lastPrice %}#}
+                                                                <span class="maxRange" data-range="{{ lastPrice }}" data-denomination="{{ key }}"><i class="fa fa-rupee"></i> {{ lastPrice }} {{ key }}</span>
+{#                                                            {% endif  %}#}
+                                                        </a>
+                                                    </li>
+                                                {% endfor %}
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    <a href="#" class="btn btn-done">Done</a>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="bhk">
+                            <a href="#">BHK</a>
+                            <div class="open-dropdown">
+                                <ul class="filter-lists">
+                                    {% for rooms in projectRoomConfigurations|sort %}
+                                        {% set tmprooms = rooms|split("|") %}
+                                        {% set roomId = tmprooms.1|trim('0','left') %}
+                                        <li><a class="bhkrooms" data-id="{{ roomId }}" href="#">{{ tmprooms.0 }}</a></li>
+                                    {% endfor  %}
+                                </ul>
+                                <a href="#" class="btn btn-done">Done</a>
+                            </div>
+                        </li>
+                        <li class="possession">
+                            <a href="#">Possession</a>
+                            <div class="open-dropdown">
+                                <ul>
+                                    {% for possessionsKey,possessions in projectPossessions %}
+                                        <li><a class="possession possessionDate" data-id="{{ possessionsKey }}" data-value="{{ possessions }}"  href="#">{{ get_possession_format(possessionsKey) }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                                <a href="#" class="btn btn-done">Done</a>
+                            </div>
+                        </li>
+                        <li class="posted-by">
+                            <a href="#">Posted By</a>
+                            <div class="open-dropdown">
+                                <ul class="filter-lists">
+                                    {% for posted in projectPostedBy %}
+                                        {% set tmpposted = posted|split("|") %}
+                                        {% set postedId = tmpposted.0|trim('0','left') %}
+                                        <li id="posted_{{ postedId }}"><a class="posted" data-id="{{ postedId }}" href="#">{{ tmpposted.1 }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                                <a href="#" class="btn btn-done">Done</a>
+                            </div>
+                        </li>
+                        <li class="amenities">
+                            <a href="#">Amenities</a>
+                            <div class="open-dropdown">
+                                <div class="filter-vtabs">
+                                    <div id="list-amenities" class="list-group">
+                                        {% for category in projectAmenitiesCategories|sort %}
+                                            {% set tmpcategory = category|split("|") %}
+                                            {% set categoryId = tmpcategory.0|trim('0','left') %}
+                                            <a class="list-group-item list-group-item-action" href="#amentities{{ tmpcategory.0 }}">{{ tmpcategory.1 }}</a>
+                                        {% endfor %}
+                                    </div>
+
+
+                                    <div data-spy="scroll" data-target="#list-amenities" data-offset="40" class="scrollspy-example">
+                                        <ul class="list-type">
+                                            {% for category in projectAmenitiesCategories|sort %}
+                                                {% set tmpcategory = category|split("|") %}
+                                                {% set categoryId = tmpcategory.0|trim('0','left') %}
+                                                <li id="amentities{{ tmpcategory.0 }}">
+                                                    <h4>{{ tmpcategory.1 }}</h4>
+                                                    <ul class="filter-lists">
+                                                        {% for amenities in projectAmenities|sort %}
+
+                                                             {% set tmpamenities = amenities|split("|") %}
+                                                             {% set amenitiesId = tmpamenities.2|trim('0','left') %}
+                                                             {% if tmpamenities.0 == tmpcategory.0 %}
+                                                                <li>
+                                                                    <a href="#" class="amenities" data-id="{{ amenitiesId }}">
+                                                                    {% set iconName = "" %}
+                                                                    {% for key,icon in projectAmenitiesIcons %}
+                                                                        {% set keyValue = ("id_"~tmpamenities.2|trim('0','left')) %}
+                                                                        {% if key == keyValue %}
+                                                                            {% set iconName = icon %}
+                                                                        {% endif %}
+                                                                    {% endfor %}
+                                                                    {% if iconName != "" %}
+                                                                        <img src="{{ iconName|imagine_filter('resize_icon_image_30_40') }}" alt="...">
+                                                                    {% endif %}
+                                                                    {% if tmpamenities.3 !="" %}{{ tmpamenities.3 }}{% else %}{{ tmpamenities.5 }}{% endif %}
+                                                                    </a>
+                                                                </li>
+                                                             {% endif %}
+                                                         {% endfor %}
+                                                    </ul>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+
+                                    </div>
+                                </div>
+                                <a href="#" class="btn btn-done">Done</a>
+                            </div>
+                        </li>
+                        <li class="more-filters">
+                            <a href="#">More Filters</a>
+
+                            <div class="open-dropdown">
+                                <div class="filter-vtabs">
+                                    <div id="list-example" class="list-group">
+                                        {% for key,moreFilter in projectMoreFilter %}
+                                            <a class="list-group-item list-group-item-action" href="#{{ key }}">{{ key|replace({"_":" "}) }}</a>
+                                        {% endfor %}
+                                    </div>
+                                    <div data-spy="scroll" data-target="#list-example" data-offset="50" class="scrollspy-example typ3">
+                                        <ul class="list-type">
+                                            {% for key,moreFilter in projectMoreFilter %}
+                                                {% if key != "Property_Area" %}
+                                                    <li id="{{ key }}">
+                                                        <h4>{{ key }}</h4>
+                                                        <ul class="filter-lists">
+                                                            {% for filter in moreFilter %}
+                                                                <li><a href="#" class="bathrooms" data-id="{{ filter }}">{{ filter }}</a></li>
+                                                            {% endfor  %}
+                                                        </ul>
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% for key,moreFilter in projectMoreFilter %}
+                                                {% if key == "Property_Area" %}
+                                                    <li id="{{ key }}">
+                                                        <h4>{{ key|replace({"_":" "}) }}</h4>
+                                                        <ul class="filter-lists sm">
+                                                            <li>
+                                                                {% for filterKey,filter in moreFilter %}
+                                                                    {% if filterKey != "Area" %}
+                                                                        <span>
+                                                                            <div class="select-custom">
+                                                                              <select class="areaValue">
+                                                                                <option value="">Sqft</option>
+                                                                                {% for exactfilter in filter %}
+                                                                                    <option value="{{ exactfilter }}">{{ exactfilter }}</option>
+                                                                                {% endfor %}
+                                                                              </select>
+                                                                            </div>
+                                                                       </span>
+                                                                    {% else %}
+{#                                                                        <span>#}
+{#                                                                            <div class="select-custom">#}
+{#                                                                              <select id ="area">#}
+{#                                                                                {% for exactfilter in filter %}#}
+{#                                                                                    <option value="{{ exactfilter }}">{{ exactfilter }}</option>#}
+{#                                                                                {% endfor %}#}
+{#                                                                              </select>#}
+{#                                                                            </div>#}
+{#                                                                       </span>#}
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </li>
+                                                            <li><a href="#" class="areaValueRange" data-id="Min">Min</a></li>
+                                                            <li><a href="#" class="areaValueRange" data-id="Max">Max</a></li>
+                                                        </ul>
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                        <a href="#" class="btn btn-done">Done</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="btn-sec">
+                        <ul>
+                            <li><a href="#" id="cancel-filter" class="btn btn-primary">Cancel</a></li>
+                            <li><a href="#" id="save-filter" class="btn btn-primary">Save</a></li>
+                        </ul>
+                    </div>
+                    <a class="btn-reset" href="#" data-toggle="modal" data-target="#largeModal"><i class="icon-filter"></i> Selected Filters</a>
+                </div>
+
+            </div>
+        </section>
+        <section class="mt-0">
+            <div class="container">
+                <div class="tbl-style two-col">
+                    <div>
+                        <div class="sort-by-sec">
+                            <ul>
+                                <li><b class="propertyCount">{{ projectData|length }}{# get_project_property_count(projectData) #}</b> properties for sale</li>
+{#                                <li><span class="growth-txt"><i class="fa fa-arrow-circle-up"></i> 18.4%</span> in last six months</li>#}
+                            </ul>
+                            <div class="sort-by">
+                                <label>Sort by :</label>
+                                <div class="select-custom">
+                                    <select id="sortBy">
+                                        <option value="">Select</option>
+                                        <option value="Tred">TRED Recommended</option>
+                                        <option value="Low">Price - Low to High</option>
+                                        <option  value="High">Price - High to Low</option>
+                                        <option  value="Recent">Most Recent</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <ul class="project-listing">
+                            {{ include('portal/page/product/property-listing.html.twig') }}
+                        </ul>
+
+                    </div>
+                    <div class="mob-hide">
+                        <div class="form-sec contact-tred-expert">
+
+{#                            <div class="form-group">#}
+{#                                <h2>Contact our <span>TRED Experts</span></h2>#}
+{#                                <span class="mendatory-field">* All fields are mandatory</span>#}
+{#                            </div>#}
+{#                            <form class="form">#}
+{#                                <div class="form-group">#}
+{#                                    <label for="name" class="">Name</label>#}
+{#                                    <input type="text" id="name" name="name" required="required" class="form-control">#}
+{#                                </div>#}
+{#                                <div class="form-group">#}
+{#                                    <label for="email-id" class="">Email ID</label>#}
+{#                                    <input type="email" id="email-id" email-id="email-id" required="required" class="form-control">#}
+{#                                </div>#}
+{#                                <div class="form-group mob-no">#}
+{#                                    <div class="input-group-prepend">#}
+{#                                        <select>#}
+{#                                            <option>+91</option>#}
+{#                                            <option>+92</option>#}
+{#                                        </select>#}
+{#                                    </div>#}
+{#                                    <label for="mobile-number">Mobile Number</label>#}
+{#                                    <input type="tel" id="mobile-number" name="mobile-number" required="required" minlength="10" maxlength="10" class="form-control">#}
+{#                                </div>#}
+{#                                <div class="form-group">#}
+{#                                    <label for="cause">Location</label>#}
+{#                                    <select class="form-control">#}
+{#                                        <option>Mumbai</option>#}
+{#                                    </select>#}
+{#                                </div>#}
+{#                                <label class="checkbox-lbl">#}
+{#                                    <input type="checkbox">#}
+{#                                    Schedule meeting with TRED Expert#}
+{#                                </label>#}
+{#                                <div class="w-100"></div>#}
+{#                                <div class="form-group"><a href="#" class="btn btn-primary">Get A Call Back</a></div>#}
+
+{#                            </form>#}
+                        </div>
+
+
+
+{#                        <div class="form-sec mt-5">#}
+{#                            <div class="form-group">#}
+{#                                <h2 class="txt-sm">Join TRED Newsletter</h2>#}
+{#                            </div>#}
+{#                            <form class="form" id="newsletterForm_listing">#}
+{#                                <div class="form-group">#}
+{#                                    <input type="email" required="required" id="userSubscriptionEmail_listing" class="form-control" placeholder="Enter your Email ID">#}
+{#                                    <div class="messagesubscription"></div>#}
+{#                                </div>#}
+{#                                <div class="w-100"></div>#}
+{#                                <div class="form-group">#}
+{#                                    <button type="submit" class="btn btn-primary btn-subscribe subscribebutton">Subscribe</button>#}
+{#                                </div>#}
+{#                            </form>#}
+{#                        </div>#}
+
+
+                        <div class="proj-dtls typ2 mt-5">
+                            {% for ad in ads|filter((ad)=>ad.advertisementPosition == "right") %}
+                                <figure>
+                                    <img src="{{ ad.advertisementDesktopImagePath|imagine_filter('resize_image_advertisement_2') }}" class="desktop-purpose" alt="{{ ad.AdvertisementName }}" title="{{ ad.AdvertisementName }}">
+                                </figure>
+                                <figcaption>
+                                    <div>
+                                        <br/>
+                                    </div>
+                                </figcaption>
+                            {% endfor %}
+                        </div>
+
+
+{#                        <div class="proj-dtls typ2 mt-5">#}
+{#                            <figure>#}
+{#                                {% for ad in ads|filter((ad)=>ad.advertisementPosition == "right") %}#}
+{#                                    <img src="{{ ad.advertisementDesktopImagePath|imagine_filter('resize_image_advertisement_2') }}" class="desktop-purpose" alt="{{ ad.AdvertisementName }}" title="{{ ad.AdvertisementName }}">#}
+{#                                {% endfor %}#}
+{#                            </figure>#}
+{#                            <figcaption>#}
+{#                                <div>#}
+{#                                    <h2 class="text-uppercase">Limited Lockdown Period Offer</h2>#}
+{#                                    <h3><b>We Pay Your<br>#}
+{#                                            12 Months PRE-EMI*</b></h3>#}
+{#                                    <h4>Kalpataru Vienta</h4>#}
+{#                                    <div class="tbl-style">#}
+{#                                        <div>#}
+{#                                            <h5>Kalpataru Group</h5>#}
+{#                                            <h6>Kandivali, Mumbai</h6>#}
+{#                                        </div>#}
+{#                                        <div>#}
+{#                                            <a class="btn btn-primary btn-sm" href="#">Book Now</a>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                            </figcaption>#}
+{#                        </div>#}
+                    </div>
+                </div>
+
+
+            </div>
+        </section>
+
+    </div>
+    <!-- large modal -->
+    <div class="modal fade cust-modal" id="largeModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close seleted-filter-close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h3>Selected Filters</h3>
+{#                    {% if app.request.get('_route') == 'portal_properties_list' %}#}
+                        <a class="btn-reset" href="{{ path(app.request.get('_route'),{'slugName':app.request.get('slugName'),'city':app.session.get('city') }) }}"><i class="fa fa-repeat"></i> Reset Filters</a>
+{#                    {% else %}#}
+{#                        <a class="btn-reset" href="{{ path(app.request.get('_route'),{'slugName':app.request.get('slugName'),'status':app.request.get('status')}) }}"><i class="fa fa-repeat"></i> Reset Filters</a>#}
+{#                    {% endif  %}#}
+                </div>
+                <div class="modal-body">
+
+                    <ul class="filter-lists selected-filter">
+                        {% include 'portal/page/product/selected-filters.html.twig' %}
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!--Main Wrapper Starts-->
+{% endblock %}
+{% block javascripts %}
+    {% set myRoute = route|split("_") %}
+    {{ parent() }}
+    <script src="{{ asset('assets/plugins/jquery-validation/jquery.validate.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/plugins/jquery-validation/additional-methods.min.js') }}" type="text/javascript"></script>
+    <script>
+
+        function getFilter() {
+            var data = {};
+            {% if transactionCategoryId %}
+                data['propertyTransactionCategoryId'] = '{{ transactionCategoryId }}';
+            {% endif %}
+            data['slugName'] = "{{ app.request.get('slugName') }}";
+
+            data['propertyTypeId'] = eval(jQuery(".propertyType:checked").val());
+            data['productSubType'] = $('.productSubType.active').map(function () {
+                return eval($(this).val());
+            }).get();
+
+            data['projectStatus'] = $('.projectStatus.active').map(function () {
+                return eval($(this).attr("data-id"));
+
+            }).get();
+
+            data['projectRoomConfigurations'] = $('.bhkrooms.active').map(function () {
+                return $(this).attr("data-id");
+            }).get();
+
+            data['projectPossessions'] = $('.possessionDate.active').map(function () {
+                return $(this).attr("data-id")+"~"+$(this).attr("data-value");
+            }).get();
+
+            data['projectPostedBy'] = $('.posted.active').map(function () {
+                return eval($(this).attr("data-id"));
+            }).get();
+
+            data['projectAmenities'] = $('.amenities.active').map(function () {
+                return eval($(this).attr("data-id"));
+            }).get();
+
+            data['noOfBathRooms'] = $('.bathrooms.active').map(function () {
+                return eval($(this).attr("data-id"));
+            }).get();
+
+            if ($('.areaValue').val() !=""){
+                data['propertyAreaValue'] =  $('.areaValue').val();
+                data['propertyAreaRange'] =  $('.areaValueRange.active').attr("data-id");
+            }
+
+            if ($('#minrange').val() !="" && $('#maxrange').val() !="" ){
+                data["priceRangeMin"] =  $('#minrange').attr("data-value");
+                data["priceRangeMax"] =  $('#maxrange').attr("data-value");
+                data["priceRangeMinDenomination"] =  $('#minrange').attr("data-denomination");
+                data["priceRangeMaxDenomination"] =  $('#maxrange').attr("data-denomination");
+            }
+
+            if ($('.hpgcity').val() !=""){
+                data['mstCity'] = $('.hpgcity').val();
+            }
+
+
+            if ($("#sortBy").val() !=""){
+                data['sort'] = $("#sortBy").val();
+            }
+            {% if myRoute.1 == 'properties' %}
+                {% set filterUrl = 'portal_properties_filter' %}
+                {% set selectedFilterUrl = 'portal_properties_selected_filter' %}
+{#            {% else %}#}
+{#                {% set filterUrl = 'portal_rentals_filter' %}#}
+{#                {% set selectedFilterUrl = 'portal_rentals_selected_filter' %}#}
+            {% endif  %}
+
+            jQuery.ajax({
+                url: "{{ path(filterUrl) }}",
+                data: data,
+                type: "POST",
+                dataType: "html",
+                success: function (data) {
+                    var result = $(".project-listing");
+                    result.html('');
+                    result.html(data);
+                    $(".propertyCount").html($(".project-listing").find("li.property-listing").length);
+                },
+                complete:function(result){
+                    jQuery.ajax({
+                        url: "{{ path(selectedFilterUrl) }}",
+                        data: data,
+                        type: "POST",
+                        dataType: "html",
+                        success: function (result_2) {
+                            var result = $(".selected-filter");
+                            result.html('');
+                            result.html(result_2);
+                        }
+                    });
+                }
+            });
+
+
+        }
+        {#function callAjax(form){#}
+        {#    jQuery.ajax({#}
+        {#        url: "{{ path('portal_tred_experts',{'mstPropertyTransactionCategory':page }) }}",#}
+        {#        type: "POST",#}
+        {#        dataType: "HTML",#}
+        {#        data: form,#}
+        {#        success: function (data) {#}
+        {#            // $(".contact-tred-expert").html(data);#}
+        {#            window.location.href = "{{ path('portal_form_enquiry_success') }}";#}
+        {#        }#}
+        {#    });#}
+        {#}#}
+        function formActition(){
+            /****Form****/
+            function formcontrol(){
+                $(".form-control").filter(function() {
+                    if (this.value.length !==0){
+                        $(this).siblings('label').addClass('clicked');
+                    }
+                });
+            }
+            formcontrol();
+            $('.form-group label').click(function () {
+                $(this).addClass('clicked');
+            });
+            $('.form-control').click(function () {
+                $(this).siblings('label').addClass('clicked');
+            });
+            $('.form-control').keyup(function () {
+                $(this).siblings('label').addClass('clicked');
+            });
+            $('.form-control').blur(function () {
+                if ($(this).val()) {
+                    $(this).siblings('label').addClass('clicked');
+                } else if (!$(this).val()) {
+                    $(this).siblings('label').removeClass('clicked');
+                }
+            });
+            /****Form****/
+        }
+
+        $(document).ready(function () {
+
+            $('.call-action.active').hide();
+            $('.call-action .closeBtn').hide();
+
+            $('.call-action span a').click(function(){
+                $('.call-action').addClass('active');
+                $('.call-action .closeBtn').show();
+            });
+
+            $('.call-action .closeBtn').click(function(){
+                $('.call-action').removeClass('active');
+                $(this).hide();
+            });
+
+            $("select").click(function(){
+                $(this).parent().addClass('active');
+            });
+
+            if(width < 991) {
+                $('.mob-hide').hide()
+                $('.mob-filter').click(function(){
+                    $('.top-filter-sec').toggle(500);
+                    $('.top-filter').toggleClass('active');
+                });
+                $('#cancel-filter').click(function(){
+                    $('.top-filter-sec').hide(500);
+                    $('.top-filter').removeClass('active');
+                });
+                $('#save-filter').click(function(){
+                    $('.top-filter-sec').hide(500);
+                    $('.top-filter').removeClass('active');
+                });
+                $('.mob-search').on('click',function(e) {
+                    e.preventDefault();
+                    $(this).toggleClass('fa-close');
+                    $(this).parents().find('.banner-carousel').find('.search_box').toggleClass('open');
+                });
+
+            }
+            jQuery(".btn-done").click(function(e){
+                e.preventDefault();
+                if ($(this).hasClass('budgetbtn')){
+                    if (jQuery(this).closest('.widget-section').length > 0){
+                        jQuery(this).closest('.widget-section').find('.open-dropdown1').hide();
+                    }
+                }else{
+                    $(this).parents('.open-dropdown').hide();
+                    getFilter();
+                }
+            });
+
+            // jQuery(".propertyTypeId").click(function(){
+            //     getFilter();
+            // });
+
+            jQuery(".productSubType").click(function(e){
+                e.preventDefault();
+                $(this).toggleClass("active");
+            });
+            jQuery(".projectStatus").click(function(e){
+                e.preventDefault();
+                $(this).toggleClass("active");
+            });
+            jQuery(".bhkrooms").click(function(e){
+                e.preventDefault();
+                $(this).toggleClass("active");
+            });
+            jQuery(".possessionDate").click(function(e){
+                e.preventDefault();
+                $(this).toggleClass("active");
+            });
+            jQuery(".posted").click(function(e){
+                e.preventDefault();
+                $(this).toggleClass("active");
+            });
+            // jQuery(".aamenities").click(function(e){
+            //     e.preventDefault();
+            //     //$(this).toggleClass("active");
+            // });
+            // jQuery(".bathrooms").click(function(e){
+            //     e.preventDefault();
+            //     getFilter();
+            // });
+            jQuery(".areaValueRange").click(function(e){
+                e.preventDefault();
+                jQuery(".areaValueRange").removeClass("active")
+                $(this).addClass("active");
+                if ($(".areaValue").val() == ""){
+                    alert("Please select the value of Property Area");
+                }
+            });
+            jQuery("#sortBy").click(function(){
+                getFilter();
+            });
+
+
+            jQuery('#userSubscriptionEmail').focus(function(){
+                $(this).closest('.messagesubscription').text("");
+            });
+
+            $("#newsletterForm_listing").submit(function(event) {
+
+                /* stop form from submitting normally */
+                event.preventDefault();
+                var data = {};
+                data['email'] = $('#userSubscriptionEmail_listing').val();
+                var messagesubscription = $(this).find('.messagesubscription');
+                messagesubscription.text('Subscribing to the newsletter......');
+                $('.subscribebutton').attr("disabled", "disabled");
+                $.ajax({
+                    url: '{{ path('newsletter-subscription') }}',
+                    type: 'POST',
+                    data: data,
+                    success: (function (formdata) {
+                        messagesubscription.text('');
+                        messagesubscription.text(formdata['message']);
+                        $('#userSubscriptionEmail_listing').val("");
+                    })
+                });
+            });
+
+            jQuery(".minRange").click(function(e){
+                e.preventDefault();
+                jQuery("#minrange").val(jQuery(this).text());
+                jQuery("#minrange").attr("data-value",jQuery(this).attr("data-range"));
+                jQuery("#minrange").attr("data-denomination",jQuery(this).attr("data-denomination"));
+                jQuery(".minRange").hide();
+                jQuery(".maxRange").map(function(index,item){
+                    var dataRange = eval($(item).attr("data-range"));
+                    var getValue = eval(jQuery("#minrange").attr("data-value"));
+                    if(getValue >= dataRange){
+                        $(item).closest("li").hide();
+                    }
+                });
+            });
+
+            jQuery(".maxRange").click(function(e){
+                e.preventDefault();
+                jQuery("#maxrange").val(jQuery(this).text());
+                jQuery("#maxrange").attr("data-value",jQuery(this).attr("data-range"));
+                jQuery("#maxrange").attr("data-denomination",jQuery(this).attr("data-denomination"));
+                jQuery(".maxRange").hide();
+            });
+
+            jQuery(document).on("click",".close-filter",function(e){
+                e.preventDefault();
+                var dataId = $(this).closest("li").attr("data-id");
+                var dataValue = $(this).closest("li").attr("data-value");
+                if (dataId == "budget"){
+                    jQuery("#minrange").val("");
+                    jQuery(".minRange").show();
+                    jQuery("#maxrange").val("");
+                    jQuery(".maxRange").show();
+                }
+                if (dataId == "bhkrooms"){
+                    $('.bhkrooms.active').map(function () {
+                        if ($(this).attr("data-id") == dataValue){
+                            $(this).removeClass("active");
+                        }
+                    })
+                    // jQuery(".bhkrooms").attr("data-id",dataValue).removeClass("active");
+                }
+                if (dataId == "possession"){
+                    $('.possessionDate.active').map(function () {
+                        if ($(this).attr("data-id") == dataValue){
+                            $(this).removeClass("active");
+                        }
+                    })
+                }
+                if (dataId == "posted"){
+                    jQuery(".posted").attr("data-id",dataValue).removeClass("active");
+                }
+                if (dataId == "amenities"){
+                    jQuery(".amenities").attr("data-id",dataValue).removeClass("active");
+                }
+                if (dataId == "productSubType"){
+                    jQuery(".productSubType").attr("data-id",dataValue).removeClass("active");
+                }
+                if (dataId == "projectStatus"){
+                    jQuery(".projectStatus").attr("data-id",dataValue).removeClass("active");
+                }
+                if (dataId == "amenities"){
+                    jQuery(".amenities").attr("data-id",dataValue).removeClass("active");
+                }
+                if (dataId == "propertyAreaRangeValue"){
+                    jQuery(".areaValue").val("");
+                    jQuery(".areaValueRange").attr("data-id",dataValue).removeClass("active");
+                }
+                getFilter();
+                $(this).closest("li").remove();
+                if (jQuery(".selected-filter").find("li").length == 0 ){
+                    jQuery(".seleted-filter-close").trigger("click");
+                }
+
+            });
+
+            $('.txt-more').click(function(e) {
+                e.preventDefault();
+                $(this).siblings("ul.amenities").find("li.amenitiesLi").slideToggle();
+            });
+
+            $('.social-btn').on('click', function(e){
+                e.preventDefault();
+                $(this).siblings('.social-media').slideToggle();
+            });
+            $('.fa-close').on('click', function(e){
+                e.preventDefault();
+                $(this).parent('.social-media').slideToggle();
+            });
+
+            jQuery.ajax({
+                url: "{{ path('portal_tred_experts',{'mstPropertyTransactionCategory':page }) }}",
+                type: "GET",
+                dataType: "HTML",
+                success: function (data) {
+                    $(".contact-tred-expert").html(data);
+                    // $('.form').submit(function(event) {
+                    //     event.preventDefault();
+                    //     var form = $(this).serialize();
+                    //     callAjax(form);
+                    // });
+                }
+            });
+
+            $('.thumbs-up').on('click', function(e){
+                e.preventDefault();
+                var item = $(this);
+                var data = {};
+                data['id'] = item.attr("data-id");
+                jQuery.ajax({
+                    url: "{{ path('portal_room_configuration_like') }}",
+                    type: "POST",
+                    dataType: "json",
+                    data: data,
+                    success: function (result) {
+                        item.find(".fa-thumbs-o-up-count").html(result.data);
+                    }
+                });
+            });
+
+            {% if  app.request.get('status') !="" %}
+                if (jQuery(".new-project").find("ul.filter-lists").find("li>a.active").length > 0){
+                    jQuery(".new-project").find("a.btn-done").trigger("click");
+                }
+            {% endif %}
+
+            jQuery("#btn-frm").click(function(){
+                var frm = jQuery("#frm");
+                var productType = frm.find(".custom-control-input:checked").attr("data-id");
+                var rc = [];
+                frm.find("a.roomConfiguration.active").map(function(){
+                    rc.push($(this).attr("data-id"));
+                });
+                frm.find("input.roomConfiguration").val(rc.join(","));
+                var rc = [];
+                frm.find("a.projectStatus.active").map(function(){
+                    rc.push($(this).attr("data-id"));
+                });
+                frm.find("input.projectStatus").val(rc.join(","));
+                frm.attr("method","post");
+                frm.submit();
+            });
+
+            $('.budget-section').click(function() {
+                $(this).siblings(".widget-section").find(".open-dropdown1").show();
+                $(this).siblings(".widget-section").toggle();
+                $('.buy-section .open-dropdown1').hide();
+                $(window).scroll(function() {
+                    if ($(this).scrollTop() > 550) {
+                        $('.search_box').addClass('sticky');
+                    } else {
+                        $('.search_box').removeClass('sticky');
+                    }
+                });
+                return false;
+            });
+        });
+
+        /*Equal Height*/
+    </script>
+{% endblock %}

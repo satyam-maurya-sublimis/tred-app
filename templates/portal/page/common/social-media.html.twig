@@ -1,0 +1,7 @@
+<div class="social-media share-icons" style="display:none;">
+  <a href="#" class="fa fa-close"></a>
+  <a href="http://www.facebook.com/sharer.php?u={{ app.request.schemeAndHttpHost ~ app.request.requestUri|url_encode }}" target="_blank"><img src="{{ asset('resources/images/icons/facebook.png') }}" alt="Facebook" title="Facebook"></a>
+  <a href="https://twitter.com/intent/tweet?text={{ project.trnProject.projectName }}&amp;url={{ app.request.schemeAndHttpHost ~ app.request.requestUri|url_encode }}&amp;via={{ office.orgCompany.company }}" target="_blank"><img src="{{ asset('resources/images/icons/twitter.png') }}" alt="Twitter" title="Twitter"></a>
+  <a href="http://www.linkedin.com/shareArticle?mini=true&url={{ app.request.schemeAndHttpHost ~ app.request.requestUri|url_encode }}" target="_blank"><img src="{{ asset('resources/images/icons/linkedin.png') }}" alt="Linkedin" title="Linkedin"></a>
+  <a href="https://api.whatsapp.com/send?phone={{ office.officeTelNumber }}&text={{ project.trnProject.projectName }}%20{{ app.request.schemeAndHttpHost ~ app.request.requestUri|url_encode }}" target="_blank" rel="nofollow"><img src="{{ asset('resources/images/icons/whatsapp.png') }}" alt="Whatsapp" title="Whatsapp" width="45"></a>
+</div>

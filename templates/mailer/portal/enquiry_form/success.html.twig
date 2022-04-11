@@ -1,0 +1,181 @@
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>TRED</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Lato', Arial, Helvetica, sans-serif; font-size: 16px; line-height:26px; color: #231F20; }
+        .wrapper { max-width: 700px; margin-left: auto; margin-right: auto; margin-top: 50px; }
+        table { border: 0; margin: 0 auto; border-spacing: 0; border-collapse: collapse; }
+        .main-table { padding: 0; margin: 0; width: 100%; background:#fff;}
+        .main-table p { margin-bottom: 1.5rem; margin-top: 0 !important; line-height: 20px; }
+        h1 { font-family:'Montserrat', Arial, Helvetica, sans-serif; font-size: 20px; font-weight: 600; color: #B55D28;}
+
+        .system-msg { font-size: 14px; text-align:left; border-top:solid 1px rgb(112 112 112 / 50%);}
+        .system-msg td { font-size: 14px; }
+        a { color: #B55D28; text-decoration: none; font-size:14px;}
+        a:hover { color: #B55D28; text-decoration: underline; }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+
+    <table width="100%" border="0" cellspacing="0" cellpadding="30" bgcolor="#F7F7F7">
+        <tr>
+            <td>
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" class="main-table">
+                    <tr>
+                        <td><table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr style="border-bottom: solid 1px #B55D28;">
+                                    <td width="40">&nbsp;</td>
+                                    <td align="left" valign="middle"><img src="{{ absolute_url(asset('resources/images/logo-tred.svg')) }}" width="180" alt="TRED" title="TRED"></td>
+                                </tr>
+                            </table></td>
+                    </tr>
+                    <tr>
+                        <td height="10" valign="top">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td><table width="100%" cellpadding="0" cellspacing="5" border="0">
+                                {% if data.enquiryForm == 'home-loans' %}
+                                    {% set enquiry_title = data.mstProductCategory %}
+                                {% endif %}
+                                {% if data.enquiryForm == 'interior-designers' %}
+                                    {% set enquiry_title = data.mstProductCategory ~" : " ~ data.mstProductType %}
+                                {% endif %}
+                                {% if data.enquiryForm == 'home-decor' or  data.enquiryForm == 'home-furnishing' %}
+                                    {% set enquiry_title = data.mstProductCategory ~" : " ~ data.mstProductType %}
+                                {% endif  %}
+                                {% if data.enquiryForm == 'ready-made' or  data.enquiryForm == 'modular' %}
+                                    {% set enquiry_title = data.mstProductCategory ~" : " ~ data.mstProductType %}
+                                {% endif  %}
+                                {% if data.enquiryForm == 'logistics' %}
+                                    {% set enquiry_title = data.mstProductCategory %}
+                                {% endif  %}
+                                <tr>
+                                    <td></td>
+                                    <td valign="top"><strong>Dear {{ data.enquiryFirstName }} {{ data.enquiryLastName }},</strong><br /><br />
+                                        Thank you for enquiry with us. One of our experts will get in touch you soon.<br />                  <br /></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td width="40"></td>
+                                    <td valign="top"><table width="100%" cellpadding="0" cellspacing="5" border="0">
+                                            <tr>
+                                                <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                        <tr style="background:rgb(180 93 39 / 5%);">
+                                                            <td width="202" height="45" style="padding-left:10px"><strong>Name</strong></td>
+                                                            <td width="332" style="padding-left:20px; border-left:#ffffff 2px solid;">{{ data.enquiryFirstName }} {{ data.enquiryLastName }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td height="40" style="padding-left:10px"><strong>Email</strong></td>
+                                                            <td style="padding-left:20px; border-left:#ffffff 2px solid;">{{ data.enquiryEmailAddress }}</td>
+                                                        </tr>
+                                                        <tr style="background:rgb(180 93 39 / 5%);">
+                                                            <td height="40" style="padding-left:10px"><strong>Mobile</strong></td>
+                                                            <td style="padding-left:20px; border-left:#ffffff 2px solid;">+{{ data.mstCountry.phoneCode}} {{ data.enquiryMobileNumber }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td height="40" style="padding-left:10px"><strong>Enquiry</strong></td>
+                                                            <td style="padding-left:20px; border-left:#ffffff 2px solid;">{{ enquiry_title }}</td>
+                                                        </tr>
+{#                                                        <tr style="background:rgb(180 93 39 / 5%);">#}
+{#                                                            <td height="40" style="padding-left:10px"><strong>City </strong></td>#}
+{#                                                            <td style="padding-left:20px; border-left:#ffffff 2px solid;">{{ data.mstCity }}</td>#}
+{#                                                        </tr>#}
+
+                                                        {% if data.enquiryForm == 'home-loans' %}
+                                                            <tr>
+                                                                <td height="40" style="padding-left:10px"><strong>Home Loan Amount</strong></td>
+                                                                <td style="padding-left:20px; border-left:#ffffff 2px solid;">{{ data.enquiryHomeLoanAmount }}</td>
+                                                            </tr>
+                                                        {% endif  %}
+                                                        {% if data.enquiryForm == 'home-decor' or  data.enquiryForm == 'home-furnishing' %}
+{#                                                            <tr >#}
+{#                                                                <td height="40" style="padding-left:10px"><strong>Comments</strong></td>#}
+{#                                                                <td style="padding-left:20px; border-left:#ffffff 2px solid;">{{ data.enquiryComments }}</td>#}
+{#                                                            </tr>#}
+                                                        {% endif  %}
+                                                        {% if data.enquiryForm == 'interior-designers' %}
+{#                                                            <tr >#}
+{#                                                                <td height="40" style="padding-left:10px"><strong>Budget</strong></td>#}
+{#                                                                <td style="padding-left:20px; border-left:#ffffff 2px solid;">{{ data.enquiryBudget }}</td>#}
+{#                                                            </tr>#}
+{#                                                            <tr style="background:rgb(180 93 39 / 5%);">#}
+{#                                                                <td height="40" style="padding-left:10px"><strong>Carpet Area </strong></td>#}
+{#                                                                <td style="padding-left:20px; border-left:#ffffff 2px solid;">{{ data.enquiryCarpetArea }}</td>#}
+{#                                                            </tr>#}
+{#                                                            <tr >#}
+{#                                                                <td height="40" style="padding-left:10px"><strong>Budget</strong></td>#}
+{#                                                                <td style="padding-left:20px; border-left:#ffffff 2px solid;">{{ data.enquiryBudget }}</td>#}
+{#                                                            </tr>#}
+{#                                                            <tr style="background:rgb(180 93 39 / 5%);">#}
+{#                                                                <td height="40" style="padding-left:10px"><strong>More Details </strong></td>#}
+{#                                                                <td style="padding-left:20px; border-left:#ffffff 2px solid;">{{ data.enquiryMoreDetail }}</td>#}
+{#                                                            </tr>#}
+{#                                                            <tr>#}
+{#                                                                <td height="40" style="padding-left:10px"><strong>Scope of Work</strong></td>#}
+{#                                                                <td style="padding-left:20px; border-left:#ffffff 2px solid;">{{ data.enquiryScopeOfWork }}</td>#}
+{#                                                            </tr>#}
+                                                        {% endif  %}
+                                                        {% if data.enquiryForm == 'ready-made' or  data.enquiryForm == 'modular' %}
+{#                                                            <tr style="background:rgb(180 93 39 / 5%);">#}
+{#                                                                <td height="40" style="padding-left:10px"><strong>Budget</strong></td>#}
+{#                                                                <td style="padding-left:20px; border-left:#ffffff 2px solid;">{{ data.enquiryBudget }}</td>#}
+{#                                                            </tr>#}
+{#                                                            <tr>#}
+{#                                                                <td height="40" style="padding-left:10px"><strong>Furniture Type </strong></td>#}
+{#                                                                <td style="padding-left:20px; border-left:#ffffff 2px solid;">{{ data.enquiryNeed }}</td>#}
+{#                                                            </tr>#}
+
+                                                        {% endif  %}
+                                                        {% if data.enquiryForm == 'logistics' %}
+{#                                                            <tr style="background:rgb(180 93 39 / 5%);">#}
+{#                                                                <td height="40" style="padding-left:10px"><strong>Moving From</strong></td>#}
+{#                                                                <td style="padding-left:20px; border-left:#ffffff 2px solid;">{{ data.enquiryMovingFrom }}</td>#}
+{#                                                            </tr>#}
+{#                                                            <tr>#}
+{#                                                                <td height="40" style="padding-left:10px"><strong>Moving To </strong></td>#}
+{#                                                                <td style="padding-left:20px; border-left:#ffffff 2px solid;">{{ data.enquiryMovingTo }}</td>#}
+{#                                                            </tr>#}
+{#                                                            <tr style="background:rgb(180 93 39 / 5%);">#}
+{#                                                                <td height="40" style="padding-left:10px"><strong>Shifting Type</strong></td>#}
+{#                                                                <td style="padding-left:20px; border-left:#ffffff 2px solid;">{{ data.enquiryShiftingType }}</td>#}
+{#                                                            </tr>#}
+
+                                                        {% endif  %}
+                                                    </table></td>
+                                            </tr>
+                                            <tr>
+                                                <td height="30">&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Warm Regards,</td>
+                                            </tr>
+                                            <tr>
+                                                <td height="50">TRED Team</td>
+                                            </tr>
+                                            <tr>
+                                                <td height="50">&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td height="50" align="left" class="system-msg"> <strong>Note</strong>: This is system generated message. Please do not reply directly
+                                                    to this email.</td>
+                                            </tr>
+                                        </table></td>
+                                    <td width="36"></td>
+                                </tr>
+                            </table></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

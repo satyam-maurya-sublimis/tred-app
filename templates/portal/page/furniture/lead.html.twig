@@ -1,0 +1,85 @@
+{#{% set _path = path(app.request.attributes.get('_route'),app.request.attributes.get('_route_params')) %}#}
+{{ form_start(form,{'attr':{"class":"form","id":"tred_furniture_form",'novalidate':'novalidate',"action": path('portal_furniture_lead_form',{'filter': app.request.attributes.get('filter')}) }}) }}
+<div class="row row-sm">
+    <div class="col-sm-4">
+        <div class="form-group">
+            {{ form_label(form.furnitureEnquiryFullName) }}
+            {{ form_widget(form.furnitureEnquiryFullName) }}
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="form-group">
+            <div class="row row-xs">
+                <div class="col-md-4">
+                    {{ form_widget(form.mstCountry) }}
+                </div>
+                <div class="col-md-8">
+                    {{ form_label(form.furnitureEnquiryMobileNumber) }}
+                    {{ form_widget(form.furnitureEnquiryMobileNumber) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="form-group">
+            {{ form_label(form.mstCity) }}
+            {{ form_widget(form.mstCity) }}
+        </div>
+    </div>
+</div>
+<div class="row row-sm">
+    <div class="col-sm-8">
+        <div class="form-group">
+            {{ form_label(form.furnitureEnquiryEmailAddress) }}
+            {{ form_widget(form.furnitureEnquiryEmailAddress) }}
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="form-group">
+            <button id="sendbtn" type="submit" class="btn btn-primary">Send</button>
+        </div>
+    </div>
+</div>
+{{ form_end(form) }}
+<script>
+    jQuery("document").ready(function(){
+        $("#furniture_tred_experts_mstCity").select2({
+            theme: 'bootstrap4',
+            placeholder: 'City',
+            text: 'City'
+        })
+        // if(width < 991) {
+        //     $('#call-back').click(function () {
+        //         $(this).parents('.wrapper').find('.mob-hide').show();
+        //         $(this).parents().find('.form-sec').addClass('open');
+        //     })
+        //     $('#close-search').click(function () {
+        //         $(this).parent().removeClass('open');
+        //     })
+        // }
+        function formcontrol(){
+            $(".form-control").filter(function() {
+                if (this.value.length !==0){
+                    $(this).siblings('label').addClass('clicked');
+                }
+            });
+        }
+        formcontrol();
+        $('.form-group label, .select2-selection__placeholder').click(function () {
+            $(this).addClass('clicked');
+        });
+        $('.form-control').click(function () {
+            $(this).siblings('label').addClass('clicked');
+        });
+        $('.form-control').keyup(function () {
+            $(this).siblings('label').addClass('clicked');
+        });
+        $('.form-control').blur(function () {
+            if ($(this).val()) {
+                $(this).siblings('label').addClass('clicked');
+            } else if (!$(this).val()) {
+                $(this).siblings('label').removeClass('clicked');
+            }
+        });
+    });
+</script>

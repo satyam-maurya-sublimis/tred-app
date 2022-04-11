@@ -1,0 +1,96 @@
+{% extends 'portal/layout/index.html.twig' %}
+{% block portal_content %}
+    {% if cmsLandingPage.cmsBanners|length > 0 %}
+        <section class="banner-carousel typ3">
+            <div id="mainBanner" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    {% for banner in cmsLandingPage.cmsBanners %}
+                        <div class="carousel-item {% if loop.first %}active{% endif %}">
+                            <figure>
+                                <img src="{{ banner.bannerDesktopImagePath|imagine_filter('resize_image_scale_1280_300') }}" class="desktop-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                                <img src="{{ banner.bannerTabletImagePath|imagine_filter('resize_image_scale_767_350') }}" class="tab-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                                <img src="{{ banner.bannerMobileImagePath|imagine_filter('resize_image_scale_350_250') }}" class="mobile-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                                <div class="container">
+                                    <nav aria-label="breadcrumb">
+                                        <ol class="breadcrumb" data-aos="fade-right" data-aos-delay="200">
+                                            <li class="breadcrumb-item"><a href="{{ path('portal_index') }}">Home</a></li>
+                                            <li class="breadcrumb-item active" aria-current="page">{{ cmsLandingPage.mstProductCategory }}</li>
+                                        </ol>
+                                    </nav>
+                                    {{ banner.bannerDescription|raw }}
+                                </div>
+                                {#                                    <a href="#intro" class="next-section-arrow"><i class="fa fa-chevron-down"></i></a>#}
+                            </figure>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% if cmsLandingPage.cmsBanners|length > 1 %}
+                    <a class="carousel-control-prev" href="#mainBanner" role="button" data-slide="prev"> <i class="fa fa-angle-left"></i> </a>
+                    <a class="carousel-control-next" href="#mainBanner" role="button" data-slide="next"> <i class="fa fa-angle-right"></i>
+                        <div class="num">1 / {{ cmsLandingPage.cmsBanners|length }}</div>
+                    </a>
+                {% endif %}
+            </div>
+        </section>
+    {% endif  %}
+    <div class="wrapper">
+        <section class="banner-carousel">
+            <div class="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <figure class="offers"  data-aos="fade-right" data-aos-delay="200"><img src="{{ cmsLandingPage.cmsLandingPageImagePath|imagine_filter('resize_image_scale_570_367') }}" alt="" title=""></figure>
+                        <div class="container">
+                            <div class="banner-content">
+                                <div class="caption typ2">
+                                    {{ cmsLandingPage.cmsLandingPageBannerTitle|raw }}
+                                </div>
+                                <div class="loan-key-points">
+                                    {% set productTypeName = cmsLandingPage.mstProductCategory.productCategory %}
+                                    <h2 data-aos="fade-right" data-aos-delay="200">{{ productTypeName }}</h2>
+                                    {{ cmsLandingPage.mstProductCategory.productCategoryDescription|raw }}
+                                </div>
+                                <a href="#" class="btn btn-primary btn-apply-loan">Request Quote Now</a>
+                                <div class="yellow-box typ2" data-aos="fade-right" data-aos-delay="200">
+                                    <a href="#" class="fa fa-close"></a>
+                                    <form class="form">
+                                        <h3>If you sign up at TRED now,
+                                            you’ll be the first to receive the latest deals in your inbox.</h3>
+                                        <h2><b>Do not miss out!</b>
+                                            To sign up, kindly...</h2>
+                                        <a href="#" class="btn-primary">Sign Up Now</a>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        jQuery("document").ready(function(){
+            AOS.init({
+                delay: 50,
+                duration: 1000,
+                offset:0,
+                once: true
+            })
+            var totalItemsPop = $('#mainBanner .carousel-item').length;
+            $('#mainBanner').on('slid.bs.carousel', function() {
+                setTimeout(function(){
+                    currentIndexPop = $('#mainBanner .carousel-item.active').index() + 1;
+                    $('.num').html('' + currentIndexPop + ' / ' + totalItemsPop + '');
+                });
+            });
+            if(width < 991) {
+                $('.mob-filter').click(function(){
+                    $('.top-filter-sec').toggle(500);
+                    $(this).toggleClass('active');
+                });
+            }
+        });
+    </script>
+{% endblock %}

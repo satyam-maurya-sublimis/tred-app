@@ -1,0 +1,104 @@
+{% extends 'layout/content.html.twig' %}
+{% block cms_content %}
+    <div class="card">
+        <div class="card-header">
+            <div class="col-sm-12">
+                <h3 class="card-title"><b>{{label_title|trans}}</b></h3>
+                <h4 class="card-title float-right">
+                    <a href="{{ path(path_edit, {'id': data.id}) }}" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i> {{'label.edit'|trans}}</a>
+                    <a href="{{ path(path_index) }}" class="btn btn-dark btn-sm"><i class="fa fa-list"></i> {{'label.back_to_list' | trans}}</a>
+                </h4>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body" id="record">
+            <div class="row">
+                <table class="table table-responsive-md text-sm">
+                    <tbody>
+                    <tr>
+                        <th>{{ 'label.title'|trans }}</th>
+                        <td>{{ data.articleTitle }}</td>
+                        <th>{{ 'label.slug_name'|trans }}</th>
+                        <td>{{ data.articleSlugName }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ 'label.intro'|trans }}</td>
+                        <td> {{ data.articleIntro | raw }}</td>
+                        <td colspan="2">
+                            {% if data.introMediaType == 'image' %}
+                            <img src="{{ data.articleIntroImagePath|imagine_filter('resize_image_100') }}" alt="--">
+                            {% else %}
+                                {{ data.articleIntroVideoPath|raw }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="4">{{ 'label.content'|trans|upper }}</th>
+                    </tr>
+                    {% for content in data.cmsArticleContent %}
+                    <tr>
+                        <td>{{ content.articleContent | raw }}</td>
+                        <td colspan="3">
+                            {% if data.introMediaType == 'image' %}
+                                <img src="{{ content.articleContentImagePath|imagine_filter('resize_image_100') }}" alt="--">
+                            {% else %}
+                                {{ content.articleContentVideoPath|raw }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <th colspan="4">{{ 'Seo Section'|upper }}</th>
+                    </tr>
+                        <tr>
+                            <td>{{ 'label.meta_title'|trans }}</td>
+                            <td>{{ data.metaTitle }}</td>
+                            <td>{{ 'label.meta_keyword'|trans }}</td>
+                            <td>{{ data.metaKeyword }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ 'label.meta_description'|trans }}</td>
+                            <td>{{ data.metaDescription }}</td>
+                            <td>{{ 'label.focus_key_phrase'|trans }}</td>
+                            <td>{{ data.focusKeyPhrase }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ 'label.key_phrase_synonyms'|trans }}</td>
+                            <td>{{ data.keyPhraseSynonyms }}</td>
+                            <td>{{ 'label.schema'|trans }}</td>
+                            <td>{{ data.seoSchema }}</td>
+                        </tr>
+                        <tr>
+                            <th colspan="4">{{ 'Social Share Section'|upper }}</th>
+                        </tr>
+                        <tr>
+                            <td>{{ 'label.social_title'|trans }}</td>
+                            <td>{{ data.ogTitle }}</td>
+                            <td>{{ 'label.social_description'|trans }}</td>
+                            <td>{{ data.ogDescription }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ 'label.social_type'|trans }}</td>
+                            <td>{{ data.ogType }}</td>
+                            <td>{{ 'label.social_image'|trans }}</td>
+                            <td><img src="{{ data.ogImagePath|imagine_filter('resize_image_200') }}" alt="--"></td>
+                        </tr>
+                        <tr>
+                            <td>{{ 'label.like'|trans }}</td>
+                            <td>{{ data.articleLikeCount|default('0') }}</td>
+                            <td>{{ 'label.is_active'|trans }}</td>
+                            <td>{{ data.isActive ? 'Yes' : 'No' }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ 'label.createtime'|trans }}</td>
+                            <td>{{ data.articleCreateDateTime|date('d M Y H:i') }}</td>
+                            <td>{{ 'label.updatetime'|trans }}</td>
+                            <td>{{ data.articleUpdateDateTime|date('d M Y H:i') }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

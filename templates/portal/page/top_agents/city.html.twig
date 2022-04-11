@@ -1,0 +1,110 @@
+{% extends 'portal/layout/index.html.twig' %}
+{% block portal_content %}
+    <div class="wrapper">
+        <section class="explore-properties">
+            <div class="container">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ path('portal_index') }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ path('portal_top_agents_index') }}">Top Agents</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Real Estate Agents in {{ city.city }}</li>
+                    </ol>
+                </nav>
+                <div class="row">
+                    <div class="col-sm-10">
+                        <h2>Real Estate Agents <span>in {{ city.city }}</span> </h2>
+                        <h5>Agents by Locality</h5>
+                    </div>
+                </div>
+                {% set locality = [] %}
+                {% for trnTopVendorPartnersLocalities in city.trnTopVendorPartnersLocalities|filter((a)=>a.mstCity.id == city.id ) %}
+                        {% for mstPincode in trnTopVendorPartnersLocalities.mstPincode %}
+                            {% if (mstPincode.officeName~"|"~"%02d"|format(mstPincode.id)~"|"~"%02d"|format(city.id)) not in locality %}
+                                {% set locality = [mstPincode.officeName~"|"~"%02d"|format(mstPincode.id)~"|"~"%02d"|format(trnTopVendorPartnersLocalities.mstCity.id)]|merge(locality) %}
+                            {% endif %}
+                        {% endfor %}
+{#                    {% endfor %}#}
+{#                    {% for trnProject in trnTopVendorPartner.trnVendorPartnerDetails.trnProjects|filter((a)=>a.mstCity.city == city.city) %}#}
+{#                        {% if (trnProject.mstPincode.officeName~"|"~"%02d"|format(trnProject.mstPincode.id)) not in locality %}#}
+{#                            {% set locality = [trnProject.mstPincode.officeName~"|"~"%02d"|format(trnProject.mstPincode.id)]|merge(locality) %}#}
+{#                        {% endif %}#}
+{#                    {% endfor %}#}
+                {% endfor %}
+                <ul class="loc-tabs">
+                    {% for local in locality|sort %}
+                        {% set tmplocal = local|split("|") %}
+                        <li data-id="{{ tmplocal.1 }}"><a href="#" class="">{{ tmplocal.0 }}</a></li>
+                    {% endfor %}
+                </ul>
+                <div class="agents-location">
+                    <ul class="agents-list">
+                        {% for trnTopVendorPartnersLocality in city.trnTopVendorPartnersLocalities|filter((a)=>a.trnTopVendorPartners.trnVendorPartnerDetails.isActive) %}
+                            {% set cityLocality = [] %}
+                            {% for mstPincode in trnTopVendorPartnersLocality.mstPincode %}
+                                {% set cityLocality =cityLocality|merge([mstPincode.id])  %}
+                            {% endfor %}
+                            <li data-id="{{ cityLocality|join(",") }}">
+                                <a href="{{ path('portal_top_agents_detail',{'title':trnTopVendorPartnersLocality.trnTopVendorPartners.trnVendorPartnerDetails|lower|replace({' ':'-',".":""}),'id':trnTopVendorPartnersLocality.trnTopVendorPartners.id}) }}">
+                                    <figure>
+                                        {% if trnTopVendorPartnersLocality.trnTopVendorPartners.trnVendorPartnerDetails.companyLogo|replace({'files/':''}) !="" %}
+                                            <img src="{{ asset('images') }}/{{ trnTopVendorPartnersLocality.trnTopVendorPartners.trnVendorPartnerDetails.companyLogo }}">
+                                        {% endif  %}
+                                    </figure>
+                                    <b>{{ trnTopVendorPartnersLocality.trnTopVendorPartners.trnVendorPartnerDetails.vendorPartnerName }}</b>
+                                </a>
+                            </li>
+                        {% endfor %}
+{#                        {% for trnTopVendorPartner in city.trnTopVendorPartners|filter((a)=>a.trnVendorPartnerDetails.isActive) %}#}
+{#                                {{ dump(trnTopVendorPartner) }}#}
+{#                               {% set cityLocality = [] %}#}
+{#                               {% for trnTopVendorPartnersLocality in trnTopVendorPartner.trnTopVendorPartnersLocalities %}#}
+{#                                    {% for mstPincode in trnTopVendorPartnersLocality.mstPincode %}#}
+{#                                        {% set cityLocality =cityLocality|merge([mstPincode.id])  %}#}
+{#                                    {% endfor %}#}
+{#                               {% endfor %}#}
+{#                                <li data-id="{{ cityLocality|join(",") }}">#}
+{#                                    <a href="{{ path('portal_top_agents_detail',{'title':trnTopVendorPartner.trnVendorPartnerDetails|lower|replace({' ':'-',".":""}),'id':trnTopVendorPartner.id}) }}">#}
+{#                                        <figure>#}
+{#                                            {% if trnTopVendorPartner.trnVendorPartnerDetails.companyLogo|replace({'files/':''}) !="" %}#}
+{#                                                <img src="{{ asset('images') }}/{{ trnTopVendorPartner.trnVendorPartnerDetails.companyLogo }}">#}
+{#                                            {% endif  %}#}
+{#                                        </figure>#}
+{#                                        <b>{{ trnTopVendorPartner.trnVendorPartnerDetails.vendorPartnerName }}</b>#}
+{#                                    </a>#}
+{#                                </li>#}
+{#                        {% endfor %}#}
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        jQuery("document").ready(function(){
+            jQuery(".loc-tabs li").click(function(){
+                $(this).toggleClass("active");
+                showAgents();
+            })
+        });
+
+        function showAgents(){
+            jQuery(".agents-list li").hide();
+            var activeLi = jQuery(".loc-tabs li.active").map(function() {
+                return $(this).attr("data-id")
+            }).get();
+            if (activeLi.length > 0){
+                for ([key, value] of Object.entries(activeLi)) {
+                    jQuery(".agents-list li").map(function(index,item) {
+                        if ($(item).attr("data-id").match(value)){
+                            $(item).show();
+                        }
+                    });
+                }
+            }else{
+                jQuery(".agents-list li").show();
+            }
+        }
+    </script>
+{% endblock %}

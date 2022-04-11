@@ -1,0 +1,318 @@
+{% extends 'layout/content.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{asset('assets/plugins/kartik-v/bootstrap-fileinput/css/fileinput.min.css')}}">
+    <link href="{{ asset('assets/plugins/jquery-ui/jquery-ui.min.css') }}" rel="stylesheet">
+{% endblock %}
+{% macro MediaContent(form) %}
+    <div class="col-sm-12 MediaContentClass">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.mediaType) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.position) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.isActive) }}
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-sm-4">
+                    {{ form_row(form.mediaFileName) }}
+                </div>
+                {% if form.vars.data is not empty %}
+                    <div class="col-sm-4">
+                        <img src="{{ form.vars.data.mediaFilePath|imagine_filter('resize_image_200') }}" alt="{{ form.vars.data.mediaAlText }}">
+                    </div>
+                {% endif %}
+                <div class="col-sm-4">
+                    {{ form_row(form.mediaPath) }}
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-sm-4">
+                    {{ form_row(form.mediaName) }}
+                </div>
+                <div class="col-sm-4">
+                    {{ form_row(form.mediaAlText) }}
+                </div>
+                <div class="col-sm-4">
+                    {{ form_row(form.mediaTitle) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-1 removeMedia mb-4"> <br>
+                    <button type="button" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Remove</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+{% import _self as formMacro %}
+{% block cms_content %}
+    {% set back_to_list = app.request.server.get('HTTP_REFERER') %}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">
+                {% if mode == 'add' %}<i class="fa fa-plus"></i> {% else%} <i class="fa fa-edit"></i> {% endif%}  <b>{{label_title|trans|upper}}</b>
+            </h5>
+        </div>
+        {{ form_start(form) }}
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.mstProductType) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mstProductSubType) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mstFurnitureCategory) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.furnitureName) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.prdBrand) }}
+                </div>
+{#                <div class="col-sm-3">#}
+{#                    {{ form_row(form.prdOption) }}#}
+{#                </div>#}
+                <div class="col-sm-3">
+                    {{ form_row(form.mstCurrency) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.furniturePrice) }}
+                </div>
+            </div>
+            <div class="row card">
+                <div class="card-header col">
+                    <h3 class="card-title">{{ 'Add Media Details'|upper }}</h3>
+                </div>
+                <div class="card-body col">
+                    <div class="row" data-prototype="{{ formMacro.MediaContent(form.mdaFurniture.vars.prototype)|e('html_attr') }}">
+                        <div class="col" id="addMediaContent" >
+                            {% for row in form.mdaFurniture %}
+                                {{ formMacro.MediaContent(row) }}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer col">
+                    <button type="button" id="addMedia" class="btn btn-dark btn-sm"><i class="fa fa-plus"></i> Add Media</button>
+                </div>
+            </div>
+
+            <div class="card-header mt-2">
+                <h3 class="card-title">{{ 'SEO Section'|upper }}</h3>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-4">
+                    {{ form_row(form.metaTitle) }}
+                </div>
+                <div class="col-sm-4">
+                    {{ form_row(form.metaKeyword) }}
+                </div>
+                <div class="col-sm-4">
+                    {{ form_row(form.metaDescription) }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-4">
+                    {{ form_row(form.focusKeyPhrase) }}
+                </div>
+                <div class="col-sm-4">
+                    {{ form_row(form.keyPhraseSynonyms) }}
+                </div>
+                <div class="col-sm-4">
+                    {{ form_row(form.seoSchema) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    {{ form_row(form.canonicalUrl) }}
+                </div>
+            </div>
+            <div class="card-header mt-2">
+                <h3 class="card-title">{{ 'Social Share Section'|upper }}</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-4">
+                        {{ form_row(form.ogTitle) }}
+                    </div>
+                    <div class="col-sm-4">
+                        {{ form_row(form.ogDescription) }}
+                    </div>
+                    <div class="col-sm-4">
+                        {{ form_row(form.ogType) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        {{ form_row(form.ogImage) }}
+                    </div>
+                    {% if trnFurniture.ogImage is not empty %}
+                        <div class="col-sm-4">
+                            <img src="{{ trnFurniture.ogImagePath|imagine_filter('resize_image_200') }}" alt="{{ trnFurniture.ogImage }}">
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.isActive) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-footer">
+        <button type="submit" class="{{ button_css|default("btn btn-dark btn-sm") }}">
+            <i class="fa fa-save" aria-hidden="true"></i> {{ label_button|trans }}
+        </button>
+        <a href="{{ back_to_list }}" class="btn btn-link"><i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}</a>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{asset('assets/plugins/kartik-v/bootstrap-fileinput/js/fileinput.min.js')}}"></script>
+    <script src="{{asset('assets/plugins/kartik-v/bootstrap-fileinput/themes/fa/theme.min.js')}}"></script>
+    <script>
+        jQuery("document").ready(function() {
+            $additionalMediaContent = jQuery('#addMediaContent').parent();
+            $additionalMediaContent.data('index', jQuery('#addMediaContent').find('.MediaContentClass').length);
+            jQuery("#addMedia").on('click', function (e) {
+                addRowContentFormMedia($additionalMediaContent);
+            });
+
+            jQuery(document).on('change', "#trn_furniture_mstProductType", function (e) {
+                var data = {};
+                data['q'] = jQuery(this).val();
+                var oThis = this;
+                jQuery.ajax({
+                    url: "{{ path('location_productSubType') }}",
+                    data: data,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (data) {
+                        var product = jQuery("#trn_furniture_mstProductSubType");
+                        product.html('');
+                        // add options
+                        product.append('<option value="" >Select..</option>');
+                        $.each(data, function (id, name) {
+                            product.append('<option value="' + name.id + '">' + name.name + '</option>');
+                        });
+                    }
+                });
+            });
+
+            jQuery(document).on('change', "#trn_furniture_mstProductSubType", function (e) {
+                var data = {};
+                data['q'] = jQuery(this).val();
+                var oThis = this;
+                jQuery.ajax({
+                    url: "{{ path('location_furniture_category') }}",
+                    data: data,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (data) {
+                        var product = jQuery("#trn_furniture_mstFurnitureCategory");
+                        product.html('');
+                        // add options
+                        product.append('<option value="" >Select..</option>');
+                        $.each(data, function (id, name) {
+                            product.append('<option value="' + name.id + '">' + name.name + '</option>');
+                        });
+                    }
+                });
+            });
+
+            $('label[for=trn_furniture_ogImage]').remove();
+            $("#trn_furniture_ogImage").fileinput({
+                theme: "fa",
+                overwriteInitial: true,
+                maxFileSize: 7168,
+                showClose: false,
+                showCaption: false,
+                showBrowse: false,
+                browseOnZoneClick: true,
+                removeLabel: '',
+                defaultPreviewContent: '<h6 class="text-muted">Click to upload social share image</h6>',
+                layoutTemplates: {main2: '{preview} {remove} {browse}'},
+                allowedFileExtensions: ["jpg", "png"]
+            });
+            jQuery(document).on('click', '.removeMedia', function (e) {
+                jQuery(this).closest(".MediaContentClass").remove();
+            });
+            {% if mode == "add" %}
+                jQuery("#addMedia").trigger("click");
+            {% else %}
+                if (jQuery(".MediaContentClass").length < 1){
+                    jQuery("#addMedia").trigger("click");
+                }
+                jQuery(".mediaFileNameCls").siblings("label").remove();
+                jQuery(".mediaFileNameCls").fileinput({
+                    theme: "fa",
+                    overwriteInitial: true,
+                    maxFileSize: 7168,
+                    showClose: false,
+                    showCaption: false,
+                    showBrowse: false,
+                    browseOnZoneClick: true,
+                    removeLabel: '',
+                    defaultPreviewContent: '<h6 class="text-muted">Click to upload social share image</h6>',
+                    layoutTemplates: {main2: '{preview} {remove} {browse}'},
+                    allowedFileExtensions: ["jpg", "png"]
+                });
+            {% endif  %}
+            jQuery(".MediaContentClass:first").find('.removeMedia').parent().hide();
+            jQuery("#addMedia").closest(".card-footer").hide();
+        });
+        function addRowContentFormMedia($ContentObj) {
+            // Get the data-prototype explained earlier
+            var prototype = $ContentObj.data('prototype');
+
+            // get the new index
+            var index = $ContentObj.data('index');
+            var newForm = prototype;
+            newForm = newForm.replace(/__name__/g, index);
+            // newForm = newForm.replace(/__index__/g, index);
+            // newForm = newForm.replace(/imageDiv/g, 'imageDiv'+index);
+            // newForm = newForm.replace(/videoDiv/g, 'videoDiv'+index);
+
+            // increase the index with one for the next item
+            $ContentObj.data('index', index + 1);
+
+            // Display the form in the page in an li, before the "Add a tag" link li
+            jQuery('#addMediaContent').append(newForm);
+            $('label[for=trn_furniture_mdaFurniture_'+index+'_mediaFileName]').remove();
+            $("#trn_furniture_mdaFurniture_"+index+"_mediaFileName").fileinput({
+                theme: "fa",
+                overwriteInitial: true,
+                maxFileSize: 2000,
+                showClose: false,
+                showCaption: false,
+                showBrowse: false,
+                browseOnZoneClick: true,
+                removeLabel: '',
+                defaultPreviewContent: '<h6 class="text-muted">Click to upload image</h6>',
+                layoutTemplates: {main2: '{preview} {remove} {browse}'},
+                allowedFileExtensions: ["jpg", "png"]
+            });
+
+            $("#trn_furniture_mdaFurniture_"+index+"_mediaName").keyup(function(){
+                var Text = $(this).val();
+                $("#trn_furniture_mdaFurniture_"+index+"_mediaAlText").val(Text);
+                $("#trn_furniture_mdaFurniture_"+index+"_mediaTitle").val(Text);
+            });
+            $("#trn_furniture_mdaFurniture_"+index+"_position").val(index+1);
+        }
+    </script>
+{% endblock %}

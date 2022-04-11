@@ -1,0 +1,76 @@
+{% extends 'layout/content.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet"  href="{{ asset('assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}" media="all" type="text/css" />
+    <link rel="stylesheet"  href="{{ asset('assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}" media="all" type="text/css" />
+{% endblock %}
+{% block cms_content %}
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">{{label_title|trans}}</h4>
+                </div>
+                <nav class="card-content collapse show">
+                    <div class="card-body card-dashboard ">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <select id="formEnquiry" name="formEnquiry" class="form-control custom-productCategory productCategory">
+                                    <option value="">Select form</option>
+                                    {% set formEnquires = get_form_enquiry() %}
+                                    {% for formEnquiry in formEnquires %}
+                                        <option value="{{formEnquiry.enquiryForm}}" {% if formEnquiry.enquiryForm == app.request.query.get('formEnquiry') %} selected {% endif %}>
+                                            {{formEnquiry.enquiryForm}}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        {# start show the state data#}
+                        <div class="mt-2 enquiryFormListing"><img src="{{ asset('assets/img/loading_lines.gif') }}" class="loading" alt="loading" style="display: none">
+                        </div>
+                        {# end the state data#}
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{asset('assets/plugins/datatables/jquery.dataTables.min.js')}}"></script>
+    <script src="{{ asset('assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            var formEnquiry = $('#formEnquiry');
+            formEnquiry.change(function () {
+                if ($(this).val() !== '') {
+                    formEnquirylisting();
+                } else {
+                    showstatelisting.html('');
+                }
+            });
+
+            function formEnquirylisting() {
+                var data = {};
+                data['formEnquiry'] = formEnquiry.val();
+                var enquiryFormListing = $('.enquiryFormListing');
+                $('.loading').show();
+                $.ajax({
+                    url: '{{ path('form_enquiry_search') }}',
+                    type: 'GET',
+                    data: data,
+                    dataType: "html",
+                    success: (function (formdata) {
+                        $('.loading').hide();
+                        enquiryFormListing.html(formdata);
+                        enquiryFormListing.show();
+
+                    }),
+                });
+            }
+        });
+    </script>
+{% endblock %}

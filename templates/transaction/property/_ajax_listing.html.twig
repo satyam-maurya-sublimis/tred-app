@@ -1,0 +1,61 @@
+<table id="dataTable" class="table table-responsive-md table-sm text-sm">
+    <thead>
+        <tr>
+            <th>{{ 'label.id'|trans|upper }}</th>
+            <th>{{ 'label.creation_date'|trans|upper }}</th>
+            <th>{{ 'label.property_transaction_category'|trans|upper }}</th>
+            <th>{{ 'label.vendor_partner_name'|trans|upper }}</th>
+            <th>{{ 'label.project_name'|trans|upper }}</th>
+            <th>{{ 'label.pincode'|trans|upper }}</th>
+            <th>{{ 'label.country'|trans|upper }}</th>
+            <th>{{ 'label.city'|trans|upper }}</th>
+            <th>{{ 'label.location'|trans|upper }}</th>
+            <th>{{ 'label.is_active'|trans|upper }}</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for project in projects %}
+            <tr>
+                <td>{{ project.id }}</td>
+                <td>{{ project.createdOn | date('d M Y') }}</td>
+                <td>{% set propertyTransactionCategory = [] %}
+                    {% for roomConfiguration in  project.trnProjectRoomConfigurations %}
+                        {% if (roomConfiguration.mstPropertyTransactionCategory) not in propertyTransactionCategory %}
+                            {% set propertyTransactionCategory = propertyTransactionCategory|merge([roomConfiguration.mstPropertyTransactionCategory]) %}
+                        {% endif  %}
+                    {% endfor %}
+                    {{ propertyTransactionCategory|join(',') }}
+                </td>
+                <td>{{ project.trnVendorPartnerDetails }}</td>
+                <td>{{ project.projectName }}</td>
+                <td>{{ project.mstPincode }}</td>
+                <td>{{ project.mstCountry }}</td>
+                <td>{{ project.mstCity }}</td>
+                <td>{{ project.mstPincode.officeName }}</td>
+                <td>{{ project.isActive ? 'Yes' : 'No' }}</td>
+                <td>
+                    <div class="btn-group-toggle" role="group" aria-label="Action Buttons">
+                        <a href="{{ path(path_show, {'id': project.id}) }}"><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-expand"></i></button></a>
+                        {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+                            <a href="{{ path(path_edit, {'id': project.id}) }}" alt="Edit" title="Edit"><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i></button></a>
+                        {% else %}
+                            {% if project.createdBy.id == app.user.id %}
+                                <a href="{{ path(path_edit, {'id': project.id}) }}" alt="Edit" title="Edit"><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i></button></a>
+                            {% endif %}
+                        {% endif %}
+                        <a href="{{ path(room_configuration_index, {'projectId': project.id}) }}" alt="{{ "label.room_configuration"|trans }}" title="{{ "label.room_configuration"|trans }}"><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-bed"></i></button></a>
+                        <a href="{{ path(additional_detail_index, {'projectId': project.id}) }}" alt="{{ "label.project_additional_detail"|trans }}" title="{{ "label.project_additional_detail"|trans }}"><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-info-circle"></i></button></a>
+                        <a href="{{ path(property_media_index, {'projectId': project.id}) }}" alt="{{ "label.project_property_media"|trans }}" title="{{ "label.project_property_media"|trans }}"><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-photo-video"></i></button></a>
+                        <a href="{{ path(property_comment_index, {'projectId': project.id}) }}" alt="{{ "label.project_property_comment"|trans }}" title="{{ "label.project_property_comment"|trans }}"><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-comment"></i></button></a>
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="9">{{'info.no_record_found'|trans}}</td>
+                <td colspan="1"><h4 class="card-title"><a href="{{ path(path_add,{'pincode' : mstPincode }) }}" class="btn btn-dark btn-sm"><i class="fa fa-plus"></i> {{label_title|trans}}</a></h4></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

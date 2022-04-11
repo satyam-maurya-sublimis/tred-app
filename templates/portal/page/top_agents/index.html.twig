@@ -1,0 +1,159 @@
+{% extends 'portal/layout/index.html.twig' %}
+{% set route =  app.request.get('_route') %}
+{% set cmsPage = get_cms_page_by_route(route) %}
+{% set page = get_pagecontent_by_route(route) %}
+{% if cmsPage %}
+    {% set banners = get_cms_page_banner(cmsPage.id) %}
+    {% set advertisements = get_cms_page_ads(cmsPage.id) %}
+{% endif %}
+{% block portal_content %}
+    {% set tmpContent = [] %}
+    {% if cmsPage.cmsPageContent|length > 0 %}
+        {% for content in cmsPage.cmsPageContent|filter((a)=>a.isActive == 1) %}
+            {% if content.cmsPageContentPosition == 'title' %}
+                {% if attribute(tmpContent,"c_"~content.position) is not defined %}
+                    {% set tmpContent = tmpContent|merge({ ("c_"~content.position) : content.pageContent }) %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    {% if banners is defined and banners %}
+        <section class="banner-carousel slider-item color-black">
+            <div id="mainBanner" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    {% for banner in banners %}
+                        <div class="carousel-item active">
+                            <figure>
+                                <img src="{{ asset('images/files') }}/{{ banner.bannerDesktopImage}}" class="desktop-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                                <img src="{{ asset('images/files') }}/{{ banner.bannerTabletImage}}" class="tab-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                                <img src="{{ asset('images/files') }}/{{ banner.bannerMobileImage}}" class="mobile-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                            </figure>
+                            <div class="container">
+                                <div class="banner-content">
+                                    <div class="caption">
+                                        {{ banner.bannerDescription|raw }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    {% endif  %}
+
+    <div class="wrapper">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ path('portal_index') }}">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Top Agents</li>
+                </ol>
+            </nav>
+        </div>
+        <section class="explore-properties">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-9">
+                        {% if tmpContent and tmpContent.c_1 %}
+                            {{ tmpContent.c_1|raw }}
+                        {% endif  %}
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group has-search">
+                            <a class="fa fa-search top-agent-search-city" href="#"></a>
+                            <input type="text" class="form-control" id="searchCity" placeholder="Search City">
+                        </div>
+                    </div>
+                </div>
+                <div class="cities-list">
+                    {% set cities = [] %}
+                    {% for topAgent in topAgents %}
+                        {% for city in topAgent.trnTopVendorPartnersLocalities %}
+                            {% if city.mstCity.city not in cities %}
+                                {% set cities = cities|merge([city.mstCity.city]) %}
+                            {% endif  %}
+                        {% endfor %}
+                    {% endfor %}
+
+                    <ul class="cities top-agents">
+                        {% for city in cities %}
+                            <li><a href="{{ path('portal_top_agents_city',{'city':city|lower}) }}">{{ city }}</a></li>
+                        {% endfor %}
+{#                        {% for topAgent in topAgents %}#}
+{#                            {% for city in topAgent.trnTopVendorPartnersLocalities %}#}
+{#                                <li><a href="{{ path('portal_top_agents_city',{'city':city.mstCity.city|lower}) }}">{{ city.mstCity.city }}</a></li>#}
+{#                            {% endfor %}#}
+{#                            {% for city in topAgent.mstCities %}#}
+{#                                <li><a href="{{ path('portal_top_agents_city',{'city':city|lower}) }}">{{ city.city }}</a></li>#}
+{#                            {% endfor %}#}
+{#                        {% endfor %}#}
+                    </ul>
+                </div>
+
+                {% if tmpContent and tmpContent.c_2 %}
+                    {{ tmpContent.c_2|raw }}
+                {% endif  %}
+                <div class="agents-location">
+                    <ul class="agents-list">
+                        {% for topAgent in topAgents|filter((a)=>a.isActive and a.trnTopVendorPartnersLocalities|length > 0 ) %}
+                            <li> <a href="{{ path('portal_top_agents_detail',{'title':topAgent.trnVendorPartnerDetails|lower|replace({' ':'-',".":""}),'id':topAgent.id}) }}">
+                                    <figure>
+                                        {% if topAgent.trnVendorPartnerDetails.companyLogo|replace({'files/':''}) !="" %}
+                                        <img src="{{ asset('images') }}/{{ topAgent.trnVendorPartnerDetails.companyLogo }}">
+                                        {% endif  %}
+                                    </figure>
+                                    <b>{{ topAgent.trnVendorPartnerDetails }}</b>
+                                </a>
+                            </li>
+
+                        {% else %}
+                            <li> !!! Agent not found !!! </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        jQuery("document").ready(function(){
+            AOS.init({
+                delay: 50,
+                duration: 1000,
+                offset:0,
+                once: true
+            })
+             if(width < 991) {
+                $('.mob-filter').click(function(){
+                    $('.top-filter-sec').toggle(500);
+                    $(this).toggleClass('active');
+                });
+             }
+             jQuery("#searchCity").keyup(function(e){
+                 if(e.keyCode === 13) {
+                     cityListing(jQuery("#searchCity").val());
+                 }
+             });
+            jQuery("a.fa-search").click(function(e){
+                e.preventDefault();
+                cityListing(jQuery("#searchCity").val());
+            });
+        });
+        function cityListing(city) {
+            var data = {};
+            data['city'] = city;
+            $.ajax({
+                url: '{{ path("portal_top_agents_search_city") }}',
+                type: 'GET',
+                data: data,
+                dataType: "html",
+                success: (function (formdata) {
+                    jQuery(".cities.top-agents").empty().html(formdata);
+                }),
+            });
+        }
+    </script>
+{% endblock %}

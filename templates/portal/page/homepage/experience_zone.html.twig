@@ -1,0 +1,7 @@
+{% if cmsPage.cmsPageContent[2] is defined and cmsPage.cmsPageContent[2].isActive %}
+    <section class="experience-zone">
+            <div class="container">
+            {{ cmsPage.cmsPageContent[2].pageContent|raw }}
+        </div>
+    </section>
+{% endif %}

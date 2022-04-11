@@ -1,0 +1,74 @@
+{% extends 'layout/content.html.twig' %}
+{% block cms_content %}
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title"><a href="{{ path(path_add) }}/?projectId={{ app.request.get('projectId') }}" class="btn btn-dark btn-sm"><i class="fa fa-plus"></i> {{label_title|trans}}</a></h4>
+                <a class="float-right" href="{{ path('product_properties_index',{'pincodeId': app.session.get('search').pincodeId,'projectName': app.session.get('search').projectName }) }}" class="btn btn-link"><i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}</a>
+            </div>
+            <div class="card-header">
+                <h4 class="card-title">{{ label_heading|trans|upper }} : {{ trnProject.projectName }}</h4>
+            </div>
+            <nav class="card-content collapse show">
+                <div class="card-body card-dashboard ">
+                    <table id="dataTable" class="table table-responsive-md table-sm text-sm">
+                        <thead>
+                        <tr>
+                            <th>{{ 'label.room_configuration'|trans|upper }}</th>
+                            <th>{{ 'label.project_additional_detail_type'|trans|upper }}</th>
+                            <th>{{ 'label.project_additional_detail'|trans|upper }}</th>
+                            <th>{{ 'label.is_active'|trans|upper }}</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for trnProjectAdditionalDetail in trnProjectAdditionalDetails %}
+                        <tr>
+                            <td>
+                                {% for trnProjectRoomConfiguration in trnProjectAdditionalDetail.trnProjectRoomConfigurations %}
+                                    {{ trnProjectRoomConfiguration.mstRoomConfiguration }} : {{ trnProjectRoomConfiguration.areaValue }} {{ trnProjectRoomConfiguration.mstProjectArea }} <br/>
+                                {% endfor %}
+                            </td>
+                            <td>{{ get_additional_detail_type(trnProjectAdditionalDetail.additionalDetailType) }}</td>
+                            <td>{{ trnProjectAdditionalDetail.additionalDetail|raw }}</td>
+                            <td>{{ trnProjectAdditionalDetail.isActive ? 'Yes' : 'No' }}</td>
+                            <td>
+                                <div class="btn-group-toggle" role="group" aria-label="Action Buttons">
+                                    <a href="{{ path(path_show, {'id': trnProjectAdditionalDetail.id}) }}/?projectId={{ app.request.get('projectId') }}"><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-expand"></i></button></a>
+{#                                    {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}#}
+{#                                        <a href="{{ path(path_edit, {'id': trnProjectRoomConfiguration.id,'appUser': app.user.id,'projectId':app.request.get('projectId') }) }}"><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i></button></a>&nbsp;&nbsp;#}
+{#                                    {% else %}#}
+                                        <a href="{{ path(path_edit, {'id': trnProjectAdditionalDetail.id,'appUser': app.user.id,'projectId':app.request.get('projectId') }) }}"><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i></button></a>&nbsp;
+{#                                    {% endif %}#}
+
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="8">{{'info.no_record_found'|trans}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <div class="text-muted"><span class="domrecord"></span></div>
+                        </div>
+                        <div class="col-sm-7">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination justify-content-end">
+                                    <li class="dompage"></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+</div>
+{% endblock %}

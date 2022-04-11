@@ -1,0 +1,1220 @@
+{% extends 'layout/content.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+{#    <link href="{{ asset('assets/plugins/summernote/summernote-bs4.css') }}" media="all" rel="stylesheet" type="text/css" />#}
+    <link rel="stylesheet" href="{{asset('assets/plugins/kartik-v/bootstrap-fileinput/css/fileinput.min.css')}}">
+    <link href="{{ asset('assets/plugins/jquery-ui/jquery-ui.min.css') }}" rel="stylesheet">
+{#    <link href="{{ asset('assets/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}" rel="stylesheet" type="text/css" ></link>#}
+{% endblock %}
+{% macro AmenitiesContent(form) %}
+    <div class="col-sm-12 AmenitiesContentClass">
+        <div class="row">
+            <div class="col-sm-2">
+                {{ form_row(form.mstSubCategory) }}
+            </div>
+            <div class="col-sm-2">
+                {{ form_row(form.mstProjectAmenities) }}
+            </div>
+            <div class="col-sm-4">
+                {{ form_row(form.trnAmenitiesDescription) }}
+            </div>
+            <div class="col-sm-2">
+                {{ form_row(form.position) }}
+            </div>
+            <div class="col-sm-1">
+                {{ form_row(form.isActive) }}
+            </div>
+            <div class="col-sm-1 removeAmenitiesContentClass mb-4"> <br>
+                <button type="button" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Remove</button>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+{% macro projectUploadDocument(form) %}
+    <div class="col-sm-12 TrnProjectUploadDocument">
+        <div class="row mt-3">
+            <div class="col-sm-3 imageDiv">
+                {{ form_row(form.mstDeviceType) }}
+            </div>
+            <div class="col-sm-3">
+                {{ form_row(form.mstUploadDocumentType) }}
+            </div>
+            <div class="col-sm-3 imageDiv">
+                {{ form_row(form.mediaFileName) }}
+            </div>
+            {% if form.vars.data is not empty %}
+                <div class="col-sm-3">
+                    <img src="{{ form.vars.data.mediaFilePath|imagine_filter('resize_image_200') }}" alt="{{ form.vars.data.mediaName }}">
+                </div>
+            {% endif %}
+            <div style="display: none;" class="col-sm-3 videoDiv">
+                {{ form_row(form.mediaPath) }}
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-sm-3">
+                {{ form_row(form.mediaName) }}
+            </div>
+            <div class="col-sm-3 imageDiv">
+                {{ form_row(form.mediaAltText) }}
+            </div>
+            <div class="col-sm-3 imageDiv">
+                {{ form_row(form.mediaTitle) }}
+            </div>
+            <div class="col-sm-3">
+                {{ form_row(form.position) }}
+            </div>
+
+        </div>
+        <div class="col-sm-3 removebutton mb-4"> <br>
+            <button type="button" class="btn btn-danger btn-sm"><i class="fa
+            fa-trash"></i> Remove Media
+                Block</button>
+        </div>
+
+    </div>
+{% endmacro %}
+{% macro projectAdditionalDetail(form) %}
+        <div class="row TrnProjectAdditionalDetail">
+            <div class="col-sm-2">
+                {{ form_row(form.additionalDetailType) }}
+            </div>
+            <div class="col-sm-6">
+                {{ form_row(form.additionalDetail) }}
+            </div>
+            <div class="col-sm-4 removebutton mb-4"> <br>
+                <button type="button" class="btn btn-danger btn-sm removeAdditionalDetail"><i class="fa fa-trash"></i> Remove Additional Detail Block</button>
+            </div>
+        </div>
+{% endmacro %}
+{#{% macro projectAreaDetail(form) %}#}
+{#        <div class="row TrnProjectAreaDetail">#}
+{#            <div class="col-sm-2">#}
+{#                {{ form_row(form.mstProjectAreaCategory) }}#}
+{#            </div>#}
+{#            <div class="col-sm-2">#}
+{#                {{ form_row(form.mstProjectArea) }}#}
+{#            </div>#}
+{#            <div class="col-sm-2">#}
+{#                {{ form_row(form.mstCurrency) }}#}
+{#            </div>#}
+{#            <div class="col-sm-2">#}
+{#                {{ form_row(form.price) }}#}
+{#            </div>#}
+{#            <div class="col-sm-4 removebutton mb-4"> <br>#}
+{#                <button type="button" class="btn btn-danger btn-sm removeAreaDetail"><i class="fa fa-trash"></i> Remove Additional Detail Block</button>#}
+{#            </div>#}
+{#        </div>#}
+{#{% endmacro %}#}
+{% macro projectRoomConfiguration(form) %}
+        <div class="row TrnProjectRoomConfiguration">
+            <div class="col-sm-12">
+                <div class="row">
+                    <div class="col-sm-3">
+                        {{ form_row(form.mstPropertyTransactionCategory) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_row(form.mstRoomConfiguration) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_row(form.mstFacing) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_row(form.floor) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        {{ form_row(form.noOfBedRoom) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_row(form.noOfBathRooms) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_row(form.noOfBalcony) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_row(form.mstProjectAreaCategory) }}
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        {{ form_row(form.mstProjectArea) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_row(form.areaValue) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_row(form.mstCurrency) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_row(form.price) }}
+                        {{ form_row(form.rentPerMonth) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        {{ form_row(form.agreementAmount) }}
+                        {{ form_row(form.deposit) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_row(form.mstDenomination) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_row(form.mstFurnishing) }}
+                        {{ form_row(form.mstPropertySaleCategory) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        {{ form_row(form.mstPreferredTenant) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_row(form.isNegotiable) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        {{ form_row(form.mstDeviceType) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_row(form.mstUploadDocumentType) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_row(form.mediaFileName) }}
+                    </div>
+                    {% if form.vars.data is not empty %}
+                        <div class="col-sm-3">
+                            <img src="{{ form.vars.data.mediaFilePath|imagine_filter('resize_image_200') }}" alt="{{ form.vars.data.mediaName }}">
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        {{ form_row(form.mediaName) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_row(form.mediaAltText) }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form_row(form.mediaTitle) }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <button type="button" class="btn btn-danger btn-sm removeRoomConfiguration"><i class="fa fa-trash"></i> Remove Room Configuration Block</button>
+            </div>
+        </div>
+{% endmacro %}
+{% import _self as formMacro %}
+{% block cms_content %}
+    {% set back_to_list = app.request.server.get('HTTP_REFERER') %}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">
+                {% if mode == 'add' %}<i class="fa fa-plus"></i> {% else%} <i class="fa fa-edit"></i> {% endif%}  <b>{{label_title|trans|upper}}</b>
+            </h5>
+        </div>
+        {{ form_start(form) }}
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.orgCompany) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mstVendorType) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.trnVendorPartnerDetails) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.mstProductCategory) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mstProductType) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mstProductSubType) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.mstPropertyType) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mstProjectStatus) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.projectName) }}
+                </div>
+                <div class="col-sm-3">
+                    {#                    {{ form_row(form.mstPossession) }}#}
+                </div>
+                <div class="col-sm-3">
+                    {#                    {{ form_row(form.possessionNote) }}#}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.mstCountry) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mstState) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mstCity) }}
+
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mstPincode) }}
+{#                    {{ form_row(form.mstAreaInCity) }}#}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-2">
+                    {{ form_row(form.possessionDate) }}
+                </div>
+                <div class="col-sm-1">
+                    <div class="orDiv mt-4">
+                        OR
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.possessionYear) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.possessionMonth) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2">
+                    {{ form_row(form.availabilityFromDate) }}
+                </div>
+            </div>
+
+
+{#            <div class="row">#}
+
+{#                <div class="col-sm-3">#}
+{#                    {{ form_row(form.mstProjectAreaSuperArea) }}#}
+{#                </div>#}
+{#                <div class="col-sm-3">#}
+{#                    {{ form_row(form.superArea) }}#}
+{#                </div>#}
+{#                <div class="col-sm-3">#}
+{#                    {{ form_row(form.mstSuperAreaCurrency) }}#}
+{#                </div>#}
+{#                <div class="col-sm-3">#}
+{#                    {{ form_row(form.superAreaPricePer) }}#}
+{#                </div>#}
+{#            </div>#}
+
+{#            <div class="row">#}
+
+{#                <div class="col-sm-3">#}
+{#                    {{ form_row(form.mstProjectAreaCarpetArea) }}#}
+{#                </div>#}
+{#                <div class="col-sm-3">#}
+{#                    {{ form_row(form.carpetArea) }}#}
+{#                </div>#}
+{#                <div class="col-sm-3">#}
+{#                    {{ form_row(form.mstCurrencyCarpetArea) }}#}
+{#                </div>#}
+{#                <div class="col-sm-3">#}
+{#                    {{ form_row(form.carpetAreaPricePer) }}#}
+{#                </div>#}
+{#            </div>#}
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.mstRoomConfiguration) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.loading) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.carParking) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.bankApproved) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.isRera) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mahaReraRegisterationNo) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.isTredRecommended) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.isNewProperty) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.occupancyCerificate) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.commencementCerificate) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.totalNoUnits) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.totalNoOfTower) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.noOfLifts) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.propertyAge) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mstPropertyIn) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.electricityStatus) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.waterAvailibility) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    {{ form_row(form.projectOverview) }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.mstProjectFeature) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mstProjectHighlights) }}
+                </div>
+            </div>
+            <div class="row card">
+                <div class="card-header col">
+                    <h3 class="card-title">{{ 'Add Amenities Details'|upper }}</h3>
+                </div>
+                <div class="card-body col">
+                    <div class="row" data-prototype="{{ formMacro.AmenitiesContent(form.trnProjectAmenities.vars.prototype)|e('html_attr') }}">
+                        <div class="col" id="projectAmenitiesContent" >
+                            {% for row in form.trnProjectAmenities %}
+                                {{ formMacro.AmenitiesContent(row) }}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer col">
+                    <button type="button" id="addAmenitiesContent" class="btn btn-dark btn-sm"><i class="fa fa-plus"></i> Add Amenities Content</button>
+                </div>
+            </div>
+{#            <div class="row card">#}
+{#                <div class="card-header col">#}
+{#                    <h3 class="card-title">{{ 'Add Area Details'|upper }}</h3>#}
+{#                </div>#}
+{#                <div class="card-body col">#}
+{#                    <div class="row" data-prototype="{{ formMacro.projectAreaDetail(form.trnProjectAreaDetail.vars.prototype)|e('html_attr') }}">#}
+{#                        <div class="col" id="areaDetailContent" >#}
+{#                            {% for row in form.trnProjectAreaDetail %}#}
+{#                                {{ formMacro.projectAreaDetail(row) }}#}
+{#                            {% endfor %}#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="card-footer col">#}
+{#                    <button type="button" id="addAreaDetail" class="btn btn-dark btn-sm"><i class="fa fa-plus"></i> Add Area Detail</button>#}
+{#                </div>#}
+{#            </div>#}
+            <div class="row card">
+                <div class="card-header col">
+                    <h3 class="card-title">{{ 'Add Room Configuration Details'|upper }}</h3>
+                </div>
+                <div class="card-body col">
+                    <div class="row" data-prototype="{{ formMacro.projectRoomConfiguration(form.trnProjectRoomConfigurations.vars.prototype)|e('html_attr') }}">
+                        <div class="col" id="roomConfigurationContent" >
+                            {% for row in form.trnProjectRoomConfigurations %}
+                                {{ formMacro.projectRoomConfiguration(row) }}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer col">
+                    <button type="button" id="addRoomConfiguration" class="btn btn-dark btn-sm"><i class="fa fa-plus"></i> Add Room Configuration</button>
+                </div>
+            </div>
+            <div class="card-header mt-2 row">
+                <div class="col-sm-3"><h3 class="card-title">{{ 'Others'|upper }}</h3></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.mstProjectRating) }}
+                </div>
+{#                <div class="col-sm-3">#}
+{#                    {{ form_row(form.phase) }}#}
+{#                </div>#}
+                <div class="col-sm-3">
+                    {{ form_row(form.openSpacePercentage) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.approvedBy) }}
+                </div>
+            </div>
+{#            <div class="row">#}
+{#                <div class="col-sm-3">#}
+{#                    {{ form_row(form.mapView) }}#}
+{#                </div>#}
+{#                <div class="col-sm-3">#}
+{#                    {{ form_row(form.locationLatitude) }}#}
+{#                </div>#}
+{#                <div class="col-sm-3">#}
+{#                    {{ form_row(form.locationLongitude) }}#}
+{#                </div>#}
+{#            </div>#}
+            <div class="card-header mt-2 row">
+                <div class="col-sm-3"><h3 class="card-title">{{ 'Add Additional Details'|upper }}</h3></div>
+            </div>
+
+            <div class="row recurringAdditionalDetails" data-prototype="{{ formMacro.projectAdditionalDetail(form.trnProjectAdditionalDetail.vars.prototype)|e('html_attr') }}">
+                <div class="col" id="additionalDetailContent" >
+                    {% for row in form.trnProjectAdditionalDetail %}
+                        {{ formMacro.projectAdditionalDetail(row) }}
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-sm-3  ml-3"><button type="button" id="addAdditionalDetail" class="btn btn-dark btn-sm"><i class="fa fa-plus"></i> Add Additional Detail</button></div>
+            </div>
+
+            <div class="card-header mt-2 row">
+                <div class="col-sm-3"><h3 class="card-title">{{ 'Upload Media'|upper }}</h3></div>
+            </div>
+            <div class="row recurringDetails" data-prototype="{{ formMacro.projectUploadDocument(form
+                .trnUploadDocument
+                .vars.prototype)|e('html_attr') }}">
+                <div class="col" id="uploadDocumentContent" >
+                    {% for row in form.trnUploadDocument %}
+                        {{ formMacro.projectUploadDocument(row) }}
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-sm-3  ml-3">
+                    <button type="button" id="addUploadMedia" class="btn btn-dark btn-sm"><i class="fa fa-plus"></i> Add
+                        Media</button>
+                </div>
+            </div>
+            <div class="card-header mt-2">
+                <h3 class="card-title">{{ 'SEO Section'|upper }}</h3>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-4">
+                    {{ form_row(form.metaTitle) }}
+                </div>
+                <div class="col-sm-4">
+                    {{ form_row(form.metaKeyword) }}
+                </div>
+                <div class="col-sm-4">
+                    {{ form_row(form.metaDescription) }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-4">
+                    {{ form_row(form.focusKeyPhrase) }}
+                </div>
+                <div class="col-sm-4">
+                    {{ form_row(form.keyPhraseSynonyms) }}
+                </div>
+                <div class="col-sm-4">
+                    {{ form_row(form.seoSchema) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    {{ form_row(form.canonicalUrl) }}
+                </div>
+            </div>
+            <div class="card-header mt-2">
+                <h3 class="card-title">{{ 'Social Share Section'|upper }}</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-4">
+                        {{ form_row(form.ogTitle) }}
+                    </div>
+                    <div class="col-sm-4">
+                        {{ form_row(form.ogDescription) }}
+                    </div>
+                    <div class="col-sm-4">
+                        {{ form_row(form.ogType) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        {{ form_row(form.ogImage) }}
+                    </div>
+                    {% if trnProject.ogImage is not empty %}
+                        <div class="col-sm-4">
+                            <img src="{{ trnProject.ogImagePath|imagine_filter('resize_image_200') }}" alt="{{ trnProject.ogImage }}">
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-header mt-2">
+                <h3 class="card-title">{{ 'Brochure Details'|upper }}</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-4">
+                        {{ form_row(form.brochureName) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        {{ form_row(form.brochure) }}
+                    </div>
+                    {% if trnProject.brochure is not empty %}
+                        <div class="col-sm-4">
+                            <a target="_blank" href="{{ absolute_url(asset(trnProject.brochurePath)) }}">{{ trnProject.brochureName }}</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.isFeatured) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.isActive) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-footer">
+        <button type="submit" class="{{ button_css|default("btn btn-dark btn-sm") }}">
+            <i class="fa fa-save" aria-hidden="true"></i> {{ label_button|trans }}
+        </button>
+        <a href="{{ back_to_list }}" class="btn btn-link"><i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}</a>
+    </div>
+    {{ form_end(form) }}
+    <br>
+
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{asset('assets/plugins/kartik-v/bootstrap-fileinput/js/fileinput.min.js')}}"></script>
+    <script src="{{asset('assets/plugins/kartik-v/bootstrap-fileinput/themes/fa/theme.min.js')}}"></script>
+{#    <script src="{{ asset('assets/plugins/summernote/summernote-bs4.min.js') }}" type="text/javascript"></script>#}
+    <script src="{{ asset('assets/plugins/jquery-ui/jquery-ui.min.js') }}"></script>
+{#    <script src="{{ asset('assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}" type="text/javascript"></script>#}
+    <script>
+        var trn_circle_appUser = '';
+        var $pageURL = $(location).attr("href");
+        var possession_date = $("#trn_project_possessionDate");
+        var possession_year = $("#trn_project_possessionYear");
+        var possession_month = $("#trn_project_possessionMonth");
+        $(function () {
+
+            possession_date.on("change",function(){
+                if ($(this).val() !== '') {
+                    possession_year.attr("value","");
+                    possession_month.attr("value","");
+                    possession_year.prop("disabled", true);
+                    possession_month.prop("disabled", true);
+                } else {
+                    possession_year.prop("disabled", false);
+                    possession_month.prop("disabled", false);
+                }
+            });
+            possession_year.on("change",function(){
+                if ($(this).val() !== '') {
+                    possession_date.val("");
+                    possession_date.prop("disabled", true);
+                } else {
+                    possession_date.prop("disabled", false);
+                }
+            });
+            possession_month.on("change",function(){
+                if ($(this).val() !== '') {
+                    possession_date.prop("disabled", true);
+                } else {
+                    possession_date.prop("disabled", false);
+                }
+            });
+
+            $uploadDocumentContent = jQuery('#uploadDocumentContent').parent();
+            $uploadDocumentContent.data('index', jQuery('#uploadDocumentContent').find('.TrnProjectUploadDocument').length);
+
+            $additionalDetailContent = jQuery('#additionalDetailContent').parent();
+            $additionalDetailContent.data('index', jQuery('#additionalDetailContent').find('.TrnProjectAdditionalDetail').length);
+
+            // $areaDetailContent = jQuery('#areaDetailContent').parent();
+            // $areaDetailContent.data('index', jQuery('#areaDetailContent').find('.TrnProjectAreaDetail').length);
+
+            $roomConfigurationContent = jQuery('#roomConfigurationContent').parent();
+            $roomConfigurationContent.data('index', jQuery('#roomConfigurationContent').find('.TrnProjectRoomConfiguration').length);
+
+            $projectAmenitiesContent = jQuery('#projectAmenitiesContent').parent();
+            $projectAmenitiesContent.data('index', jQuery('#projectAmenitiesContent').find('.AmenitiesContentClass').length);
+
+
+            jQuery(document).on('click', '.btn-danger', function (e) {
+                jQuery(this).closest(".TrnProjectUploadDocument").remove();
+            });
+
+            jQuery(document).on('click', '.removeAdditionalDetail', function (e) {
+                jQuery(this).closest(".TrnProjectAdditionalDetail").remove();
+            });
+
+            jQuery(document).on('click', '.removeAdditionalDetail', function (e) {
+                jQuery(this).closest(".TrnProjectAdditionalDetail").remove();
+            });
+            // jQuery(document).on('click', '.removeAreaDetail', function (e) {
+            //     jQuery(this).closest(".TrnProjectAreaDetail").remove();
+            // });
+
+            jQuery(document).on('click', '.removeAmenitiesContentClass', function (e) {
+                jQuery(this).closest(".AmenitiesContentClass").remove();
+            });
+            jQuery(document).on('click', '.removeRoomConfiguration', function (e) {
+                jQuery(this).closest(".TrnProjectRoomConfiguration").remove();
+            });
+
+            jQuery("#addUploadMedia").on('click', function (e) {
+                addRowContentFormSubEvent($uploadDocumentContent);
+            });
+
+            // jQuery("#addAreaDetail").on('click', function (e) {
+            //     addRowContentFormSubEventAreaDetails($areaDetailContent);
+            // });
+
+            jQuery("#addRoomConfiguration").on('click', function (e) {
+                addRowContentFormSubEventRoomConfiguration($roomConfigurationContent);
+            });
+
+            jQuery("#addAdditionalDetail").on('click', function (e) {
+                addRowContentFormSubEventDetails($additionalDetailContent);
+            });
+
+            jQuery("#addAmenitiesContent").on('click', function (e) {
+                addRowContentAmenitiesContent($projectAmenitiesContent);
+            });
+
+            function addRowContentFormSubEvent($uploadDocumentContent) {
+                // Get the data-prototype explained earlier
+                var prototype = $uploadDocumentContent.data('prototype');
+
+                // get the new index
+                var index = $uploadDocumentContent.data('index');
+                var newForm = prototype;
+                newForm = newForm.replace(/__name__/g, index);
+                newForm = newForm.replace(/__index__/g, index);
+                newForm = newForm.replace(/imageDiv/g, 'imageDiv'+index);
+                newForm = newForm.replace(/videoDiv/g, 'videoDiv'+index);
+
+                // increase the index with one for the next item
+                $uploadDocumentContent.data('index', index + 1);
+
+                // Display the form in the page in an li, before the "Add a tag" link li
+                jQuery('#uploadDocumentContent').append(newForm);
+                $("#trn_project_trnUploadDocument_"+index+"_position").val(index);
+                $('select').select2({
+                    theme: 'bootstrap4'
+                })
+                $('label[for=trn_project_trnUploadDocument_'+index+'_mediaFileName]').remove();
+                $("#trn_project_trnUploadDocument_"+index+"_mediaFileName").fileinput({
+                    theme: "fa",
+                    overwriteInitial: true,
+                    maxFileSize: 7168,
+                    showClose: false,
+                    showCaption: false,
+                    showBrowse: false,
+                    browseOnZoneClick: true,
+                    removeLabel: '',
+                    defaultPreviewContent: '<h6 class="text-muted">Click to upload image</h6>',
+                    layoutTemplates: {main2: '{preview} {remove} {browse}'},
+                    allowedFileExtensions: ["jpg","jpeg", "png"]
+                });
+
+
+                // Copy the intro text to alt and title
+                $("#trn_project_trnUploadDocument_"+index+"_mediaName").keyup(function(){
+                    var Text = $(this).val();
+                    $("#trn_project_trnUploadDocument_"+index+"_mediaAltText").val(Text);
+                    $("#trn_project_trnUploadDocument_"+index+"_mediaTitle").val(Text);
+                });
+            }
+
+            function addRowContentFormSubEventDetails($ContentObj) {
+                // Get the data-prototype explained earlier
+                var prototype = $ContentObj.data('prototype');
+
+                // get the new index
+                var index = $ContentObj.data('index');
+                var newForm = prototype;
+                newForm = newForm.replace(/__name__/g, index);
+                // newForm = newForm.replace(/__index__/g, index);
+                // newForm = newForm.replace(/imageDiv/g, 'imageDiv'+index);
+                // newForm = newForm.replace(/videoDiv/g, 'videoDiv'+index);
+
+                // increase the index with one for the next item
+                $ContentObj.data('index', index + 1);
+
+                // Display the form in the page in an li, before the "Add a tag" link li
+                jQuery('#additionalDetailContent').append(newForm);
+
+                //jQuery("#additionalDetailContent").find(".TrnProjectAdditionalDetail:first").find(".removeAdditionalDetail").hide();
+
+                // if ($('.textarea').length) {
+                //     $(".textarea").summernote({
+                //         height: 200,
+                //         toolbar: [
+                //             // [groupName, [list of button]]
+                //             ['style', ['bold', 'italic', 'underline']],
+                //             ['para', ['ul', 'ol', 'paragraph']],
+                //             ['table', ['table']],
+                //             ['insert', ['link']],
+                //             ['view', ['fullscreen', 'codeview', 'help']],
+                //         ]
+                //     });
+                // }
+            }
+            function addRowContentFormSubEventAreaDetails($ContentObj) {
+                // Get the data-prototype explained earlier
+                var prototype = $ContentObj.data('prototype');
+
+                // get the new index
+                var index = $ContentObj.data('index');
+                var newForm = prototype;
+                newForm = newForm.replace(/__name__/g, index);
+                $ContentObj.data('index', index + 1);
+
+                // Display the form in the page in an li, before the "Add a tag" link li
+                jQuery('#areaDetailContent').append(newForm);
+                //jQuery("#areaDetailContent").find(".TrnProjectAreaDetail:first").find(".removeAreaDetail").hide();
+                $('select').select2({
+                    theme: 'bootstrap4'
+                })
+            }
+            function addRowContentFormSubEventRoomConfiguration($ContentObj) {
+                // Get the data-prototype explained earlier
+                var prototype = $ContentObj.data('prototype');
+
+                // get the new index
+                var index = $ContentObj.data('index');
+                var newForm = prototype;
+                newForm = newForm.replace(/__name__/g, index);
+                $ContentObj.data('index', index + 1);
+
+                // Display the form in the page in an li, before the "Add a tag" link li
+                jQuery('#roomConfigurationContent').append(newForm);
+                // jQuery("#roomConfigurationContent").find(".TrnProjectRoomConfiguration:first").find(".removeRoomConfiguration").hide();
+                $('label[for=trn_project_trnProjectRoomConfigurations_'+index+'_mediaFileName]').remove();
+                $("#trn_project_trnProjectRoomConfigurations_"+index+"_mediaFileName").fileinput({
+                    theme: "fa",
+                    overwriteInitial: true,
+                    maxFileSize: 7168,
+                    showClose: false,
+                    showCaption: false,
+                    showBrowse: false,
+                    browseOnZoneClick: true,
+                    removeLabel: '',
+                    defaultPreviewContent: '<h6 class="text-muted">Click to upload image</h6>',
+                    layoutTemplates: {main2: '{preview} {remove} {browse}'},
+                    allowedFileExtensions: ["jpg","jpeg", "png"]
+                });
+                $("#trn_project_trnProjectRoomConfigurations_"+index+"_mediaName").keyup(function(){
+                    var Text = $(this).val();
+                    $("#trn_project_trnProjectRoomConfigurations_"+index+"_mediaAltText").val(Text);
+                    $("#trn_project_trnProjectRoomConfigurations_"+index+"_mediaTitle").val(Text);
+                });
+                $('select').select2({
+                    theme: 'bootstrap4'
+                })
+                BuyRent(index);
+                $('label[for=trn_project_trnProjectRoomConfigurations_'+index+'_rentPerMonth]').parent(".form-group").hide();
+                $('label[for=trn_project_trnProjectRoomConfigurations_'+index+'_deposit]').parent(".form-group").hide();
+                $('label[for=trn_project_trnProjectRoomConfigurations_'+index+'_isNegotiable]').parent(".form-check").hide();
+            }
+            function BuyRent(index)
+            {
+                $("#trn_project_trnProjectRoomConfigurations_"+index+"_mstPropertyTransactionCategory").change(function(){
+                    if ($(this).val() == 1){
+                        BuyElements(index)
+                    }else if($(this).val() == 2){
+                        RentElements(index)
+                    }else{
+                        BuyElements(index)
+                    }
+                });
+                $("#trn_project_trnProjectRoomConfigurations_"+index+"_mstPropertyTransactionCategory").trigger("change");
+            }
+
+            function addRowContentAmenitiesContent($ContentObj) {
+                // Get the data-prototype explained earlier
+                var prototype = $ContentObj.data('prototype');
+
+                // get the new index
+                var index = $ContentObj.data('index');
+                var newForm = prototype;
+                newForm = newForm.replace(/__name__/g, index);
+                $ContentObj.data('index', index + 1);
+
+                // Display the form in the page in an li, before the "Add a tag" link li
+                jQuery('#projectAmenitiesContent').append(newForm);
+                $('#trn_project_trnProjectAmenities_'+index+'_position').val(index+1);
+                //jQuery("#areaDetailContent").find(".TrnProjectAreaDetail:first").find(".removeAreaDetail").hide();
+                $('select').select2({
+                    theme: 'bootstrap4'
+                })
+
+                jQuery("#trn_project_trnProjectAmenities_"+index+"_mstSubCategory").change(function(e) {
+                    var data = {};
+                    data['q'] = jQuery(this).val();
+                    var oThis = this;
+                    jQuery.ajax({
+                        url: "{{ path('location_amentities') }}",
+                        data: data,
+                        type: "GET",
+                        dataType: "JSON",
+                        success: function (data) {
+                            var amenities = jQuery("#trn_project_trnProjectAmenities_"+index+"_mstProjectAmenities");
+                            amenities.html('');
+                            // add options
+                            amenities.append('<option value="" >Select Amenities</option>');
+                            $.each(data, function (id,item) {
+                                amenities.append('<option value="'+ item.id +'">'+ item.name + '</option>');
+                            });
+                        }
+                    });
+                });
+
+            }
+
+            jQuery(document).on('change', ".uploadDocumentType", function(e) {
+                var index = jQuery(this).attr('index');
+                jQuery('.imageDiv'+index).hide();
+                jQuery('.videoDiv'+index).hide();
+                switch(jQuery(this).find("option:selected").text().toLowerCase()) {
+                    case 'image':
+                    case 'pdf':{
+                        jQuery('.imageDiv'+index).show();
+                        break;
+                    }
+                    case 'video':{
+                        jQuery('.videoDiv'+index).show();
+                        break;
+                    }
+                }
+            });
+            jQuery(document).on('change', ".mstcountry", function(e) {
+                var data = {};
+                data['q'] = jQuery(this).val();
+                var oThis = this;
+                jQuery.ajax({
+                    url: "/core/location/state_list",
+                    data: data,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (data) {
+                        var product = jQuery("#trn_project_mstState");
+                        product.html('');
+                        // add options
+                        product.append('<option value="" >Select State..</option>');
+                        $.each(data, function (id, name) {
+                            product.append('<option value="'+ name.id +'">'+ name.name + '</option>');
+                        });
+                    }
+                });
+            });
+
+            jQuery(document).on('change', ".mststate", function(e) {
+                var data = {};
+                data['q'] = jQuery(this).val();
+                var oThis = this;
+                jQuery.ajax({
+                    url: "/core/location/city_list",
+                    data: data,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (data) {
+                        var product = jQuery("#trn_project_mstCity");
+                        product.html('');
+                        // add options
+                        product.append('<option value="" >Select City..</option>');
+                        $.each(data, function (id, name) {
+                            product.append('<option value="'+ name.id +'">'+ name.name + '</option>');
+                        });
+                    }
+                });
+            });
+
+            jQuery(document).on('change', ".mstcity", function(e) {
+                var data = {};
+                data['q'] = jQuery(this).val();
+                var oThis = this;
+                jQuery.ajax({
+                    url: "/core/location/area_in_city_list",
+                    data: data,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (data) {
+                        var product = jQuery("#trn_project_mstAreaInCity");
+                        product.html('');
+                        // add options
+                        product.append('<option value="" >Select Area in City..</option>');
+                        $.each(data, function (id, name) {
+                            product.append('<option value="'+ name.id +'">'+ name.name + '</option>');
+                        });
+                    }
+                });
+            });
+
+            $('label[for=trn_project_ogImage]').remove();
+            $("#trn_project_ogImage").fileinput({
+                theme: "fa",
+                overwriteInitial: true,
+                maxFileSize: 7168,
+                showClose: false,
+                showCaption: false,
+                showBrowse: false,
+                browseOnZoneClick: true,
+                removeLabel: '',
+                defaultPreviewContent: '<h6 class="text-muted">Click to upload social share image</h6>',
+                layoutTemplates: {main2: '{preview} {remove} {browse}'},
+                allowedFileExtensions: ["jpg", "png"]
+            });
+
+            if ($pageURL.search(/add/i) > 0) {
+                //jQuery("#addAreaDetail").trigger("click");
+                jQuery("#addAdditionalDetail").trigger("click");
+                jQuery("#addRoomConfiguration").trigger("click");
+            }else{
+                if (jQuery('.clsPropertyTransactionCategory').length > 0 ){
+                   $.map(jQuery('.clsPropertyTransactionCategory'), function(item) {
+                       var nIndex = $(item).attr("id").replace(/trn_project_trnProjectRoomConfigurations_/g, '');
+                       var nIndex = nIndex.replace(/_mstPropertyTransactionCategory/g, '');
+                       BuyRent(nIndex);
+                       if (nIndex > -1){
+                           if ($("#trn_project_trnProjectRoomConfigurations_"+nIndex+"_mstPropertyTransactionCategory").val() !="" ){
+                               if ($("#trn_project_trnProjectRoomConfigurations_"+nIndex+"_mstPropertyTransactionCategory").val() == 1){
+                                   BuyElements(nIndex)
+                               }else{
+                                   RentElements(nIndex)
+                               }
+                           }else{
+                               BuyElements(nIndex)
+                           }
+                       }
+                    });
+                }
+                if (possession_year.val() != ""){
+                    possession_year.trigger("change");
+                }else{
+                    possession_date.trigger("change");
+                }
+                jQuery("#trn_project_isRera").trigger("change");
+            }
+
+            if (jQuery('#roomConfigurationContent').find('.TrnProjectRoomConfiguration').length ==0 ){
+                jQuery("#addRoomConfiguration").trigger("click");
+            }
+            jQuery("#roomConfigurationContent").find(".TrnProjectRoomConfiguration:first").find(".removeRoomConfiguration").hide();
+
+            jQuery(".custom-file-input").map(function(item){
+                var customObj = $(this).attr("id");
+                $('label[for='+customObj+']').remove();
+                if(customObj != "trn_project_brochure"){
+                    $("#"+customObj).fileinput({
+                        theme: "fa",
+                        overwriteInitial: true,
+                        maxFileSize: 7168,
+                        showClose: false,
+                        showCaption: false,
+                        showBrowse: false,
+                        browseOnZoneClick: true,
+                        removeLabel: '',
+                        defaultPreviewContent: '<h6 class="text-muted">Click to upload image</h6>',
+                        layoutTemplates: {main2: '{preview} {remove} {browse}'},
+                        allowedFileExtensions: ["jpg","jpeg", "png"]
+                    });
+                }else{
+                    $("#"+customObj).fileinput({
+                        theme: "fa",
+                        overwriteInitial: true,
+                        showClose: false,
+                        showCaption: false,
+                        showBrowse: false,
+                        browseOnZoneClick: true,
+                        removeLabel: '',
+                        defaultPreviewContent: '<h6 class="text-muted">Click to upload pdf</h6>',
+                        layoutTemplates: {main2: '{preview} {remove} {browse}'},
+                        allowedFileExtensions: ["pdf"]
+                    });
+
+                }
+            });
+
+            if ($('#projectAmenitiesContent').find('.AmenitiesContentClass').length == 0) {
+                jQuery("#addAmenitiesContent").trigger("click");
+                $('.removeAmenitiesContentClass').hide();
+            }
+
+            jQuery(document).on('change', "#trn_project_mstProductCategory", function(e) {
+                var data = {};
+                data['q'] = jQuery(this).val();
+                var oThis = this;
+                jQuery.ajax({
+                    url: "{{ path('location_productType') }}",
+                    data: data,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (data) {
+                        var product = jQuery("#trn_project_mstProductType");
+                        product.html('');
+                        // add options
+                        product.append('<option value="" >Select..</option>');
+                        $.each(data, function (id, name) {
+                            product.append('<option value="'+ name.id +'">'+ name.name + '</option>');
+                        });
+                    }
+                });
+            });
+            jQuery(document).on('change', "#trn_project_mstProductType", function(e) {
+                var data = {};
+                data['q'] = jQuery(this).val();
+                var oThis = this;
+                jQuery.ajax({
+                    url: "{{ path('location_productSubType') }}",
+                    data: data,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (data) {
+                        var product = jQuery("#trn_project_mstProductSubType");
+                        product.html('');
+                        // add options
+                        product.append('<option value="" >Select..</option>');
+                        $.each(data, function (id, name) {
+                            product.append('<option value="'+ name.id +'">'+ name.name + '</option>');
+                        });
+                    }
+                });
+                jQuery.ajax({
+                    url: "{{ path('location_projectStatus') }}",
+                    data: data,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (data) {
+                        var product = jQuery("#trn_project_mstProjectStatus");
+                        product.html('');
+                        // add options
+                        product.append('<option value="" >Select..</option>');
+                        $.each(data, function (id, name) {
+                            product.append('<option value="'+ name.id +'">'+ name.name + '</option>');
+                        });
+                    }
+                });
+            });
+            $(".datepicker").datepicker({
+                dateFormat: 'dd/mm/yy',
+                showOn: "both",
+                minDate: 0,
+                buttonImage: "{{ asset('resources/images/icons/icon_calender.png') }}",
+                buttonImageOnly: true,
+            });
+
+
+            jQuery(document).on('change', "#trn_project_mstVendorType", function(e) {
+                var data = {};
+                data['q'] = jQuery(this).val();
+                jQuery.ajax({
+                    url: "{{ path('vendor_partner_list') }}",
+                    data: data,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (data) {
+                        var dropdown = jQuery("#trn_project_trnVendorPartnerDetails");
+                        dropdown.html('');
+                        // add options
+                        dropdown.append('<option value="" >Select..</option>');
+                        $.each(data, function (id, name) {
+                            dropdown.append('<option value="'+ name.id +'">'+ name.name + '</option>');
+                        });
+                    }
+                });
+
+            });
+
+            jQuery(document).on('change', "#trn_project_isRera", function(e) {
+                if (jQuery(this).val() == 1){
+                    jQuery("#trn_project_mahaReraRegisterationNo").prop("disabled","");
+                }else{
+                    jQuery("#trn_project_mahaReraRegisterationNo").prop("disabled","disabled");
+                }
+            });
+            jQuery("#trn_project_isRera").trigger("change");
+        });
+
+        function BuyElements(nIndex){
+            $("#trn_project_trnProjectRoomConfigurations_"+nIndex+"_agreementAmount").prop("required","required");
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_agreementAmount]').addClass('required');
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_agreementAmount]').parent(".form-group").show();
+            $("#trn_project_trnProjectRoomConfigurations_"+nIndex+"_price").prop("required","required");
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_price]').addClass('required');
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_price]').parent(".form-group").show();
+            $("#trn_project_trnProjectRoomConfigurations_"+nIndex+"_mstPropertySaleCategory").prop("required","required");
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_mstPropertySaleCategory]').addClass('required');
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_mstPropertySaleCategory]').parent(".form-group").show();
+            $("#trn_project_trnProjectRoomConfigurations_"+nIndex+"_rentPerMonth").prop("required","");
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_rentPerMonth]').removeClass('required');
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_rentPerMonth]').parent(".form-group").hide();
+            $("#trn_project_trnProjectRoomConfigurations_"+nIndex+"_deposit").prop("required","");
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_deposit]').removeClass('required');
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_deposit]').parent(".form-group").hide();
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_isNegotiable]').parent(".form-check").hide();
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_mstFurnishing]').removeClass('required');
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_mstFurnishing]').parent(".form-group").hide();
+            $("#trn_project_trnProjectRoomConfigurations_"+nIndex+"_mstPreferredTenant").prop("required","");
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_mstPreferredTenant]').removeClass('required');
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_mstPreferredTenant]').parent(".form-group").hide();
+        }
+        function RentElements(nIndex){
+            $("#trn_project_trnProjectRoomConfigurations_"+nIndex+"_agreementAmount").prop("required","");
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_agreementAmount]').removeClass('required');
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_agreementAmount]').parent(".form-group").hide();
+            $("#trn_project_trnProjectRoomConfigurations_"+nIndex+"_price").prop("required","");
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_price]').removeClass('required');
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_price]').parent(".form-group").hide();
+            $("#trn_project_trnProjectRoomConfigurations_"+nIndex+"_mstPropertySaleCategory").prop("required","");
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_mstPropertySaleCategory]').removeClass('required');
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_mstPropertySaleCategory]').parent(".form-group").hide();
+            $("#trn_project_trnProjectRoomConfigurations_"+nIndex+"_rentPerMonth").prop("required","required");
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_rentPerMonth]').addClass('required');
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_rentPerMonth]').parent(".form-group").show();
+            $("#trn_project_trnProjectRoomConfigurations_"+nIndex+"_deposit").prop("required","required");
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_deposit]').addClass('required');
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_deposit]').parent(".form-group").show();
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_isNegotiable]').parent(".form-check").show();
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_mstFurnishing]').addClass('required');
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_mstFurnishing]').parent(".form-group").show();
+            $("#trn_project_trnProjectRoomConfigurations_"+nIndex+"_mstPreferredTenant").prop("required","required");
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_mstPreferredTenant]').addClass('required');
+            $('label[for=trn_project_trnProjectRoomConfigurations_'+nIndex+'_mstPreferredTenant]').parent(".form-group").show();
+        }
+
+    </script>
+{% endblock %}

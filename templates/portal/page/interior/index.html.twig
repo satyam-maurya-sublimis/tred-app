@@ -1,0 +1,119 @@
+{% extends 'portal/layout/index.html.twig' %}
+{% block portal_content %}
+<section class="banner-carousel typ2">
+    {% set route =  app.request.get('_route') %}
+    {% set cmsPage = get_cms_page_by_route(route) %}
+    {% set page = get_pagecontent_by_route(route) %}
+    {% set banners = get_cms_page_banner(cmsPage.id) %}
+    {% set advertisements = get_cms_page_ads(cmsPage.id) %}
+    <div id="mainBanner" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+            {% for banner in banners %}
+            <div class="carousel-item active">
+                <figure>
+                    <img src="{{ banner.bannerDesktopImagePath|imagine_filter('resize_image_scale_1280_300') }}" class="desktop-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                    <img src="{{ banner.bannerTabletImagePath|imagine_filter('resize_image_scale_767_350') }}" class="tab-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                    <img src="{{ banner.bannerMobileImagePath|imagine_filter('resize_image_scale_350_250') }}" class="mobile-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                </figure>
+                <div class="container">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{{ path('portal_index') }}">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Interiors</li>
+                        </ol>
+                    </nav>
+                    <div class="banner-content">
+                        <div class="caption">
+                            {{ banner.bannerDescription|raw }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+<div class="wrapper {% if advertisements|length == 0 %}typ2{% endif %}">
+    <section class="explore-properties">
+        <div class="container">
+            {% for content in page.cmsPageContent|filter((a)=>a.cmsPageContentPosition =="title") %}
+                <h2 data-aos="fade-right" data-aos-delay="200">{{ content.pageContent|raw }} </h2>
+            {% endfor %}
+            <div class="row row-grid-md">
+                {% for content in page.cmsPageContent %}
+                    {% if content.cmsPageContentPosition =="left" %}
+                    <div class="col-md-8" data-aos="fade-right"  data-aos-delay="200">
+                        {{ content.pageContent|raw }}
+                    </div>
+                    {% endif %}
+                    {% if content.cmsPageContentPosition =="right" %}
+                        <div class="col-md-4" data-aos="fade-right" data-aos-delay="400">
+                            <div class="highlights">
+                                {{ content.pageContent|raw }}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="card-deck cust-card typ3">
+                {% for productType in get_sub_product_by_route(page.id) %}
+                <div class="card aos-init aos-animate" data-aos="fade-right" data-aos-delay="200">
+                    <figure class="">
+                        <a href="{{ path('portal_interior_internal',{'slugName':productType.productTypeSlugName}) }}">
+                            <img src="{{ productType.productTypeImagePath|imagine_filter('resize_image_scale_380_200')  }}" class="card-img-top" alt="{{ productType.productType }}" title="{{ productType.productType }}">
+                        </a>
+                    </figure>
+                    <figcaption>
+                        {% set productTypeName = productType.productType|split(" ") %}
+                        <h2>{{ productTypeName.0 }} <span>{{ productTypeName.1 }}</span></h2>
+                        <div class="contentLess">{{ productType.productTypeDescription|raw }}</div>
+                        <a href="{{ path('portal_interior_internal',{'slugName':productType.productTypeSlugName}) }}" class="btn btn-primary">Know More</a>
+                    </figcaption>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </section>
+
+    {% if advertisements|length > 0 %}
+        <section class="bg-container text-center add-sec">
+            <div class="container" data-aos="fade-down" data-aos-delay="200">
+                {% for ads in advertisements|filter((a)=>a.advertisementPosition =="middle") %}
+                    <img src="{{ ads.advertisementDesktopImagePath|imagine_filter('resize_image_advertisement') }}" class="desktop-purpose" alt="{{ ads.advertisementName }}" title="{{ ads.advertisementName }}">
+                {% endfor %}
+            </div>
+        </section>
+    {% endif  %}
+</div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('resources/js/readmore.js') }}"></script>
+    <script>
+        jQuery("document").ready(function(){
+            $readMoreJS.init({
+                target: '.contentLess',           // Selector of the element the plugin applies to (any CSS selector, eg: '#', '.'). Default: ''
+                numOfWords: 19,               // Number of words to initially display (any number). Default: 50
+                toggle: true,                 // If true, user can toggle between 'read more' and 'read less'. Default: true
+                moreLink: '',    // The text of 'Read more' link. Default: 'read more ...'
+                lessLink: '',         // The text of 'Read less' link. Default: 'read less'
+                linkClass: 'txt-link'
+            });
+
+            AOS.init({
+                delay: 50,
+                duration: 1000,
+                offset:0,
+                once: true
+            })
+
+             if(width < 991) {
+                $('.mob-filter').click(function(){
+                    $('.top-filter-sec').toggle(500);
+                    $(this).toggleClass('active');
+                });
+             }
+        });
+    </script>
+{% endblock %}

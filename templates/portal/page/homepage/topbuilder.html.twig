@@ -1,0 +1,24 @@
+{% if cmsPage.cmsPageContent[7] is defined and cmsPage.cmsPageContent[7].isActive %}
+    {% set topbuilders = get_top_builders() %}
+    {% if  topbuilders|length > 0 %}
+        <section>
+            <div class="container">
+                {{ cmsPage.cmsPageContent[7].pageContent|raw }}
+                <div class="properties-location">
+                    <ul class="properties typ2">
+                        {% for topbuilder in topbuilders %}
+                            <li data-aos="fade-right" data-aos-delay="200">
+                                <a href="#">
+                                    <figure>
+                                        <img src="{{ topbuilder.trnVendorPartnerDetails.companyLogo|imagine_filter('resize_logo_100') }}">
+                                    </figure>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="btn-sec" data-aos="fade-right" data-aos-delay="700"> <a href="#" class="btn-view-more typ2"> <i class="fa fa-custom-plus"></i> <b>View Top Real Estate Builders</b> </a> </div>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+{% endif %}

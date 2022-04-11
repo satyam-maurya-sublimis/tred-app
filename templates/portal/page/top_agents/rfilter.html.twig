@@ -1,0 +1,212 @@
+<section class="top-filter">
+    <div class="container paddlr0">
+        <a class="mob-search" href="#"><i class="fa fa-search"></i></a>
+        <a href="#" class="btn btn-primary" id="call-back">Get A Call Back</a>
+        <a class="mob-filter" href="#">Filter</a>
+        <div class="top-filter-sec">
+            <ul>
+                <li class="bhk">
+                    <a href="#">BHK</a>
+                    <div class="open-dropdown">
+                        <ul class="filter-lists">
+                            {% for key,rooms in mFilters.projectRoomConfigurations|sort %}
+                                <li><a class="bhkrooms" data-id="{{ key }}" href="#">{{ rooms }}</a></li>
+                            {% endfor  %}
+                        </ul>
+                        <a href="#" class="btn btn-done">Done</a>
+                    </div>
+                </li>
+                <li class="budget">
+                    <a href="#">Budget</a>
+                    <div class="open-dropdown">
+                        <div class="prz-range">
+                            <div class="row row-zero">
+                                <div class="col-md-5 col-sm-5">
+                                    <input type="text" class="form-control" placeholder="Min" id="minrange" data-value="" value="" data-denomination="">
+                                </div>
+                                <div class="col-md-1  col-sm-1 text-center"> - </div>
+                                <div class="col-md-5 col-sm-5">
+                                    <input type="text" class="form-control" placeholder="Max" id="maxrange" data-value="" value="" data-denomination="">
+                                </div>
+                            </div>
+                            <div class="longEnough mCustomScrollbar scrollspy-example typ3" data-mcs-theme="dark">
+
+                                <ul class="rangeSlider">
+                                    {% for key,priceGroup in mFilters.priceGroup %}
+                                        {% for pricerow in priceGroup|sort|batch(4) %}
+                                            {% set firstPrice = pricerow|first %}
+                                            {% set lastPrice = pricerow|last %}
+                                            <li>
+                                                <a href="#">
+                                                    <span class="minRange" data-range="{{ firstPrice }}" data-denomination="{{ key }}"><i class="fa fa-rupee"></i> {{ firstPrice }} {{ key }}</span>
+                                                    <span class="maxRange" data-range="{{ lastPrice }}" data-denomination="{{ key }}"><i class="fa fa-rupee"></i> {{ lastPrice }} {{ key }}</span>
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <a href="#" class="btn btn-done">Done</a>
+                        </div>
+                    </div>
+                </li>
+                <li class="possession">
+                    <a href="#">Availability</a>
+                    <div class="open-dropdown">
+                        <ul class="filter-lists">
+                            {% for keyavailabilityFromDate,availabilityFromDateValue in projectAvailabilityFromDate %}
+                                <li><a class="availabilityFromDate"  href="#" data-id="{{ keyavailabilityFromDate }}" data-value="{{ keyavailabilityFromDate }}~{{ availabilityFromDateValue }}">{{ get_available_date_format(keyavailabilityFromDate) }}</a></li>
+                            {% endfor %}
+                        </ul>
+                        <a href="#" class="btn btn-done">Done</a>
+                    </div>
+                </li>
+                <li class="new-project">
+                    {% set get_Tenant =  app.request.get('tenants') %}
+                    <a href="#">Preferred Tenants</a>
+                    <div class="open-dropdown">
+                        <ul class="filter-lists">
+                            {% for key,projectTenant in mFilters.projectTenants %}
+                                <li><a class="projectTenants {% if key==get_Tenant %}active{% endif %}" data-id="{{ key }}" href="#">{{ projectTenant }}</a></li>
+                            {% endfor %}
+                        </ul>
+                        <a href="#" class="btn btn-done">Done</a>
+                    </div>
+                </li>
+                <li class="posted-by">
+                    <a href="#">Property Type</a>
+                    <div class="open-dropdown">
+                        <ul class="filter-lists">
+                            {% for key,projectProductSubType in mFilters.projectProductSubType %}
+                                <li id="productSubType_{{ key }}"><a class="productSubType" data-id="{{ key }}" href="#">{{ projectProductSubType }}</a></li>
+                            {% endfor %}
+                        </ul>
+                        <a href="#" class="btn btn-done">Done</a>
+                    </div>
+                </li>
+                <li class="amenities">
+                    <a href="#">Amenities</a>
+                    <div class="open-dropdown">
+                        <div class="filter-vtabs">
+                            <div id="list-amenities" class="list-group">
+                                {% for key,category in mFilters.projectAmenitiesCategories|sort %}
+                                    <a class="list-group-item list-group-item-action" href="#amentities{{ key }}">{{ category }}</a>
+                                {% endfor %}
+                            </div>
+                            <div data-spy="scroll" data-target="#list-amenities" data-offset="40" class="scrollspy-example">
+                                <ul class="list-type">
+                                    {% for cid,category in mFilters.projectAmenitiesCategories|sort %}
+                                        <li id="amentities{{ cid }}">
+                                            <h4>{{ category }}</h4>
+                                            <ul class="filter-lists">
+                                                {% for amenities in mFilters.projectAmenities|sort|filter((a)=> a.subCategoryId == cid) %}
+
+                                                    <li>
+                                                        <a href="#" class="amenities" data-id="{{ amenities.Id }}">
+                                                            {% set iconName = mFilters.projectAmenitiesIcons[amenities.Id] %}
+                                                            {% if iconName != "" %}
+                                                                <img src="{{ iconName|imagine_filter('resize_icon_image_30_40') }}" alt="{% if amenities.Amentity !="" %}{{ amenities.Amentity }}{% else %}{{ amenities.projectAmenity }}{% endif %}" title="{% if amenities.Amentity !="" %}{{ amenities.Amentity }}{% else %}{{ amenities.projectAmenity }}{% endif %}">
+                                                            {% endif %}
+                                                            {% if amenities.Amentity !="" %}{{ amenities.Amentity }}{% else %}{{ amenities.projectAmenity }}{% endif %}
+                                                        </a>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+
+                            </div>
+                        </div>
+                        <a href="#" class="btn btn-done">Done</a>
+                    </div>
+                </li>
+                <li class="more-filters">
+                    <a href="#">More Filters</a>
+
+                    <div class="open-dropdown">
+                        <div class="filter-vtabs">
+                            <div id="list-example" class="list-group">
+                                {% for key,moreFilter in mFilters.projectMoreFilter %}
+                                    <a class="list-group-item list-group-item-action" href="#{{ key }}">{{ key|replace({"_":" "}) }}</a>
+                                {% endfor %}
+                            </div>
+                            <div data-spy="scroll" data-target="#list-example" data-offset="50" class="scrollspy-example typ3">
+                                <ul class="list-type">
+                                    {% for key,moreFilter in mFilters.projectMoreFilter %}
+                                        {% if key != "Property_Area" %}
+                                            <li id="{{ key }}">
+                                                <h4>{{ key }}</h4>
+                                                <ul class="filter-lists">
+                                                    {% for filter in moreFilter %}
+                                                        <li><a href="#" class="{{ key|lower }}" data-id="{{ filter }}">{{ filter }}</a></li>
+                                                    {% endfor  %}
+                                                </ul>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% for key,moreFilter in mFilters.projectMoreFilter %}
+                                        {% if key == "Property_Area" %}
+                                            <li id="{{ key }}">
+                                                <h4>{{ key|replace({"_":" "}) }}</h4>
+                                                <ul class="filter-lists sm">
+                                                    <li>
+                                                        {% for filterKey,filter in moreFilter %}
+                                                            {% if filterKey != "Area" %}
+                                                                <span>
+                                                                    <div class="select-custom">
+                                                                          <select class="areaValue">
+                                                                                <option value="">Sqft</option>
+                                                                                {% for exactfilter in filter %}
+                                                                                    <option value="{{ exactfilter }}">{{ exactfilter }}</option>
+                                                                                {% endfor %}
+                                                                          </select>
+                                                                    </div>
+                                                               </span>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </li>
+                                                    <li><a href="#" class="areaValueRange" data-id="Min">Min</a></li>
+                                                    <li><a href="#" class="areaValueRange" data-id="Max">Max</a></li>
+                                                </ul>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                                <a href="#" class="btn btn-done">Done</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div class="btn-sec">
+                <ul>
+                    <li><a href="#" id="cancel-filter" class="btn btn-primary">Cancel</a></li>
+                    <li><a href="#" id="save-filter" class="btn btn-primary">Save</a></li>
+                </ul>
+            </div>
+            <a class="btn-reset" href="#" data-toggle="modal" data-target="#largeModal"><i class="icon-filter"></i> Selected Filters</a>
+        </div>
+
+    </div>
+</section>
+<div class="modal fade cust-modal" id="largeModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close seleted-filter-close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3>Selected Filters</h3>
+                <a class="btn-reset" href="{{ path(app.request.attributes.get('_route'),app.request.attributes.get('_route_params')) }}"><i class="fa fa-repeat"></i> Reset Filters</a>
+            </div>
+            <div class="modal-body">
+
+                <ul class="filter-lists selected-filter">
+                    {% include 'portal/page/product/selected-filters.html.twig' %}
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>

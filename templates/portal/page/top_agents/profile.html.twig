@@ -1,0 +1,37 @@
+<div>
+    <div class="agent-dtls-frm">
+        {% if trnTopVendorPartners.contactPersonName %}
+        <div class="profile-details">
+            <div class="profile-img">
+            {% if trnTopVendorPartners.contactPersonImage|replace({'files/':''}) != ""  %}
+                <img src="{{ asset('images') }}/{{ trnTopVendorPartners.contactPersonImage }}"/>
+            {% else %}
+                <i class="fa fa-user-o" aria-hidden="true"></i>
+            {% endif %}
+            </div>
+            <h5 class="text-center">{{ trnTopVendorPartners.mstSalutation }} {{ trnTopVendorPartners.contactPersonName }}</h5>
+            <h6><img src="{{ asset('resources/images/icons/icon-map.png') }}" class="list-img"/>
+                {% if  trnTopVendorPartners.contactPersonPincode and trnTopVendorPartners.contactPersonCity %}
+                {{ trnTopVendorPartners.contactPersonPincode.officeName }}, {{ trnTopVendorPartners.contactPersonCity }}
+                {% endif  %}
+            </h6>
+            {% if trnVendorPartnerDetails.websiteUrl %}
+                <h6><i class="fa fa-mouse-pointer"></i>{{ trnVendorPartnerDetails.websiteUrl }}</h6>
+            {% endif  %}
+        </div>
+        {% endif  %}
+        <div class="form-sec with-bg">
+            <div class="bdr-sec">
+                    <div class="contact-expert">
+                        <div class="form-group">
+                            <h2>Contact <span>Real Estate Agent</span></h2>
+                            <p class="text-center">{{ trnVendorPartnerDetails }}</p>
+                        </div>
+                        <div class="top-agent-form2">
+                        </div>
+{#                        <div class="form-group"><a href="#" class="btn btn-primary" data-toggle="modal" data-target="#verify-number">Contact Agent</a></div>#}
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>

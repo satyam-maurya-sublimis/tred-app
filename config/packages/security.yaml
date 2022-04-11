@@ -1,0 +1,60 @@
+security:
+    role_hierarchy:
+        ROLE_APP_USER: ROLE_APP_USER
+        ROLE_VENDOR_USER: ROLE_VENDOR_USER
+        ROLE_SYS_CONTENT_USER: ROLE_VENDOR_USER
+        ROLE_SYS_MODULE_ADMIN: ROLE_SYS_CONTENT_USER
+        ROLE_SYS_ADMIN: [ROLE_SYS_MODULE_ADMIN, ROLE_APP_USER ROLE_ALLOWED_TO_SWITCH]
+        ROLE_SUPER_ADMIN: [ROLE_SYS_ADMIN, ROLE_APP_USER ROLE_ALLOWED_TO_SWITCH]
+
+    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\SystemApp\AppUser
+                property: userName
+#        in_memory: { memory: null }
+    firewalls:
+#        login:
+#            pattern: ^/api/login
+#            stateless: true
+#            anonymous: true
+#            json_login:
+#                check_path: /api/login_check
+#                success_handler: lexik_jwt_authentication.handler.authentication_success
+#                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+#        api:
+#            pattern: ^/api
+#            stateless: true
+#            provider: app_user_provider
+#            guard:
+#                authenticators:
+#                    - lexik_jwt_authentication.jwt_token_authenticator
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            lazy: true
+            logout:
+                path: logout
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 86400 # 1 day
+            switch_user: true
+            custom_authenticators:
+                    - App\Security\LoginAuthenticator
+
+            # activate different ways to authenticate
+            # https://symfony.com/doc/current/security.html#firewalls-authentication
+
+            # https://symfony.com/doc/current/security/impersonating_user.html
+            # switch_user: true
+
+    # Easy way to control access for large sections of your site
+    # Note: Only the *first* access control that matches will be used
+    access_control:
+#        - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+#        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+        - {path: ^/welcome, roles: IS_AUTHENTICATED_FULLY }

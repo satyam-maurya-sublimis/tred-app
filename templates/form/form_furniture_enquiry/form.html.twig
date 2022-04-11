@@ -1,0 +1,195 @@
+{% extends 'layout/content.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block cms_content %}
+    {% set back_to_list = app.request.server.get('HTTP_REFERER') %}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">
+                {% if mode == 'add' %}<i class="fa fa-plus"></i> {% elseif mode == 'convert'%} <i class="fa fa-cog"></i> {% else%} <i class="fa fa-edit"></i> {% endif%}  <b>{{label_title|trans|upper}}</b>
+            </h5>
+        </div>
+        {{ form_start(form) }}
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.mstSalutation) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.furnitureEnquiryFullName) }}
+                </div>
+{#                <div class="col-sm-3">#}
+{#                    {{ form_row(form.furnitureEnquiryMiddleName) }}#}
+{#                </div>#}
+{#                <div class="col-sm-3">#}
+{#                    {{ form_row(form.furnitureEnquiryLastName) }}#}
+{#                </div>#}
+                <div class="col-sm-3">
+                    {{ form_row(form.furnitureEnquiryEmailAddress) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.furnitureEnquiryMobileNumber) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.mstLeadStatus) }}
+                </div>
+                <div class="col-sm-6">
+                    {{ form_row(form.furnitureEnquiryDescription) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">{{ 'Address'|upper }}</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.furnitureEnquiryAddressOne) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.furnitureEnquiryAddressTwo) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.furnitureEnquiryPincode) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.mstCountry) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mstState) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mstCity) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">{{ 'Enquiry'|upper }}</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.mstProductType) }}
+                </div>
+                <div class="col-sm-3">
+                    {% if form_furniture_enquiry.mstProductSubType %}
+                        {{ form_row(form.mstProductSubType) }}
+                    {% else %}
+                        {{ form_row(form.mstProductSubType, { 'attr':{'disabled':'disabled'} }) }}
+                    {% endif %}
+                </div>
+                <div class="col-sm-3">
+                    {% if form_furniture_enquiry.mstFurnitureCategory %}
+                        {{ form_row(form.mstFurnitureCategory) }}
+                    {% else %}
+                        {{ form_row(form.mstFurnitureCategory, { 'attr':{'disabled':'disabled'} }) }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {% if not form_furniture_enquiry.trnFurniture and not form_furniture_enquiry.trnFurnitureProductCatalog %}
+                        {{ form_row(form.trnFurniture, { 'attr':{'disabled':'disabled'} }) }}
+                        {{ form_row(form.trnFurnitureProductCatalog, { 'attr':{'disabled':'disabled'} }) }}
+                    {% else %}
+                        {% if form_furniture_enquiry.trnFurniture %}
+                            {{ form_row(form.trnFurniture) }}
+                            {% set media = get_media_by_furniture_id(form_furniture_enquiry.trnFurniture.id) %}
+                            <img src="{{ absolute_url(asset('images/files/'~media.0.mediaFileName)) }}" width="50%" /><br/>
+                            {{ form_row(form.trnFurnitureProductCatalog, { 'attr':{'disabled':'disabled'} }) }}
+                        {% elseif form_furniture_enquiry.trnFurnitureProductCatalog %}
+                            {{ form_row(form.trnFurniture, { 'attr':{'disabled':'disabled'} }) }}
+                            {{ form_row(form.trnFurnitureProductCatalog) }}
+                            {% set media = get_media_by_catalog_id(form_furniture_enquiry.trnFurnitureProductCatalog.id) %}
+                            <img src="{{ absolute_url(asset('images/files/'~media.0.mediaFileName)) }}" width="50%" /><br/>
+                            Brand : {% if form_furniture_enquiry.trnFurnitureProductCatalog.prdBrand %}{{ form_furniture_enquiry.trnFurnitureProductCatalog.prdBrand.brandName }}{% endif %}
+                        {% endif %}
+                    {% endif  %}
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="card-footer">
+            <button type="submit" class="{{ button_css|default("btn btn-dark btn-sm") }}">
+                <i class="fa fa-save" aria-hidden="true"></i> {{ label_button|trans }}
+            </button>
+            <a href="{{ back_to_list }}" class="btn btn-link"><i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}</a>
+        </div>
+        {{ form_end(form) }}
+    <br>
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/form/form_furniture_enquiry/index.js') }}"></script>
+    <script>
+        jQuery("document").ready(function() {
+            jQuery(document).on('change', "#form_furniture_enquiry_mstProductType", function (e) {
+                var data = {};
+                data['q'] = jQuery(this).val();
+                var oThis = this;
+                jQuery.ajax({
+                    url: "{{ path('location_productSubType') }}",
+                    data: data,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (data) {
+                        var product = jQuery("#form_furniture_enquiry_mstProductSubType");
+                        product.html('');
+                        // add options
+                        product.append('<option value="" >Select..</option>');
+                        $.each(data, function (id, name) {
+                            product.append('<option value="' + name.id + '">' + name.name + '</option>');
+                        });
+                    }
+                });
+                jQuery.ajax({
+                    url: "{{ path('location_trnFurnitureProductCatalog') }}",
+                    data: data,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (data) {
+                        var product = jQuery("#form_furniture_enquiry_trnFurnitureProductCatalog");
+                        product.html('');
+                        // add options
+                        product.append('<option value="" >Select..</option>');
+                        $.each(data, function (id, name) {
+                            product.append('<option value="' + name.id + '">' + name.name + '</option>');
+                        });
+                    }
+                });
+            });
+
+            jQuery(document).on('change', "#form_furniture_enquiry_mstProductSubType", function (e) {
+                var data = {};
+                data['q'] = jQuery(this).val();
+                var oThis = this;
+                jQuery.ajax({
+                    url: "{{ path('location_furniture_category') }}",
+                    data: data,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (data) {
+                        var product = jQuery("#form_furniture_enquiry_mstFurnitureCategory");
+                        product.html('');
+                        // add options
+                        product.append('<option value="" >Select..</option>');
+                        $.each(data, function (id, name) {
+                            product.append('<option value="' + name.id + '">' + name.name + '</option>');
+                        });
+                    }
+                });
+            });
+
+        });
+    </script>
+{% endblock %}

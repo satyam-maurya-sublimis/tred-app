@@ -1,0 +1,54 @@
+{% extends 'layout/content.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assets/plugins/summernote/summernote-bs4.css') }}" media="all" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="{{asset('assets/plugins/kartik-v/bootstrap-fileinput/css/fileinput.min.css')}}">
+{% endblock %}
+{% block cms_content %}
+    {% set back_to_list = app.request.server.get('HTTP_REFERER') %}
+    {{ form_start(form) }}
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">{{ label_heading|trans|upper }} : {{ trnProject.projectName }} <br/>{{ trnProject.mstPincode }}</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    Topic : {{ form.vars.data.topic }}
+                </div>
+                <div class="col-sm-6">
+                    Feedback : {{ form.vars.data.feedback|raw }}
+                </div>
+                <div class="col-sm-3">
+                    User : {{ form.vars.data.createdBy.appUserInfo.userFirstName }} {{ form.vars.data.createdBy.appUserInfo.userLastName }} ({{ form.vars.data.createdBy.appUserInfo.userEmail }})
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-9">
+                    {{ form_row(form.tredRemark) }}
+                </div>
+            </div>
+{#            <div class="row">#}
+{#                <div class="col-sm-3">#}
+{#                    {{ form_row(form.isApproved) }}#}
+{#                </div>#}
+{#            </div>#}
+        </div>
+    </div>
+    <div class="card-footer">
+        <button type="submit" class="{{ button_css|default("btn btn-dark btn-sm") }}">
+            <i class="fa fa-reply" aria-hidden="true"></i> {{ label_button|trans }}
+        </button>
+        <a href="{{ back_to_list }}" class="btn btn-link"><i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}</a>
+    </div>
+    {{ form_end(form) }}
+    <br>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function() {
+
+        });
+    </script>
+{% endblock %}

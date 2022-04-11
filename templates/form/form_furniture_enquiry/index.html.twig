@@ -1,0 +1,138 @@
+{% extends 'layout/content.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet"  href="{{ asset('assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}" media="all" type="text/css" />
+    <link rel="stylesheet"  href="{{ asset('assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}" media="all" type="text/css" />
+{% endblock %}
+{% block cms_content %}
+<!-- Small boxes (Stat box) -->
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title"><a href="{{ path(path_add) }}" class="btn btn-dark btn-sm"><i class="fa fa-plus"></i> {{label_title|trans}}</a></h4>
+            </div>
+            <nav class="card-content collapse show">
+                <div class="card-body card-dashboard ">
+                    <table id="dataTableFrmEnquiry" class="table table-responsive-md table-sm text-sm">
+                        <thead>
+                        <tr>
+                            <th>{{ 'label.id'|trans|upper }}</th>
+                            <th>{{ 'label.name'|trans|upper }}</th>
+                            <th>{{ 'label.email'|trans|upper }}</th>
+                            <th>{{ 'label.enquiry'|trans|upper }}</th>
+                            <th>{{ 'label.mobile'|trans|upper }}</th>
+                            <th>{{ 'Create Date and Time'|trans|upper }}</th>
+                            <th>{{ 'Date and Time'|trans|upper }}</th>
+                            <th>{{ 'label.status'|trans|upper }}</th>
+                            <th>{{ 'label.image'|trans|upper }}</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for form_furniture_enquiry in form_furniture_enquirys %}
+                        <tr>
+                            <td>{{ form_furniture_enquiry.id }}</td>
+                            <td><a href="{{ path(path_show, {'id': form_furniture_enquiry.id}) }}">{{ form_furniture_enquiry.mstSalutation|default('') }} {{ form_furniture_enquiry.furnitureEnquiryFirstName|default('') }} {{ form_furniture_enquiry.furnitureEnquiryMiddleName|default('') }} {{ form_furniture_enquiry.furnitureEnquiryLastName|default('') }}</a></td>
+                            <td><a href="mailto:{{ form_furniture_enquiry.furnitureEnquiryEmailAddress }}">{{ form_furniture_enquiry.furnitureEnquiryEmailAddress}}</a></td>
+                            <td>
+                                {% if form_furniture_enquiry.trnFurniture %}
+                                    {{ form_furniture_enquiry.mstFurnitureCategory }} - {{ form_furniture_enquiry.trnFurniture.id }}
+                                {% elseif form_furniture_enquiry.mstFurnitureCategory %}
+                                    {{ form_furniture_enquiry.mstFurnitureCategory }}
+                                {% elseif form_furniture_enquiry.mstProductSubType %}
+                                    {{ form_furniture_enquiry.mstProductSubType }}
+                                {% elseif form_furniture_enquiry.mstProductType %}
+                                    {{ form_furniture_enquiry.mstProductType }}
+                                {% elseif form_furniture_enquiry.trnFurnitureProductCatalog %}
+                                    {{ form_furniture_enquiry.trnFurnitureProductCatalog.catalogName }}
+                                {% endif %}
+                            </td>
+                            <td>{{ form_furniture_enquiry.furnitureEnquiryMobileNumber }}</td>
+                            <td>{{ form_furniture_enquiry.furnitureEnquiryCreateTime|date('d M Y') }} {{ form_furniture_enquiry.furnitureEnquiryCreateTime|date('H:i') }}</td>
+                            <td>{{ form_furniture_enquiry.furnitureEnquiryCreateTime|date('YmdHi') }}</td>
+                            <td>{{ form_furniture_enquiry.mstLeadStatus }}</td>
+                            <td>
+                                {% if form_furniture_enquiry.trnFurniture %}
+                                    {% set media = get_media_by_furniture_id(form_furniture_enquiry.trnFurniture.id) %}
+                                    <img src="{{ absolute_url(asset('images/files/'~media.0.mediaFileName)) }}" width="25%" /><br/>
+                                {% elseif form_furniture_enquiry.trnFurnitureProductCatalog %}
+                                    {% set media = get_media_by_catalog_id(form_furniture_enquiry.trnFurnitureProductCatalog.id) %}
+                                    <img src="{{ absolute_url(asset('images/files/'~media.0.mediaFileName)) }}" width="25%" /><br/>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group-toggle" role="group" aria-label="Action Buttons">
+{#                                    <a href="{{ path(path_show, {'id': form_furniture_enquiry.id}) }}"><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-expand"></i></button></a>&nbsp;#}
+                                    <a href="{{ path(path_edit, {'id': form_furniture_enquiry.id}) }}"><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i></button></a>&nbsp;
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7">{{'info.no_record_found'|trans}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <div class="text-muted"><span class="domrecord"></span></div>
+                        </div>
+                        <div class="col-sm-7">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination justify-content-end">
+                                    <li class="dompage"></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{asset('assets/plugins/datatables/jquery.dataTables.min.js')}}"></script>
+    <script src="{{ asset('assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('assets/js/form/form_furniture_enquiry/index.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            if ($('#dataTableFrmEnquiry').length > 0) {
+                $('#dataTableFrmEnquiry').DataTable({
+                    "buttons": ["csv", "excel"],
+                    "paging": true,
+                    "lengthChange": true,
+                    "ordering": true,
+                    "order": [[ 6, "desc" ]],
+                    "columnDefs": [
+                        {
+                            "targets": [ 6 ],
+                            "visible": false,
+                            "searchable": false
+                        },
+                    ],
+                    "info": true,
+                    "autoWidth": true,
+                    "oLanguage": {
+                        "sSearch": "Search:",
+                        "sInfo": "Total records(s): _TOTAL_"
+
+                    },
+                    "language": {
+                        "paginate": {
+                            "previous": "&laquo;&nbsp;Previous",
+                            "next": "Next&nbsp;&raquo;"
+                        }
+                    },
+                });
+            }
+        });
+    </script>
+{% endblock %}

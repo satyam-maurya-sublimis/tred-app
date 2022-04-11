@@ -1,0 +1,215 @@
+{% extends 'layout/content.html.twig' %}
+{% set route = app.request.get('_route') %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet"  href="{{ asset('assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}" media="all" type="text/css" />
+    <link rel="stylesheet"  href="{{ asset('assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}" media="all" type="text/css" />
+{% endblock %}
+{% block cms_content %}
+    {% set back_to_list = app.request.server.get('HTTP_REFERER') %}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">
+                {% if mode == 'add' %}<i class="fa fa-plus"></i> {% elseif mode == 'convert'%} <i class="fa fa-cog"></i> {% else%} <i class="fa fa-edit"></i> {% endif%}  <b>{{label_title|trans|upper}}</b>
+            </h5>
+        </div>
+        {{ form_start(form,{'attr':{'class':'form'}}) }}
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.orgCompany) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.mstSalutation) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.enquiryFirstName) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.enquiryMiddleName) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.enquiryLastName) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.enquiryEmailAddress) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.enquiryPhoneNumber) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.enquiryMobileNumber) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mstLeadStatus) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    {{ form_row(form.enquiryDescription) }}
+                </div>
+                <div class="col-sm-3">
+                    {% if route == 'form_enquiry_edit' %}
+                        {{ form_row(form.mstProductCategory,{'attr':{'disabled':'disabled'}}) }}
+                    {% else  %}
+                        {{ form_row(form.mstProductCategory) }}
+                    {% endif  %}
+                </div>
+                <div class="col-sm-3">
+                    {% if route == 'form_enquiry_edit' %}
+                        {{ form_row(form.mstProductType,{'attr':{'disabled':'disabled'}}) }}
+                    {% else  %}
+                        {{ form_row(form.mstProductType) }}
+                    {% endif  %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if formEnquiry.enquiryForm == 'home-loans' %}
+{#    <div class="card">#}
+{#        <div class="card-header">#}
+{#            <h3 class="card-title">{{ formEnquiry.enquiryForm|upper }}</h3>#}
+{#        </div>#}
+{#        <div class="card-body">#}
+{#            <div class="row">#}
+{#                <div class="col-sm-3">#}
+{#                    {{ form_row(form.enquiryHomeLoanAmount) }}#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+    {% endif  %}
+    {% if formEnquiry.enquiryForm == 'interior-designers' %}
+{#    <div class="card">#}
+{#        <div class="card-header">#}
+{#            <h3 class="card-title">{{ formEnquiry.enquiryForm|upper }}</h3>#}
+{#        </div>#}
+{#        <div class="card-body">#}
+{#            <div class="row">#}
+{#                <div class="col-sm-3">#}
+{#                    {{ form_row(form.enquiryScopeOfWork) }}#}
+{#                </div>#}
+{#                <div class="col-sm-3">#}
+{#                    {{ form_row(form.enquiryCarpetArea) }}#}
+{#                    {{ form_row(form.enquiryBudget) }}#}
+{#                </div>#}
+{#                <div class="col-sm-6">#}
+{#                    {{ form_row(form.enquiryMoreDetail) }}#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+    {% endif %}
+    {% if formEnquiry.enquiryForm == 'home-decor' or  formEnquiry.enquiryForm == 'home-furnishing' %}
+{#    <div class="card">#}
+{#        <div class="card-header">#}
+{#            <h3 class="card-title">{{ formEnquiry.enquiryForm|upper }}</h3>#}
+{#        </div>#}
+{#        <div class="card-body">#}
+{#            <div class="row">#}
+{#                <div class="col-sm-6">#}
+{#                    {{ form_row(form.enquiryComments) }}#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+    {% endif  %}
+    {% if formEnquiry.enquiryForm == 'ready-made' or  formEnquiry.enquiryForm == 'modular' %}
+{#        <div class="card">#}
+{#            <div class="card-header">#}
+{#                <h3 class="card-title">{{ formEnquiry.enquiryForm|upper }}</h3>#}
+{#            </div>#}
+{#            <div class="card-body">#}
+{#                <div class="row">#}
+{#                    <div class="col-sm-3">#}
+{#                        {{ form_row(form.enquiryBudget) }}#}
+{#                    </div>#}
+{#                    <div class="col-sm-6">#}
+{#                        {{ form_row(form.enquiryComments) }}#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+    {% endif  %}
+    {% if formEnquiry.enquiryForm == 'logistics' %}
+{#        <div class="card">#}
+{#            <div class="card-header">#}
+{#                <h3 class="card-title">{{ formEnquiry.enquiryForm|upper }}</h3>#}
+{#            </div>#}
+{#            <div class="card-body">#}
+{#                <div class="row">#}
+{#                    <div class="col-sm-3">#}
+{#                        {{ form_row(form.enquiryMovingFrom) }}#}
+{#                    </div>#}
+{#                    <div class="col-sm-3">#}
+{#                        {{ form_row(form.enquiryMovingTo) }}#}
+{#                    </div>#}
+{#                    <div class="col-sm-3">#}
+{#                        {{ form_row(form.enquiryShiftingType) }}#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+    {% endif  %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">{{ 'Address'|upper }}</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.enquiryAddressOne) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.enquiryAddressTwo) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.enquiryPincode) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    {{ form_row(form.mstCountry) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mstState) }}
+                </div>
+                <div class="col-sm-3">
+                    {{ form_row(form.mstCity) }}
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="card-footer">
+            {{ form_row(form._token) }}
+            <button type="button" id="frmButton" class="{{ button_css|default("btn btn-dark btn-sm") }}">
+                <i class="fa fa-save" aria-hidden="true"></i> {{ label_button|trans }}
+            </button>
+            <a href="{{ back_to_list }}" class="btn btn-link"><i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}</a>
+        </div>
+        {{ form_end(form,{'render_rest': false}) }}
+    <br>
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{asset('assets/plugins/datatables/jquery.dataTables.min.js')}}"></script>
+    <script src="{{ asset('assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+    <script>
+        jQuery("document").ready(function(){
+            jQuery('#frmButton').click(function(){
+                {% if route == 'form_enquiry_edit' %}
+                    jQuery("#form_enquiry_mstProductCategory,#form_enquiry_mstProductType").prop("disabled","");
+                {% endif  %}
+                jQuery(".form").submit();
+            });
+        });
+    </script>
+{% endblock %}

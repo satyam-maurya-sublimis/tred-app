@@ -1,0 +1,23 @@
+{% if cmsPage.cmsPageContent[6] is defined and cmsPage.cmsPageContent[6].isActive %}
+    {% set topRealEstates = get_top_real_estates() %}
+    {% if  topRealEstates|length > 0 %}
+        <section>
+            <div class="container">
+                {{ cmsPage.cmsPageContent[6].pageContent|raw }}
+                <div class="properties-location">
+                    <ul class="properties typ2">
+                        {% for topRealEstate in topRealEstates %}
+                            <li data-aos="fade-right" data-aos-delay="200">
+                                <a href="#">
+                                    <figure><img src="{{ topRealEstate.trnVendorPartnerDetails.companyLogo|imagine_filter('resize_image_scale_245_75') }}"></figure>
+                                    <b>{{ topRealEstate.trnVendorPartnerDetails.vendorPartnerName }}</b>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="btn-sec" data-aos="fade-right" data-aos-delay="700"> <a href="#" class="btn-view-more typ2"> <i class="fa fa-custom-plus"></i> <b>View More Real Estate Agents</b> </a> </div>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+{% endif %}

@@ -1,0 +1,60 @@
+{{ form_start(form,{'attr':{"class":"form","id":"tred_furniture_form",'novalidate':'novalidate',"action": path('portal_furniture_lead_form_catalog',{'filter': app.request.attributes.get('filter')}) }}) }}
+    <div class="contact-expert">
+        <div class="form-group">
+            <a href="#" class="close-icon"></a>
+            <h2>Contact Our <span>TRED Experts</span></h2>
+            <span class="mendatory-field">*Mandatory fields</span>
+        </div>
+        <div class="form-group">
+            {{ form_label(form.furnitureEnquiryFullName) }}
+            {{ form_widget(form.furnitureEnquiryFullName) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.furnitureEnquiryEmailAddress) }}
+            {{ form_widget(form.furnitureEnquiryEmailAddress) }}
+        </div>
+        <div class="form-group mob-no">
+            <div class="input-group-prepend">
+                {{ form_widget(form.mstCountry) }}
+            </div>
+            {{ form_label(form.furnitureEnquiryMobileNumber) }}
+            {{ form_widget(form.furnitureEnquiryMobileNumber) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.mstCity) }}
+            {{ form_widget(form.mstCity) }}
+        </div>
+        <div class="w-100"></div>
+        <div class="form-group">
+            <button id="sendbtn" type="submit" class="btn btn-primary">Send</button>
+        </div>
+    </div>
+{{ form_end(form) }}
+<script>
+    jQuery("document").ready(function(){
+        function formcontrol(){
+            $(".form-control").filter(function() {
+                if (this.value.length !==0){
+                    $(this).siblings('label').addClass('clicked');
+                }
+            });
+        }
+        formcontrol();
+        $('.form-group label, .select2-selection__placeholder').click(function () {
+            $(this).addClass('clicked');
+        });
+        $('.form-control').click(function () {
+            $(this).siblings('label').addClass('clicked');
+        });
+        $('.form-control').keyup(function () {
+            $(this).siblings('label').addClass('clicked');
+        });
+        $('.form-control').blur(function () {
+            if ($(this).val()) {
+                $(this).siblings('label').addClass('clicked');
+            } else if (!$(this).val()) {
+                $(this).siblings('label').removeClass('clicked');
+            }
+        });
+    });
+</script>

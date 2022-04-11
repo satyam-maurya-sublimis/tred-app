@@ -1,0 +1,24 @@
+<section class="mt-0">
+    <div class="tbl-style two-col">
+        <div>
+            <div class="sort-by-sec">
+                <ul>
+                    <li><b>Properties for Rent</b></li>
+                </ul>
+                <div class="sort-by">
+                    <label>Sort by :</label>
+                    <select class="multiple-select">
+                        <option>TRED Recommended</option>
+                        <option>Price - Low to High</option>
+                        <option>Price - High to Low</option>
+                        <option>Most Recent</option>
+                    </select>
+                </div>
+            </div>
+            <ul class="project-listing">
+                {% include("portal/page/top_agents/rlisting.html.twig") %}
+            </ul>
+        </div>
+        {% include("portal/page/top_agents/profile.html.twig") %}
+    </div>
+</section>

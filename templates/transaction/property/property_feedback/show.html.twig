@@ -1,0 +1,55 @@
+{% extends 'layout/content.html.twig' %}
+
+{% block cms_content %}
+    <div class="card">
+        <div class="card-header">
+            <div class="col-sm-12">
+                <h3 class="card-title"><b>{{label_title|trans}}</b></h3>
+
+                <h4 class="card-title float-right custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="customSwitch1">
+{#                    <label class="custom-control-label btn btn-dark btn-sm" for="customSwitch1"><i class="fa fa-clock"></i> {{'label.log'|trans}}</label>#}
+{#                    <a href="{{ path(path_edit, {'id': data.id}) }}/?projectId={{ app.request.get('projectId') }}" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i> {{'label.edit'|trans}}</a>#}
+                    <a href="{{ path(path_index) }}?projectId={{ app.request.get('projectId') }}" class="btn btn-dark btn-sm"><i class="fa fa-list"></i> {{'label.back_to_list' | trans}}</a>
+                </h4>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body" id="record">
+        <div class="row">
+            <table class="table table-responsive-md text-sm">
+                <tbody>
+                    <tr>
+                        <td class="col-sm-1" colspan="2">
+                            <b>{{ data.trnProjects.projectName }}</b>
+                        </td>
+                    </tr>
+                    {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+                    <tr>
+                        <td class="col-sm-1">
+                            <b>user</b>
+                        </td>
+                        <td class="col-sm-11" >{{ data.createdBy.appUserInfo.userFirstName }} {{ data.createdBy.appUserInfo.userLastName }} ({{ data.createdBy.appUserInfo.userEmail }}) </td>
+                    </tr>
+                    {% endif  %}
+                    <tr>
+                        <td class="col-sm-1">{{ 'label.project_property_feedback_topic'|trans }}</td>
+                        <td class="col-sm-11" >{{ data.topic }} </td>
+                    </tr>
+                    <tr>
+                        <td class="col-sm-1">{{ 'label.project_property_feedback'|trans }}</td>
+                        <td class="col-sm-11" >{{ data.feedback|raw }} </td>
+                    </tr>
+                    <tr>
+                        <td class="col-sm-1">Response</td>
+                        <td class="col-sm-11">{{ data.tredRemark|raw }} </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+{% endblock %}
+
+

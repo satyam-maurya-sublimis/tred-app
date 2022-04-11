@@ -1,0 +1,29 @@
+{% if banners %}
+    <section class="banner-carousel slider-item">
+        <div id="mainBanner" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                {% for banner in banners %}
+                    <div class="carousel-item {% if loop.first %}active{% endif %}">
+                        <figure>
+                            <img src="{{ banner.bannerDesktopImagePath|imagine_filter('resize_image_scale_1280_300') }}" class="desktop-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                            <img src="{{ banner.bannerTabletImagePath|imagine_filter('resize_image_scale_767_350') }}" class="tab-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                            <img src="{{ banner.bannerMobileImagePath|imagine_filter('resize_image_scale_350_250') }}" class="mobile-purpose" alt="{{ banner.bannerName }}" title="{{ banner.bannerName }}">
+                        </figure>
+                        <div class="container">
+                            <div class="banner-content">
+                                <div class="caption">
+                                    {{ banner.bannerDescription|raw }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            {% if banners|length > 1 %}
+                <a class="carousel-control-prev" href="#mainBanner" role="button" data-slide="prev"> <i class="fa fa-angle-left"></i> </a>
+                <a class="carousel-control-next" href="#mainBanner" role="button" data-slide="next"> <i class="fa fa-angle-right"></i>
+                </a>
+            {% endif %}
+        </div>
+    </section>
+{% endif %}

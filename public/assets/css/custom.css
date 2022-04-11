@@ -1,0 +1,8 @@
+label.required:not(:empty):after,
+.field-header.required:after {
+    content: " *";
+    color: red;
+}
+.col-form-label {
+    font-weight: normal !important;
+}

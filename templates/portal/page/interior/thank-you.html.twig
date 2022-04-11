@@ -1,0 +1,15 @@
+{% extends 'portal/layout/index.html.twig' %}
+{% block portal_content %}
+    <div class="wrapper thankyou-bg">
+        <div class="container">
+            <div class="thank-you text-center mt-5 mb-5">
+                <img src="/resources/images/icons/icon-check.png">
+                <h2>Thank <span>You!</span></h2>
+                <p>Every Home Matters</p>
+                <p>We appreciate you showing interest in our services.<br/>
+                    our TRED recommended expert advisor will reach out to you on your registered mobile number and email address.</p>
+                <a href="{{ path("portal_index") }}" class="btn btn-primary">Back to Home</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

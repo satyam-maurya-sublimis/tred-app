@@ -1,0 +1,261 @@
+{% set office = get_office_list() %}
+{% set priceGroup =[] %}
+{% set minimunPriceGroup =[] %}
+{% for project in projectData %}
+        <li class="property-listing">
+            <div class="card-deck cust-card">
+                <div class="card">
+                    <figure>
+                        {% set uploadImageCount = 0 %}
+                        {% for  upload in project.trnUploadDocuments %}
+                            {% set uploadImageCount = uploadImageCount+1 %}
+                            {% if upload.mediaFileName %}
+                                <img src="{{ upload.mediaFilePath|imagine_filter('resize_image_scale_330_220') }}" class="card-img-top" alt="..">
+                            {% endif  %}
+                        {% else %}
+                            <img src="{{ asset('resources/images/no_image.jpg') }}" class="card-img-top" title="No Image" alt="No Image">
+                        {% endfor  %}
+
+                        <figcaption>
+                            <div class="top-left">
+                                {% if project.trnProject.isTredRecommended %}
+                                    <span><i class="fa fa-check"></i> {{ project.trnProject.orgCompany.company }} Recommended </span>
+                                {% endif  %}
+                            </div>
+                            <div class="bottom-left">
+                                <ul class="like-view">
+                                    <li>
+                                        <a href="#" data-id="{{ project.id }}" class="thumbs-up" >
+                                            <i class="fa fa-thumbs-o-up"></i>
+                                            <b class="fa-thumbs-o-up-count">{% if project.roomConfigurationLikes %}{{ project.roomConfigurationLikes }}{% else %}0{% endif %}</b>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#">
+                                            <i class="fa fa-eye"></i>
+                                            <b>{% if project.roomConfigurationViews %}{{ project.roomConfigurationViews }}{% else %}0{% endif %}</b>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="bottom-center">
+                                <ul class="like-view">
+                                    <li>
+                                        <a href="#">
+                                            <i class="fa fa-camera"></i>
+                                            <b>{{ uploadImageCount }}</b>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            {% if project.trnProject.isRera %}
+                                <div class="bottom-right">
+                                    <div class="rera">
+                                        RERA
+                                    </div>
+                                </div>
+                            {% endif  %}
+                        </figcaption>
+                    </figure>
+                </div>
+                <div class="card-body">
+                        <h5 class="card-title"><b>
+
+                                {{ project.mstRoomConfiguration.roomConfiguration }}
+                                {{ project.trnProject.mstProductSubType.productSubType }} {% if transactionCategoryId == 2 %} for Rent {% endif %}</b> in {{ project.trnProject.projectName }}
+                        </h5>
+                        <span class="location"><b>{{ project.trnProject.trnVendorPartnerDetails.vendorPartnerName }},</b> {{ project.trnProject.mstPincode.officeName }}, {{ project.trnProject.mstCity.city }}-{{ project.trnProject.mstPincode }}</span>
+                        {% if transactionCategoryId == 1 %}
+                            <ul class="flat-dtls">
+                                <li>
+                                    <div class="prz">
+                                  <span>
+                                    <i class="fa fa-rupee"></i>
+                                        <b>{{ project.agreementAmount }}</b> {{ project.mstDenomination.abbreviation }}
+                                  </span>
+                                        <small>onwards</small>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div>
+                                        <small>{{ project.mstProjectAreaCategory }}</small>
+                                        <span>
+                                    <b class="amt">{{ project.areaValue }}</b> {{ project.mstProjectArea }}
+                                  </span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div>
+                                        <span>Status</span>
+                                        {% if project.trnProject.isNewProperty %}
+                                            New Project -
+                                        {% endif %}
+                                        <small>Possession
+                                            <b>
+                                                {% if project.trnProject.possessionDate != null %}
+                                                    {{ project.trnProject.possessionDate|date('M - Y') }}
+                                                {% elseif project.trnProject.possessionYear != "" and project.trnProject.possessionMonth  %}
+                                                    {{ project.trnProject.possessionMonth[:3] }} - {{ project.trnProject.possessionYear }}
+                                                {% endif %}
+                                            </b>
+                                        </small>
+                                    </div>
+                                </li>
+                            </ul>
+                            <div class="amenities-sec">
+                                <ul class="amenities">
+                                    {% for amenitiesBatch in project.trnProject.trnProjectAmenities|filter((a)=>a.isActive)|batch(10) %}
+                                        {% if loop.first %}
+                                            {% set display = 1 %}
+                                        {% else %}
+                                            {% set display = 0 %}
+                                        {% endif %}
+                                        {% for amenities in amenitiesBatch %}
+                                            <li {% if display == 0 %} class="amenitiesLi" style="display:none;" {% endif %}>
+
+                                                {% if amenities.mstProjectAmenities.mediaIcon %}
+                                                    {% if amenities.trnAmenitiesDescription %}
+                                                        {% set amentiesTile = amenities.trnAmenitiesDescription %}
+                                                    {% else %}
+                                                        {% if amenities.mstProjectAmenities %}
+                                                            {% set amentiesTile = amenities.mstProjectAmenities.projectAmenities %}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                    <img src="{{ amenities.mstProjectAmenities.mediaIcon.iconImage|imagine_filter('resize_icon_image_30_40') }}" class="card-img-top" data-toggle="tooltip" alt="{{ amentiesTile  }}"     title="{{ amentiesTile }}">
+                                                {% else %}
+                                                    <img src="" class="card-img-top" alt="..." title="{{ amenities.projectAmenities }}">
+                                                {% endif  %}
+                                            </li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </ul>
+                                {% if project.trnProject.mstAmenities|length > 10  %}
+                                    <a href="#" class="txt-more">more <i class="fa fa-plus"></i></a>
+                                {% endif  %}
+                            </div>
+                            <ul class="internal-amenities">
+                                {% if project.trnProject.isNewProperty  %}
+                                    <li>New Property</li>
+                                {% endif %}
+                                <li>{{ project.trnProject.mstProjectStatus.propertyType }}</li>
+                                {% if project.trnProject.propertyAge  %}
+                                    <li>{{ project.trnProject.propertyAge }}</li>
+                                {% endif  %}
+                                <li>{{ project.noOfBathrooms }} Bathrooms</li>
+                            </ul>
+                        {% endif %}
+
+                        {% if transactionCategoryId == 2 %}
+                            <ul class="flat-dtls typ2">
+                                <li>
+                                    <div class="prz">
+                          <span>
+                            <b>{{ project.areaValue }} {{ project.mstProjectArea }}</b>
+                          </span>
+                                        <small>{{ project.mstProjectAreaCategory }}</small>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div>
+                          <span>
+                            <b class="amt"><i class="fa fa-rupee"></i> {{ project.deposit|replace({'.00':''}) }} {{ project.mstDenomination }}</b>
+                          </span>
+                                        <small>Deposit</small>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div>
+                            <span>
+                              <b class="amt"><i class="fa fa-rupee"></i> {{ project.rentPerMonth|replace({'.00':''}) }}</b>
+                            </span>
+                                        <small>Rent ({{ project.isNegotiable?'Negotiable':'' }})</small>
+                                    </div>
+                                </li>
+                            </ul>
+                            <ul class="flat-dtls property-dtls">
+                                <li>
+                                <span class="icon"><img src="/resources/images/icons/icon-Furniture-sm.png">
+                                </span>
+                                    <span>
+                                    {{ project.mstFurnishing }}
+                                    <small>Furnishing</small>
+                                </span>
+                                </li>
+                                <li>
+                                <span class="icon"><img src="/resources/images/icons/icon-AgeProperty.png">
+                                </span>
+                                    <span>
+                                    {{ project.trnProject.propertyAge|default("NA") }}
+                                    <small>Property Age</small>
+                                </span>
+
+                                </li>
+                                <li>
+                                <span class="icon"><img src="/resources/images/icons/icon-Family.png">
+                                </span>
+                                    <span>
+                                    {% for tenants in project.mstPreferredTenant %}
+                                        {{ tenants }}{{ not loop.last ? ',' }}
+                                    {% endfor %}
+
+                                    <small>Preferred Tenants</small>
+                                </span>
+
+                                </li>
+                                <li>
+                                <span class="icon"><i class="fa fa-calendar-o"></i>
+                                </span>
+                                    <span>
+                                    {% if project.trnProject.availabilityFromDate %}
+                                        {% if date(project.trnProject.availabilityFromDate) > date() %}
+                                            {{ project.trnProject.availabilityFromDate|date('M - Y') }}
+                                        {% else %}
+                                            Ready to move
+                                        {% endif %}
+                                    {% endif %}
+                                    <small>Available From</small>
+                                </span>
+                                </li>
+                            </ul>
+                        {% endif %}
+
+
+                        <div class="view-details">
+                            <div class="left-sec">
+                                <ul class="btn-sec">
+                                                                    <li><a href="#" class="fa fa-heart-o"></a></li>
+                                    <li><a href="#" class="fa fa-share-alt social-btn"></a>
+                                        {% include "portal/page/common/social-media.html.twig" %}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="rgt-sec">
+                                <ul class="btn-sec">
+                                    <li>
+                                        {% set title = project.mstRoomConfiguration.roomConfiguration~" "~project.trnProject.mstProductSubType.productSubType~" "~project.trnProject.projectName  %}
+                                        {% set title = title|lower|replace({" ":"-",",":""})  %}
+{#                                        <a href="{{ path("portal_properties_detail",{"id":project.id,"projectId":project.trnProject.id}) }}" class="btn btn-primary-outline-sm">View Details</a>#}
+                                        {% if project.mstPropertyTransactionCategory|lower == 'buy' %}
+                                            <a href="{{ path("portal_properties_buy_detail",{'slugName':project.trnProject.mstProductType.productTypeSlugName,'city':project.trnProject.mstCity|lower,'title':title,'id':project.id}) }}" class="btn btn-primary-outline-sm">View Details</a>
+                                        {% endif %}
+                                        {% if project.mstPropertyTransactionCategory|lower == 'rent' %}
+                                            <a href="{{ path("portal_properties_rent_detail",{'slugName':project.trnProject.mstProductType.productTypeSlugName,'city':project.trnProject.mstCity|lower,'title':title,'id':project.id}) }}" class="btn btn-primary-outline-sm">View Details</a>
+                                        {% endif %}
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('portal_tred_experts_room',{'mstPropertyTransactionCategory':project.mstPropertyTransactionCategory.propertyTransactionCategory,'trnProjectRoomConfiguration':project.id}) }}" class="btn btn-primary contactDifferent" data-toggle="modal" data-target="#contactDifferent">Contact Now</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+
+                </div>
+            </div>
+        </li>
+    {% if transactionCategoryId == 1 %}
+        {% set route =  'portal_properties_buy_list' %}
+    {% elseif transactionCategoryId == 1%}
+        {% set route =  'portal_properties_rent_list' %}
+    {% endif %}
+{% endfor %}

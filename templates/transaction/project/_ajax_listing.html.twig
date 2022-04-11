@@ -1,0 +1,42 @@
+<table id="dataTable" class="table table-responsive-md table-sm text-sm">
+    <thead>
+        <tr>
+            <th>{{ 'label.id'|trans|upper }}</th>
+            <th>{{ 'label.project_created_date'|trans|upper }}</th>
+            <th>{{ 'label.vendor_partner_name'|trans|upper }}</th>
+            <th>{{ 'label.project_name'|trans|upper }}</th>
+            <th>{{ 'label.project_type'|trans|upper }}</th>
+            <th>{{ 'label.possession_on'|trans|upper }}</th>
+            <th>{{ 'label.rera_id'|trans|upper }}</th>
+            <th>{{ 'label.configuration'|trans|upper }}</th>
+            <th>{{ 'label.is_active'|trans|upper }}</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for project in projects %}
+            <tr>
+                <td>{{ project.id }}</td>
+                <td>{{ project.createdOn | date('d M Y') }}</td>
+                <td>{{ project.trnVendorPartnerDetails }}</td>
+                <td>{{ project.projectName }}</td>
+                <td>{{ project.mstPropertyType }}</td>
+                <td>{{ project.possessionNote }}</td>
+                <td>{{ project.mahaReraRegisterationNo }}</td>
+                <td>{{ project.mstRoomConfiguration | join(', ') }}</td>
+                <td>{{ project.isActive ? 'Yes' : 'No' }}</td>
+                <td>
+                    <div class="btn-group-toggle" role="group" aria-label="Action Buttons">
+                        <a href="{{ path(path_show, {'id': project.id}) }}"><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-expand"></i></button></a>&nbsp;
+                        <a href="{{ path(path_edit, {'id': project.id}) }}"><button type="button" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i></button></a>
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="9">{{'info.no_record_found'|trans}}</td>
+                <td colspan="1"><h4 class="card-title"><a href="{{ path(path_add,{'pincode' : mstPincode }) }}" class="btn btn-dark btn-sm"><i class="fa fa-plus"></i> {{label_title|trans}}</a></h4></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

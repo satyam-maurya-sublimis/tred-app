@@ -1,0 +1,183 @@
+{% extends 'layout/content.html.twig' %}
+
+{% block cms_content %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title"><b>{{ 'Project Tower Details'|upper }}</b></h3>
+            <h4 class="card-title float-right">
+                <a href="{{ path(path_edit, {'id': data.id}) }}" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i> {{'label.edit'|trans}}</a>
+                <a href="{{ path(path_index) }}" class="btn btn-dark btn-sm"><i class="fa fa-list"></i> {{'label.back_to_list' | trans}}</a>
+            </h4>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="card-header mt-2">
+                <h3 class="card-title">{{ 'Project Tower Details'|upper }}</h3>
+            </div>
+            <div class="row">
+                <table class="table table-responsive-md text-sm">
+                    <tbody>
+                    <tr>
+                        <th>{{ 'label.project_name'|trans }}</th>
+                        <td>{{ data.trnProject }}</td>
+                        <th>{{ 'label.org_company'|trans }}</th>
+                        <td>{{ data.trnProject.orgCompany }}</td>
+                        <th>{{ 'label.product_category'|trans }}</th>
+                        <td>{{ data.trnProject.mstProductCategory }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>{{ 'label.product_type'|trans }}</th>
+                        <td>{{ data.trnProject.mstProductType }}</td>
+                        <th>{{ 'label.product_subtype'|trans }}</th>
+                        <td>{{ data.trnProject.mstProductSubType }}</td>
+                        <th>{{ 'label.builder_name'|trans }}</th>
+                        <td>{{ data.trnProject.trnVendorPartnerDetails }}</td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'label.tower_name'|trans }}</th>
+                        <td>{{ data.towerName }}</td>
+                        <th>{{ 'label.country'|trans }}</th>
+                        <td>{{ data.trnProject.mstCountry }}</td>
+                        <th>{{ 'label.state'|trans }}</th>
+                        <td>{{ data.trnProject.mstState }}</td>
+                    </tr>
+
+                    <tr>
+
+                        <th>{{ 'label.city'|trans }}</th>
+                        <td>{{ data.trnProject.mstCity }}</td>
+                        <th>{{ 'label.area_city'|trans }}</th>
+                        <td>{{ data.trnProject.mstAreaInCity }}</td>
+                        <td colspan="2"></td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'label.property_type_new'|trans }}</th>
+                        <td>{{ data.trnProject.mstPropertyType }}</td>
+                        <th>{{ 'label.property_type'|trans }}</th>
+                        <td>{{ data.trnProject.mstProjectStatus }}</td>
+                        <th>{{ 'label.possession_on'|trans }}</th>
+                        <td>{{ data.trnProject.possessionOn }}</td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'label.total_number_floor'|trans }}</th>
+                        <td>{{ data.noOfFloors }}</td>
+                        <th>{{ 'label.is_active'|trans }}</th>
+                        <td colspan="3">{{ data.isActive ? 'Yes' : 'No' }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="card-header mt-2 row">
+                <div class="col-sm-3"><h3 class="card-title">{{ 'Floor Plan'|upper }}</h3></div>
+            </div>
+            {% for trnProjectTowerFloorPlan in data.trnProjectTowerFloorPlans  %}
+                <div class="row">
+                    <table class="table table-responsive-md text-sm">
+                        <tbody>
+                        <tr>
+                            <th>{{ 'label.room_configuration'|trans }}</th>
+                            <td>{{ trnProjectTowerFloorPlan.mstRoomConfiguration }}</td>
+                            <th>{{ 'label.no_of_bedroom'|trans }}</th>
+                            <td>{{ trnProjectTowerFloorPlan.noOfBedRoom }}</td>
+                            <th>{{ 'label.no_of_bathroom'|trans }}</th>
+                            <td>{{ trnProjectTowerFloorPlan.noOfBathRooms }}</td>
+                            <td colspan="2"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="8">
+                                <div class="col-sm-3"><h3 class="card-title"><i>{{ 'Super Area'}}</i></h3></div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>{{ 'label.area'|trans }}</th>
+                            <td>{{ trnProjectTowerFloorPlan.mstProjectSuperArea }}</td>
+                            <th>{{ 'label.super_area'|trans }}</th>
+                            <td>{{ trnProjectTowerFloorPlan.superArea }}</td>
+                            <th>{{ 'label.currency'|trans }}</th>
+                            <td>{{ trnProjectTowerFloorPlan.mstSuperAreaCurrency }}</td>
+                            <th>{{ 'label.amount_per_area'|trans }}</th>
+                            <td>{{ trnProjectTowerFloorPlan.superAreaPerUnit }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="8">
+                                <div class="col-sm-3"><h3 class="card-title"><i>{{ 'Carpet Area'}}</i></h3></div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>{{ 'label.area'|trans }}</th>
+                            <td>{{ trnProjectTowerFloorPlan.mstProjectCarpetArea }}</td>
+                            <th>{{ 'label.carpet_area'|trans }}</th>
+                            <td>{{ trnProjectTowerFloorPlan.carpetArea }}</td>
+                            <th>{{ 'label.currency'|trans }}</th>
+                            <td>{{ trnProjectTowerFloorPlan.mstCarpetAreaCurrency }}</td>
+                            <th>{{ 'label.amount_per_area'|trans }}</th>
+                            <td>{{ trnProjectTowerFloorPlan.carpetAreaPerUnit }}</td>
+                        </tr>
+
+
+                        <tr>
+                            <td colspan="8">
+                                <div class="col-sm-3"><h3 class="card-title"><i>{{ 'Agreement Price'}}</i></h3></div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>{{ 'label.currency'|trans }}</th>
+                            <td>{{ trnProjectTowerFloorPlan.mstCurrencyAgreementPrice }}</td>
+                            <th>{{ 'label.agreement_amount'|trans }}</th>
+                            <td>{{ trnProjectTowerFloorPlan.agreementAmount }}</td>
+                            <th>{{ 'label.denomination'|trans }}</th>
+                            <td>{{ trnProjectTowerFloorPlan.mstDenomination }}</td>
+                            <td colspan="2"></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="8">
+                                <div class="col-sm-3"><h3 class="card-title"><i>{{ 'Floor Plan Images'}}</i></h3></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>{{ 'label.device_type'|trans }}</th>
+                            <td>{{ trnProjectTowerFloorPlan.mstDeviceType }}</td>
+                            <th>{{ 'label.media_name'|trans }}</th>
+                            <th>{{ 'label.media'|trans }}</th>
+                            <td><img src="{{ trnProjectTowerFloorPlan.mediaFilePath|imagine_filter('resize_image_200') }}" alt="{{ trnProjectTowerFloorPlan.mediaAltText }}" title="{{ trnProjectTowerFloorPlan.mediaTitle }}"></td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+            {% endfor %}
+
+            <div class="card-header mt-2 row">
+                <div class="col-sm-3"><h3 class="card-title">{{ 'Media'|upper }}</h3></div>
+            </div>
+            <div class="row">
+                <table class="table table-responsive-md text-sm">
+                    {% for media in data.trnUploadDocuments %}
+                        <tr>
+                            {% if media.mstUploadDocumentType == 'Image' %}
+                                <th>{{ 'label.media'|trans }}</th>
+                                <td><img src="{{ media.mediaFilePath|imagine_filter('resize_image_200') }}" alt="{{ media.mediaAltText }}" title="{{ media.mediaTitle }}"></td>
+                            {% else %}
+                                <th>{{ 'label.media'|trans }}</th>
+                                <td>{{ media.mediaPath }}</td>
+                            {% endif %}
+                            <th>{{ 'label.media_name'|trans }}</th>
+                            <td>{{ media.mediaName }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+        </div>
+    </div>
+    <br>
+{% endblock %}

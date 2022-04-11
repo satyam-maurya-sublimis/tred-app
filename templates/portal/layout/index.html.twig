@@ -1,0 +1,311 @@
+{% extends 'portal/base.html.twig' %}
+{% set office = get_office_list() %}
+{% set wsearch =  get_wiget_search() %}
+{% set cities = get_project_cities() %}
+{% set projectTypes = get_project_project_type() %}
+{% block title %} :: {{'title.app'|trans}} :: {% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block body %}
+{#    {% set productTypes = get_product_type('b2c') %}#}
+{#    {% set gcity = get_city_location(app.request.server.get("REMOTE_ADDR")) %}#}
+{#    {% set gcity = '' %}#}
+{#    {% for city in cities %}#}
+{#        {% if city.city == gcity %}#}
+{#            {% set cityId =  city.id %}#}
+{#            {% set filters = filters|merge({"mstCity": city.city}) %}#}
+{#        {% endif %}#}
+{#    {% endfor %}#}
+{#    {% if gcity == 'Not found' %}#}
+{#        {% set gcity = 'Hyderabad' %}#}
+{#        {% set filters = filters|merge({"mstCity": gcity}) %}#}
+{#    {% endif  %}#}
+    {% include('portal/layout/_header.html.twig') %}
+    {# This is where the real action happens for the user and the center stage for displaying content #}
+    {% block portal_content %}
+    {% endblock %}
+    {# End on portal_content block #}
+
+    {% include('portal/layout/_footer.html.twig') %}
+{% endblock %}
+{% set currentPath = app.request.get('_route') %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        var route = "{{ currentPath }}";
+        var currentUrl = "{{ path(app.request.attributes.get('_route'),app.request.attributes.get('_route_params')) }}"
+        function changeLocation(route,city){
+            if(route == "portal_index" || route =="portal_project_city" ){
+                var cityUrl = "{{ path('portal_project_city',{'city':'x' }) }}";
+                var cityUrl = cityUrl.replace("x",city);
+            } else if ( route == "portal_properties_buy_list" || route =="portal_properties_rent_list") {
+                var cityUrl = currentUrl+"/"+city;
+            } else if ( route == "portal_properties_buy_city_list" ) {
+                var myArr = currentUrl.split("/");
+                var replaceValue = myArr[3];
+                var cityUrl = currentUrl.replace(myArr[3],city);
+            } else if ( route =="portal_properties_rent_city_list" ) {
+                var replaceValue = myArr[3];
+                var cityUrl = currentUrl.replace(myArr[3],city);
+            }else if (route =="portal_properties_detail"){
+                var cityUrl = "{{ path('portal_project_city',{'city':'x' }) }}";
+                var cityUrl = cityUrl.replace("x",city);
+            }else{
+                var cityUrl = currentUrl;
+            }
+            window.location.href = cityUrl;
+        }
+
+        $("document").ready(function() {
+            $(".hpgcity").change(function(){
+                var city = $(this).val();
+                changeLocation(route,city);
+            });
+
+            {#$("#newsletterForm").submit(function(event) {#}
+            {#    /* stop form from submitting normally */#}
+            {#    event.preventDefault();#}
+            {#    var data = {};#}
+            {#    data['email'] = $('#userSubscriptionEmail').val();#}
+            {#    var messagesubscription = $(this).find('.messagesubscription');#}
+            {#    messagesubscription.text('Subscribing to the newsletter......');#}
+            {#    $('.subscribebutton').attr("disabled", "disabled");#}
+            {#    $.ajax({#}
+            {#        url: '{{ path('newsletter-subscription') }}',#}
+            {#        type: 'POST',#}
+            {#        data: data,#}
+            {#        success: (function (formdata) {#}
+            {#            messagesubscription.text('');#}
+            {#            messagesubscription.text(formdata['message']);#}
+            {#            $('.subscribebutton').removeAttr("disabled");#}
+            {#        })#}
+            {#    });#}
+            {#});#}
+            // $('.search-input').autoComplete({
+            //     resolver: 'custom',
+            //     events: {
+            //         search: function (qry, callback) {
+            //             // let's do a custom ajax call
+            //             $.ajax(
+            //                 '/search',
+            //                 {
+            //                     data: { 'search': qry, 'propertyType': $("#propertyType").val()}
+            //                 }
+            //             ).done(function (res) {
+            //                 $('#searchList').html('');
+            //                 res.forEach((item) => {
+            //                     $('#searchList').append('<li data-id="'+item.id+'" data-href="'+item.href+'" class="searchItem">'+item.text+'</li>');
+            //                 });
+            //                 //callback(res)
+            //             });
+            //         }
+            //     }
+            // });
+            // $(".search-input").on("keyup", function() {
+            //     $('.search-list').addClass('show');
+            // });
+            // $("body").on('click','li.searchItem',function(e){
+            //     $(".search-input").val($(this).text());
+            //     $('.search-list').removeClass('show');
+            //     var hreff = $(this).attr('data-href');
+            //     $('#search-product').attr("href",hreff);
+            //     window.location.href = hreff;
+            // });
+            jQuery("#btn-buy").click(function(){
+                var frm = jQuery("#frmbuy");
+                var productType = frm.find(".custom-control-input:checked").attr("data-id");
+                if (productType === undefined){
+                    productType = 'residential';
+                }
+                var Url = "{{ path('portal_properties_buy_list',{'slugName':'x'}) }}".replace("x",productType);
+                var rc = [];
+                frm.find("a.roomConfiguration.active").map(function(){
+                    rc.push($(this).attr("data-id"));
+                });
+                frm.find("input.roomConfiguration").val(rc.join(","));
+                var rc = [];
+                frm.find("a.projectStatus.active").map(function(){
+                    rc.push($(this).attr("data-id"));
+                });
+                frm.find("input.projectStatus").val(rc.join(","));
+                frm.attr("action",Url);
+                frm.attr("method","post");
+                frm.submit();
+            });
+            jQuery("#btn-rent").click(function(){
+                var frm = jQuery("#frmrent");
+                var productType = frm.find(".custom-control-input:checked").attr("data-id");
+                if (productType === undefined){
+                    productType = 'residential';
+                }
+                var Url = "{{ path('portal_properties_rent_list',{'slugName':'x'}) }}".replace("x",productType);
+                var rc = [];
+                frm.find("a.roomConfiguration.active").map(function(){
+                    rc.push($(this).attr("data-id"));
+                });
+                frm.find("input.roomConfiguration").val(rc.join(","));
+                frm.attr("action",Url);
+                frm.attr("method","post");
+                frm.submit();
+            });
+            jQuery("#btn-frm").click(function(){
+                var frm = jQuery("#frm");
+                var productType = frm.find(".custom-control-input:checked").attr("data-id");
+                var rc = [];
+                frm.find("a.roomConfiguration.active").map(function(){
+                    rc.push($(this).attr("data-id"));
+                });
+                frm.find("input.roomConfiguration").val(rc.join(","));
+                var rc = [];
+                frm.find("a.projectStatus.active").map(function(){
+                    rc.push($(this).attr("data-id"));
+                });
+                frm.find("input.projectStatus").val(rc.join(","));
+                frm.attr("method","post");
+                frm.submit();
+            });
+            $('.btn-close').click(function(){
+                $(this).parents('.tooltip-list').find('.popover').hide();
+
+            })
+            $(".multiple-select").select2({
+                maximumSelectionLength: 3,
+                placeholder: 'Location',
+            });
+            $('.contactDifferent').on('click', function(e){
+                e.preventDefault();
+                $('#contactDifferent').modal('show').find('.modal-body').find('.contactDifferentFrm').load($(this).attr('href'));
+            });
+            $('.share-widget').hide();
+            $('.fa-share-alt').click(function(e){
+                e.preventDefault();
+                $(this).addClass('active');
+                $('.share-widget').show();
+            });
+            $('.close-share').click(function(e){
+                e.preventDefault();
+                $(this).parents('.share').find('.share-widget ').hide();
+                $('.fa-share-alt').removeClass('active');
+            });
+            //$('[data-toggle="tooltip"]').tooltip();
+
+            jQuery(".btn-productType").click(function(e){
+                e.preventDefault();
+                if (jQuery(this).closest('.open-dropdown').length > 0){
+                    jQuery(this).parents('.open-dropdown').hide();
+                }else if (jQuery(this).closest('.open-dropdown1').length > 0){
+                    jQuery(this).parents('.open-dropdown1').hide();
+                }
+                var buySection = jQuery(this).closest('.buy-section');
+                if(buySection.length > 0){
+                    var productType = buySection.find('.custom-control-input:radio:checked').attr("data-val");
+                    buySection.siblings(".select-destination").find(".buy_select").html(productType);
+                }
+            });
+            {% if app.request.get('_route') == 'portal_index' or app.request.get('_route') == 'portal_project_city'
+                or app.request.get('_route') == 'portal_properties_buy_list' or app.request.get('_route') == 'portal_properties_buy_city_list'
+                or app.request.get('_route') == 'portal_properties_rent_list' or app.request.get('_route') == 'portal_properties_rent_city_list'
+            %}
+                jQuery('.btn-done').click(function(e){
+                    e.preventDefault();
+                    if (jQuery(this).closest('.open-dropdown').length > 0){
+                        jQuery(this).parent('.open-dropdown').hide();
+                    }else if (jQuery(this).closest('.open-dropdown1').length > 0){
+                        jQuery(this).parent('.open-dropdown1').hide();
+                    }
+                });
+            {% endif  %}
+            jQuery('.custom-control-input').click(function(){
+                var buySection = jQuery(this).closest('.buy-section');
+                if(buySection.length > 0){
+                    var productType = buySection.find('.custom-control-input:radio:checked').attr("data-val");
+                    buySection.siblings(".select-destination").find(".buy_select").html(productType);
+                }
+            });
+            {% if currentPath == "portal_index" %}
+                $('.nav-item').click(function() {
+                    $('html, body').animate({
+                        scrollTop: 700
+                    }, 2000, 'easeInOutExpo');
+                    if ($(this).attr("aria-controls") == 'nav-buy'){
+                        jQuery(".minRange_buy").show();
+                        jQuery(".maxRange_buy").show();
+                        jQuery("#minrange_buy").val("");
+                        jQuery("#maxrange_buy").val("");
+                    }else if ($(this).attr("aria-controls") == 'nav-rent'){
+                        jQuery(".minRange_rent").show();
+                        jQuery(".maxRange_rent").show();
+                        jQuery("#minrange_rent").val("");
+                        jQuery("#maxrange_rent").val("");
+                    }else{
+
+                    }
+                    return false;
+                });
+            {% endif  %}
+
+
+            $('.custom-control-input').click(function() {
+                $('.custom-control-label').removeClass('active');
+                $('.customSelection').removeClass('active');
+                $('.custom-checkbox').hide();
+                $(this).parent().find('.custom-control-label').addClass('active');
+                $(this).parent().siblings(".custom-checkbox").show();
+
+            });
+            $('.customSelection').click(function() {
+                $( this ).toggleClass( "active" )
+            });
+
+            jQuery(".minRange_buy").click(function(e){
+                e.preventDefault();
+                jQuery("#minrange_buy").val(jQuery(this).text());
+                jQuery("#minrange_buy").attr("data-value",jQuery(this).attr("data-range"));
+                jQuery("#minrange_buy").attr("data-denomination",jQuery(this).attr("data-denomination"));
+                jQuery("#minrange_buy").parents('.select-budget').find('.budget-section').html(jQuery("#minrange_buy").attr("data-value")+"-"+jQuery("#maxrange_buy").val()+" "+jQuery("#minrange_buy").attr("data-denomination"));
+                jQuery(".minRange_buy").css("visibility","hidden");
+                jQuery(".maxRange_buy").map(function(index,item){
+                    var dataRange = eval($(item).attr("data-range"));
+                    var getValue = eval(jQuery("#minrange_buy").attr("data-value"));
+                    if(getValue >= dataRange){
+                        $(item).closest("li").css("visibility","hidden");;
+                    }
+                });
+            });
+            jQuery(".maxRange_buy").click(function(e){
+                e.preventDefault();
+                jQuery("#maxrange_buy").val(jQuery(this).text());
+                jQuery("#maxrange_buy").attr("data-value",jQuery(this).attr("data-range"));
+                jQuery("#maxrange_buy").attr("data-denomination",jQuery(this).attr("data-denomination"));
+                jQuery("#maxrange_buy").parents('.select-budget').find('.budget-section').html(jQuery("#minrange_buy").attr("data-value")+"-"+jQuery("#maxrange_buy").attr("data-value")+" "+jQuery("#maxrange_buy").attr("data-denomination"));
+                jQuery(".maxRange_buy").css("visibility","hidden");
+            });
+            jQuery(".minRange_rent").click(function(e){
+                e.preventDefault();
+                jQuery("#minrange_rent").val(jQuery(this).text());
+                jQuery("#minrange_rent").attr("data-value",jQuery(this).attr("data-range"));
+                jQuery("#minrange_rent").attr("data-denomination",jQuery(this).attr("data-denomination"));
+                jQuery("#minrange_rent").parents('.select-budget').find('.budget-section').html(jQuery("#minrange_rent").val()+"-"+jQuery("#maxrange_rent").val());
+                jQuery(".minRange_rent").css("visibility","hidden");
+                jQuery(".minRange_rent").map(function(index,item){
+                    var dataRange = eval($(item).attr("data-range"));
+                    var getValue = eval(jQuery("#minRange_rent").attr("data-value"));
+                    if(getValue >= dataRange){
+                        $(item).closest("li").css("visibility","hidden");
+                    }
+                });
+            });
+            jQuery(".maxRange_rent").click(function(e){
+                e.preventDefault();
+                jQuery("#maxrange_rent").val(jQuery(this).text());
+                jQuery("#maxrange_rent").attr("data-value",jQuery(this).attr("data-range"));
+                jQuery("#maxrange_rent").attr("data-denomination",jQuery(this).attr("data-denomination"));
+                jQuery("#maxrange_rent").parents('.select-budget').find('.budget-section').html(jQuery("#minrange_rent").val()+"-"+jQuery("#maxrange_rent").val());
+                jQuery(".maxRange_rent").hide();
+            });
+
+
+        });
+    </script>
+{% endblock %}

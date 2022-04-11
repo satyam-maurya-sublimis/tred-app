@@ -1,0 +1,107 @@
+{% extends 'layout/content.html.twig' %}
+
+{% block cms_content %}
+    <div class="card">
+        <div class="card-header">
+            {#<h4 class="card-title txt-bold float-left">{{ data.circle |upper}}</h4> #}
+            <h4 class="card-title float-right">
+                <a href="{{ path(path_edit, {'id': data.id}) }}" class="btn btn-dark btn-sm"><i class="fa fa-edit"></i> {{'label.edit'|trans}}</a>
+                <a href="{{ path(path_index) }}" class="btn btn-dark btn-sm"><i class="fa fa-list"></i> {{'label.back_to_list' | trans}}</a>
+            </h4>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="card-body">
+                    <div class="card-header mt-2">
+                        <h3 class="card-title">{{ 'Vendor/Partner Office Details'|upper }}</h3>
+                    </div>
+                    <div class="row">
+                        <table class="table table-responsive-md text-sm">
+                            <tbody>
+                            <tr>
+                                <th>{{ 'label.vendor_partner_name'|trans }}</th>
+                                <td colspan="3">{{ data.trnVendorPartnerDetails }}</td>
+                                <th>{{ 'label.office_name'|trans }}</th>
+                                <td colspan="3">{{ data.officeName }}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ 'label.office_category'|trans }}</th>
+                                <td colspan="3">{{ data.mstOfficeCategory }}</td>
+                                <th>{{ 'label.country'|trans }}</th>
+                                <td colspan="3">{{ data.mstCountry }}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ 'label.state'|trans }}</th>
+                                <td colspan="3">{{ data.mstState }}</td>
+                                <th>{{ 'label.city'|trans }}</th>
+                                <td colspan="3">{{ data.mstCity }}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ 'label.area_city'|trans }}</th>
+                                <td colspan="3">{{ data.mstAreaInCity }}</td>
+                                <th>{{ 'label.addressOne'|trans }}</th>
+                                <td colspan="3">{{ data.address1 }}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ 'label.addressTwo'|trans }}</th>
+                                <td colspan="3">{{ data.address2 }}</td>
+                                <th>{{ 'label.pincode'|trans }}</th>
+                                <td colspan="3">{{ data.pincode }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                    <div class="card-header mt-2">
+                        <h3 class="card-title">{{ 'Vendor/Partner Contact Details'|upper }}</h3>
+                    </div>
+                    <div class="row">
+                        <table class="table table-responsive-md text-sm">
+                            <tbody>
+                            {% for trnVendorPartnerOfficeLandLines in data.trnVendorPartnerOfficeLandLines %}
+                            <tr>
+                                <th>{{ 'label.department'|trans }}</th>
+                                <td>{{ trnVendorPartnerOfficeLandLines.mstDepartment }}</td>
+                                <th>{{ 'label.contact_no'|trans }}</th>
+                                <td>{{ trnVendorPartnerOfficeLandLines.contactNoCountryCode }} {{ trnVendorPartnerOfficeLandLines.contactNoCityCode }}  {{ trnVendorPartnerOfficeLandLines.contactNo }} </td>
+                                <th>{{ 'label.email'|trans }}</th>
+                                <td>{{ trnVendorPartnerOfficeLandLines.email }}</td>
+                            </tr>
+                            {% endfor %}
+                            <tr>
+                                <th>{{ 'label.mobile'|trans }}</th>
+                                <td >{{ data.mobileNoCountryCode }} {{ data.mobileNumber }}</td>
+                                <th>{{ 'label.fax'|trans }}</th>
+                                <td colspan="3">{{ data.faxNoCountryCode }} {{ data.faxNoCityCode }} {{ data
+                                    .faxNumber }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card-header mt-2">
+                        <h3 class="card-title">{{ 'Working Days / Hours'|upper }}</h3>
+                    </div>
+                    <div class="row">
+                        <table class="table table-responsive-md text-sm">
+                            <tbody>
+                            <tr>
+                                <th>{{ 'label.days_of_week'|trans }}</th>
+                                <td colspan="2">{{ data.mstDaysOfWeek | join(', ') }}</td>
+                                <th>{{ 'label.working_time_from'|trans }}</th>
+                                <td colspan="2">{{ data.workingTimeFrom | date('H:i') }}</td>
+                                <th>{{ 'label.working_time_to'|trans }}</th>
+                                <td colspan="2">{{ data.workingTimeTo  | date('H:i') }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+{% endblock %}
