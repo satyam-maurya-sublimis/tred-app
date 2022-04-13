@@ -5,6 +5,7 @@ namespace App\Controller\Cms;
 use App\Service\CommonHelper;
 use App\Service\FileUploaderHelper;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Cms\CmsPage;
 use App\Form\Cms\CmsPageType;
@@ -17,10 +18,18 @@ use Ramsey\Uuid\Uuid;
 
 /**
  * @Route("/core/cms/page", name="cms_page_")
- * @IsGranted("ROLE_SYS_CONTENT_USER")
+ * @IsGranted("ROLE_APP_USER")
  */
 class CmsPageController extends AbstractController
 {
+
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
+
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param CmsPageRepository $cmsPageRepository
@@ -70,7 +79,7 @@ class CmsPageController extends AbstractController
                 $cmsPage->setOgImagePath($this->getParameter('public_file_folder'));
             }
 
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($cmsPage);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -149,8 +158,7 @@ class CmsPageController extends AbstractController
                 $cmsPage->setOgImage($newFilename);
                 $cmsPage->setOgImagePath($this->getParameter('public_file_folder'));
             }
-
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('cms_page_index');
         }

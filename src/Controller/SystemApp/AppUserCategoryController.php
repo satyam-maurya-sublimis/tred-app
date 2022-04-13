@@ -2,6 +2,7 @@
 
 namespace App\Controller\SystemApp;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\SystemApp\AppUserCategory;
 use App\Form\SystemApp\AppUserCategoryType;
@@ -19,6 +20,12 @@ use Knp\Component\Pager\PaginatorInterface;
  */
 class AppUserCategoryController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param AppUserCategoryRepository $appUserTypeRepository
@@ -62,7 +69,7 @@ class AppUserCategoryController extends AbstractController
             $uuidGenerator = Uuid::uuid4();
             $rowId = $uuidGenerator->toString();
             $appUserType->setRowId($rowId);
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($appUserType);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -107,7 +114,7 @@ class AppUserCategoryController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('system_user_category_index');
         }
@@ -130,7 +137,7 @@ class AppUserCategoryController extends AbstractController
     public function delete(Request $request, AppUserCategory $appUserType): Response
     {
         if ($this->isCsrfTokenValid('delete'.$appUserType->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($appUserType);
             $entityManager->flush();
         }

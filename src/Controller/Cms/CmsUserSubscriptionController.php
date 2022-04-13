@@ -15,7 +15,7 @@ use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @Route("/core/cms/usersubscription", name="cms_usersubscription_")
- * @IsGranted("ROLE_SYS_CONTENT_USER")
+ * @IsGranted("ROLE_APP_USER")
  */
 class CmsUserSubscriptionController extends AbstractController
 {

@@ -5,50 +5,50 @@ namespace App\Controller\Organization;
 use App\Entity\Organization\OrgCompany;
 use App\Entity\SystemApp\AppUser;
 use App\Entity\SystemApp\AppUserInfo;
-use App\Form\Organization\OrgCompanyUserResetPasswordType;
 use App\Form\Organization\OrgCompanyUserType;
-use App\Repository\SystemApp\AppUserInfoRepository;
 use App\Repository\SystemApp\AppUserRepository;
+use App\Service\CommonHelper;
 use App\Service\Mailer;
 use DateTime;
+use DateTimeZone;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Ramsey\Uuid\Uuid;
-use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * @Route("/core/organization/user", name="org_company_user_")
- * @IsGranted("ROLE_SYS_MODULE_ADMIN")
+ * @IsGranted("ROLE_SYS_ADMIN")
  */
 class OrgCompanyUserController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param AppUserRepository $appUserRepository
-     * @param PaginatorInterface $paginator
      * @param Request $request
      * @return Response
      */
-    public function index(AppUserRepository $appUserRepository, PaginatorInterface $paginator, Request $request): Response
+    public function index(AppUserRepository $appUserRepository, Request $request): Response
     {
         $company_id = $request->query->get('company_id');
-        if(!$company_id) {
+        if (!$company_id) {
             return $this->redirectToRoute('org_company_index');
-            }
-        $orgCompany = $this->getDoctrine()->getRepository(OrgCompany::class)->find($company_id);
-        $queryBuilder = $appUserRepository->getUserByCompanyId($company_id);
-        $pagination = $paginator->paginate(
-            $queryBuilder,
-            $request->query->getInt('page', 1),
-            10
-        );
+        }
+        $orgCompany = $this->managerRegistry->getRepository(OrgCompany::class)->find($company_id);
         return $this->render('organization/org_company_user/index.html.twig', [
-            'org_company_users' => $pagination,
+            'org_company_users' => $appUserRepository->getUserByCompanyId($company_id),
             'org_company' => $orgCompany,
             'path_index' => 'org_company_user_index',
             'path_add' => 'org_company_user_add',
@@ -57,32 +57,44 @@ class OrgCompanyUserController extends AbstractController
             'label_title' => 'label.company_user',
         ]);
     }
+
     /**
      * @Route("/add", name="add", methods={"GET","POST"})
      * @param Request $request
-     * @param UserPasswordEncoderInterface $encoder
+     * @param UserPasswordHasherInterface $hasher
      * @param Mailer $mailer
+     * @param CommonHelper $commonHelper
      * @return Response
      * @throws Exception
      */
-    public function new(Request $request, UserPasswordEncoderInterface $encoder, Mailer $mailer): Response
+    public function new(Request $request, UserPasswordHasherInterface $hasher, Mailer $mailer, CommonHelper $commonHelper): Response
     {
+        $company_id = $request->query->get('company_id');
+        if (!$company_id) {
+            return $this->redirectToRoute('org_company_index');
+        }
+        $orgCompany = $this->managerRegistry->getRepository(OrgCompany::class)->find($company_id);
+
         $appUser = new AppUser();
-        $orgCompany = $this->getDoctrine()->getRepository(OrgCompany::class)->find($request->query->get('company_id'));
+        $orgCompany = $this->managerRegistry->getRepository(OrgCompany::class)->find($request->query->get('company_id'));
         $appUser->setAppUserInfo(new AppUserInfo())->getAppUserInfo()->setOrgCompany($orgCompany);
         $form = $this->createForm(OrgCompanyUserType::class, $appUser);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
             $userEmail = $appUser->getAppUserInfo()->getUserEmail();
             $userName = $appUser->getUserName();
             $token = bin2hex(random_bytes(32));
             $appUser->setRowId(Uuid::uuid4()->toString());
             $appUser->setUserCreationToken($token);
             $appUser->setUserRole($_POST['org_company_user']['userRole']);
+            $appUser->setUserCreationDateTime(new DateTime('now', new DateTimeZone('UTC')));
             $generatePassword = random_bytes(10);
-            $appUser->setUserPassword($encoder->encodePassword($appUser, $generatePassword));
-            $entityManager = $this->getDoctrine()->getManager();
+            $appUser->setUserPassword($hasher->hashPassword($appUser, $generatePassword));
+            // In case the role is HBA set the HBA Code
+            if (in_array('ROLE_HBA_USER', $_POST['org_company_user']['userRole'])) {
+                $appUser->setUserCode($commonHelper->generateRandomString());
+            }
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($appUser);
             $entityManager->flush();
             // Send Reset Email to User
@@ -99,6 +111,7 @@ class OrgCompanyUserController extends AbstractController
             'mode' => 'add'
         ]);
     }
+
     /**
      * @Route("/edit/{id}", name="edit", methods={"GET","POST"})
      * @param Request $request
@@ -107,10 +120,16 @@ class OrgCompanyUserController extends AbstractController
      */
     public function edit(Request $request, AppUser $appUser): Response
     {
+        $company_id = $request->query->get('company_id');
+        if (!$company_id) {
+            return $this->redirectToRoute('org_company_index');
+        }
+        $orgCompany = $this->managerRegistry->getRepository(OrgCompany::class)->find($company_id);
+
         $form = $this->createForm(OrgCompanyuserType::class, $appUser);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('org_company_user_index', $request->query->all());
         }
@@ -134,12 +153,12 @@ class OrgCompanyUserController extends AbstractController
     {
         // If company_id param is entry redirect to Company listing
         $company_id = $request->query->get('company_id');
-        if(!$company_id) {
+        if (!$company_id) {
             return $this->redirectToRoute('org_company_user_index');
         }
-        $appUser = $this->getDoctrine()->getRepository(AppUser::class)->find($id);
+        $appUser = $this->managerRegistry->getRepository(AppUser::class)->find($id);
         if (!$appUser) {
-            throw $this->createNotFoundException('No Data found for id '.$id);
+            throw $this->createNotFoundException('No Data found for id ' . $id);
         }
 
         return $this->render('organization/org_company_user/show.html.twig', [
@@ -152,53 +171,4 @@ class OrgCompanyUserController extends AbstractController
         ]);
     }
 
-
-    /**
-     * @Route("/resetpassword/{id}", name="resetpassword", methods={"GET","POST"})
-     * @param Request $request
-     * @param AppUser $appUser
-     * @param Mailer $mailer
-     * @return Response
-     * @throws Exception
-     */
-    public function resetpassword(Request $request, AppUser $appUser, Mailer $mailer): Response
-    {
-        $form = $this->createForm(OrgCompanyUserResetPasswordType::class, $appUser);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $token = bin2hex(random_bytes(32));
-            $tokenExpiryTime = new DateTime('+24 hour');
-            $userName = $appUser->getUserName();
-            $userEmail = $appUser->getAppUserInfo()->getUserEmail();
-            $appUser->setUserResetPasswordToken($token);
-            $appUser->setUserResetPasswordTokenExpiry($tokenExpiryTime);
-            $this->getDoctrine()->getManager()->flush();
-            // Send Reset Email to User
-            $mailer->mailerResetPassword($userEmail, $userName, $token);
-            $this->addFlash('success', 'form.updated_successfully');
-            return $this->redirectToRoute('org_company_user_index', $request->query->all());
-        }
-        return $this->render('form/form.html.twig', [
-            'org_company_user' => $appUser,
-            'form' => $form->createView(),
-            'index_path' => 'org_user_index',
-            'label_title' => 'label.reset_password',
-            'label_button' => 'action.reset_password'
-        ]);
-    }
-    /**
-     * @Route("/{id}", name="delete", methods={"DELETE"})
-     * @param Request $request
-     * @param AppUser $appUser
-     * @return Response
-     */
-    public function delete(Request $request, AppUser $appUser): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$appUser->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($appUser);
-            $entityManager->flush();
-        }
-        return $this->redirectToRoute('org_company_user_index', $request->query->all());
-    }
 }

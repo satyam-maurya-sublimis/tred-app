@@ -4,6 +4,7 @@ namespace App\Controller\SystemApp;
 
 
 use App\Form\SystemApp\AppModuleType;
+use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\SystemApp\AppModule;
 use App\Form\SystemApp\AppModuleAccessType;
@@ -21,6 +22,12 @@ use Knp\Component\Pager\PaginatorInterface;
  */
 class AppModuleController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param AppModuleRepository $appModuleRepository
@@ -69,7 +76,7 @@ class AppModuleController extends AbstractController
             $uuidGenerator = Uuid::uuid4();
             $rowId = $uuidGenerator->toString();
             $appModule->setRowId($rowId);
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($appModule);
             $entityManager->flush();
 
@@ -116,7 +123,7 @@ class AppModuleController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
 
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('system_module_index');
@@ -144,7 +151,7 @@ class AppModuleController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
 
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('system_module_index');
@@ -169,7 +176,7 @@ class AppModuleController extends AbstractController
     public function delete(Request $request, AppModule $appModule): Response
     {
         if ($this->isCsrfTokenValid('delete'.$appModule->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($appModule);
             $entityManager->flush();
         }

@@ -15,7 +15,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * @Route("/core/cms/faq", name="cms_faq_")
- * @IsGranted("ROLE_SYS_CONTENT_USER")
+ * @IsGranted("ROLE_APP_USER")
  */
 class CmsFaqController extends AbstractController
 {

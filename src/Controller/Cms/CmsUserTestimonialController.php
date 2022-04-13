@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints\Timezone;
 
 /**
  * @Route("/core/cms/usertestimonial", name="cms_usertestimonial_")
- * @IsGranted("ROLE_SYS_CONTENT_USER")
+ * @IsGranted("ROLE_APP_USER")
  */
 class CmsUserTestimonialController extends AbstractController
 {

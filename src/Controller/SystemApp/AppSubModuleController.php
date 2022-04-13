@@ -3,6 +3,7 @@
 namespace App\Controller\SystemApp;
 use App\Entity\SystemApp\AppModule;
 use App\Form\SystemApp\AppSubModuleAccessType;
+use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\SystemApp\AppSubModule;
 use App\Form\SystemApp\AppSubModuleType;
@@ -20,6 +21,12 @@ use Knp\Component\Pager\PaginatorInterface;
  */
 class AppSubModuleController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param AppSubModuleRepository $appSubModuleRepository
@@ -59,7 +66,7 @@ class AppSubModuleController extends AbstractController
     public function new(Request $request, AppSubModuleRepository $appSubModuleRepository): Response
     {
         $appSubModule = new AppSubModule();
-        $appModule = $this->getDoctrine()->getRepository(AppModule::class)->find($request->query->get('appmodule_id'));
+        $appModule = $this->managerRegistry->getRepository(AppModule::class)->find($request->query->get('appmodule_id'));
         $sequenceNo = $appSubModuleRepository->findOneBySeqNo($request->query->get('appmodule_id'));
         $appSubModule->setSequenceNo(($sequenceNo[1] + 1));
         $appSubModule->setAppmodule($appModule);
@@ -71,7 +78,7 @@ class AppSubModuleController extends AbstractController
             $uuidGenerator = Uuid::uuid4();
             $rowId = $uuidGenerator->toString();
             $appSubModule->setRowId($rowId);
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             if ($appSubModule->getParentId() == 'null' || $appSubModule->getParentId() == '') {
 
                 $appSubModule->setParentId('0');
@@ -129,7 +136,7 @@ class AppSubModuleController extends AbstractController
 
             }
 
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
 
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('system_submodule_index', $request->query->all());
@@ -157,7 +164,7 @@ class AppSubModuleController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
 
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('system_submodule_index', $request->query->all());
@@ -182,7 +189,7 @@ class AppSubModuleController extends AbstractController
     public function delete(Request $request, AppSubModule $appSubModule): Response
     {
         if ($this->isCsrfTokenValid('delete'.$appSubModule->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($appSubModule);
             $entityManager->flush();
         }

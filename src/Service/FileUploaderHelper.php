@@ -3,6 +3,7 @@
 namespace App\Service;
 
 
+use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -22,7 +23,7 @@ class FileUploaderHelper
     private $publicAssetBaseUrl;
     private $privateFileSystem;
     private $slugger;
-    public function __construct(RequestStackContext $requestStackContext, FilesystemInterface $publicFilesFileSystem, FilesystemInterface $privateFilesFileSystem, LoggerInterface $logger, string $uploadedAssetsBaseUrl, SluggerInterface $slugger)
+    public function __construct(RequestStackContext $requestStackContext, FilesystemOperator $publicFilesFileSystem, FilesystemOperator $privateFilesFileSystem, LoggerInterface $logger, string $uploadedAssetsBaseUrl, SluggerInterface $slugger)
     {
         $this->requestStackContext = $requestStackContext;
         $this->fileSystem = $publicFilesFileSystem;

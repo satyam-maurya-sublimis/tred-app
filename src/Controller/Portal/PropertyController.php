@@ -11,23 +11,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\Persistence\ManagerRegistry;
 
 class PropertyController extends AbstractController
 {
 
-//    /**
-//     * @Route("/", name="portal_properties_index", methods={"GET","POST"})
-//     * @return Response
-//     */
-//    public function properties(Request $request): Response
-//    {
-//        return $this->render('portal/page/properties/index.html.twig', [
-//        ]);
-//    }
+    private ManagerRegistry $managerRegistry;
     private $portalCommonHelper;
-    public function __construct(PortalCommonHelper $portalCommonHelper)
+    public function __construct(PortalCommonHelper $portalCommonHelper, ManagerRegistry $managerRegistry)
     {
         $this->portalCommonHelper = $portalCommonHelper;
+        $this->managerRegistry = $managerRegistry;
     }
 
     /**
@@ -38,15 +32,9 @@ class PropertyController extends AbstractController
     public function propertyFilter(Request $request): Response
     {
         $filters = $this->customFilters($request);
-//        $trnProject = $this->getDoctrine()->getManager()->getRepository(TrnProject::class)->getProject(null,$filters);
-        $trnProjectRoomConfiguration = $this->getDoctrine()->getManager()->getRepository(TrnProjectRoomConfiguration::class)->getRoomConfiguration($filters);
-//        if ($request->get('sort') == "High") {
-//                return $this->render('portal/page/product/property-listings.html.twig', [
-//                    'projects'=> array_reverse($trnProject),
-//                    'filters' => $filters,
-//                    'transactionCategoryId'=> $filters['propertyTransactionCategoryId']
-//                ]);
-//        }else {
+//        $entityManager = $this->managerRegistry->getManager();
+//        $trnProjectRoomConfiguration = $this->getDoctrine()->getManager()->getRepository(TrnProjectRoomConfiguration::class)->getRoomConfiguration($filters);
+        $trnProjectRoomConfiguration = $this->managerRegistry->getRepository(TrnProjectRoomConfiguration::class)->getRoomConfiguration($filters);
             return $this->render('portal/page/product/property-listing.html.twig', [
                 'projectData' => $trnProjectRoomConfiguration,
                 'filters' => $filters,
@@ -84,7 +72,7 @@ class PropertyController extends AbstractController
 //        return $this->render('portal/page/product/property-detail.html.twig', [
 //            'project'=> $trnProject
 //        ]);
-        $trnProjectRoomConfiguration = $this->getDoctrine()->getManager()->getRepository(TrnProjectRoomConfiguration::class)->findOneBy(['isActive'=>1,"id"=>$roomId,'trnProject'=>$projectId]);
+        $trnProjectRoomConfiguration = $this->managerRegistry->getRepository(TrnProjectRoomConfiguration::class)->findOneBy(['isActive'=>1,"id"=>$roomId,'trnProject'=>$projectId]);
         $cnt = $trnProjectRoomConfiguration->getRoomConfigurationViews()?$trnProjectRoomConfiguration->getRoomConfigurationViews():0;
         $trnProjectRoomConfiguration->setRoomConfigurationViews($cnt+1);
         $this->getDoctrine()->getManager()->flush();
@@ -119,7 +107,7 @@ class PropertyController extends AbstractController
         }
 
 //        $trnProject = $this->getDoctrine()->getManager()->getRepository(TrnProject::class)->getProject(null,$filters);
-        $trnProjectRoomConfiguration = $this->getDoctrine()->getManager()->getRepository(TrnProjectRoomConfiguration::class)->getRoomConfiguration($filters);
+        $trnProjectRoomConfiguration = $this->managerRegistry->getRepository(TrnProjectRoomConfiguration::class)->getRoomConfiguration($filters);
         return $this->render('portal/page/product/property-buy-list.html.twig', [
             'projectData'=> $trnProjectRoomConfiguration,
             'filters'=> $filters,
@@ -153,7 +141,7 @@ class PropertyController extends AbstractController
             $filters['propertyTransactionCategoryId'] = 2;
         }
 //        $trnProject = $this->getDoctrine()->getManager()->getRepository(TrnProject::class)->getProject(null,$filters);
-        $trnProjectRoomConfiguration = $this->getDoctrine()->getManager()->getRepository(TrnProjectRoomConfiguration::class)->getRoomConfiguration($filters);
+        $trnProjectRoomConfiguration = $this->managerRegistry->getRepository(TrnProjectRoomConfiguration::class)->getRoomConfiguration($filters);
         return $this->render('portal/page/product/property-rent-list.html.twig', [
             'projectData'=> $trnProjectRoomConfiguration,
             'filters'=> $filters,
@@ -179,7 +167,7 @@ class PropertyController extends AbstractController
         $slugName  = $request->get('slugName');
         $city = $request->get('city');
         $roomId  = $request->get('id');
-        $trnProjectRoomConfiguration = $this->getDoctrine()->getManager()->getRepository(TrnProjectRoomConfiguration::class)->findOneBy(['isActive'=>1,"id"=>$roomId]);
+        $trnProjectRoomConfiguration = $this->managerRegistry->getRepository(TrnProjectRoomConfiguration::class)->findOneBy(['isActive'=>1,"id"=>$roomId]);
         $cnt = $trnProjectRoomConfiguration->getRoomConfigurationViews()?$trnProjectRoomConfiguration->getRoomConfigurationViews():0;
         $trnProjectRoomConfiguration->setRoomConfigurationViews($cnt+1);
         $this->getDoctrine()->getManager()->flush();

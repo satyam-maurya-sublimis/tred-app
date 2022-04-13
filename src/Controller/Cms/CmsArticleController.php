@@ -21,7 +21,7 @@ use Ramsey\Uuid\Uuid;
 
 /**
  * @Route("/core/cms/article", name="cms_article_")
- * @IsGranted("ROLE_SYS_CONTENT_USER")
+ * @IsGranted("ROLE_APP_USER")
  */
 class CmsArticleController extends AbstractController
 {

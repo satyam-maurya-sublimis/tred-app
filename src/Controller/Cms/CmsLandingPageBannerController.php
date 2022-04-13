@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/core/cms/landing-page-banner", name="cms_landing_page_banner_")
- * @IsGranted("ROLE_SYS_CONTENT_USER")
+ * @IsGranted("ROLE_APP_USER")
  */
 class CmsLandingPageBannerController extends AbstractController
 {

@@ -17,6 +17,7 @@ use App\Form\Form\FormFurnitureEnquiryType;
 use App\Form\Portal\FurnitureTredExpertsType;
 use App\Service\CommonHelper;
 use App\Service\Mailer;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,6 +27,13 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class FurnitureController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
+
     /**
      * @Route("/home-furniture", name="home")
      * @param Request $request
@@ -34,10 +42,10 @@ class FurnitureController extends AbstractController
     public function furnitureHome(Request $request): Response
     {
         $slugName  = 'home-furniture';
-        $mstProductType = $this->getDoctrine()->getRepository(MstProductType::class)->findOneBy(["isActive"=>1,"productTypeSlugName"=>$slugName]);
-        $mstProductSubType = $this->getDoctrine()->getRepository(MstProductSubType::class)->getProductSubTypeByProductTypeId($mstProductType->getId());
-        $mstFurnitureUniqueValuePreposition = $this->getDoctrine()->getRepository(MstFurnitureUniqueValuePreposition::class)->findBy(["isActive"=>1,"mstProductType"=>$mstProductType]);
-        $mstFurnitureProductCatalogue = $this->getDoctrine()->getRepository(TrnFurnitureProductCatalog::class)->findBy(["isActive"=>1,"mstProductType"=>$mstProductType]);
+        $mstProductType = $this->managerRegistry->getRepository(MstProductType::class)->findOneBy(["isActive"=>1,"productTypeSlugName"=>$slugName]);
+        $mstProductSubType = $this->managerRegistry->getRepository(MstProductSubType::class)->getProductSubTypeByProductTypeId($mstProductType->getId());
+        $mstFurnitureUniqueValuePreposition = $this->managerRegistry->getRepository(MstFurnitureUniqueValuePreposition::class)->findBy(["isActive"=>1,"mstProductType"=>$mstProductType]);
+        $mstFurnitureProductCatalogue = $this->managerRegistry->getRepository(TrnFurnitureProductCatalog::class)->findBy(["isActive"=>1,"mstProductType"=>$mstProductType]);
         return $this->render('portal/page/furniture/home_furniture/index.html.twig', [
             'mstProductType'=> $mstProductType,
             'mstProductSubType'=> $mstProductSubType,
@@ -54,7 +62,7 @@ class FurnitureController extends AbstractController
     public function furnitureHomeCatalogue(Request $request): Response
     {
         $id = $request->attributes->get('id');
-        $trnFurnitureProductCatalogue = $this->getDoctrine()->getRepository(TrnFurnitureProductCatalog::class)->find($id);
+        $trnFurnitureProductCatalogue = $this->managerRegistry->getRepository(TrnFurnitureProductCatalog::class)->find($id);
         return $this->render('portal/page/furniture/home_furniture/catalogue.html.twig', [
             'mstProducType'=> $trnFurnitureProductCatalogue->getMstProductType(),
             'trnFurnitureProductCatalogue'=> $trnFurnitureProductCatalogue,
@@ -69,7 +77,7 @@ class FurnitureController extends AbstractController
     public function furnitureOfficeCatalogue(Request $request): Response
     {
         $id = $request->attributes->get('id');
-        $trnFurnitureProductCatalogue = $this->getDoctrine()->getRepository(TrnFurnitureProductCatalog::class)->find($id);
+        $trnFurnitureProductCatalogue = $this->managerRegistry->getRepository(TrnFurnitureProductCatalog::class)->find($id);
         return $this->render('portal/page/furniture/home_furniture/catalogue.html.twig', [
             'mstProducType'=> $trnFurnitureProductCatalogue->getMstProductType(),
             'trnFurnitureProductCatalogue'=> $trnFurnitureProductCatalogue,
@@ -85,7 +93,7 @@ class FurnitureController extends AbstractController
     public function furnitureCatalogue(Request $request): Response
     {
         $id = $request->attributes->get('id');
-        $trnFurnitureProductCatalogue = $this->getDoctrine()->getRepository(TrnFurnitureProductCatalog::class)->find($id);
+        $trnFurnitureProductCatalogue = $this->managerRegistry->getRepository(TrnFurnitureProductCatalog::class)->find($id);
         return $this->render('portal/page/furniture/home_furniture/catalogue.html.twig', [
             'mstProducType'=> $trnFurnitureProductCatalogue->getMstProductType(),
             'trnFurnitureProductCatalogue'=> $trnFurnitureProductCatalogue,
@@ -100,8 +108,8 @@ class FurnitureController extends AbstractController
     public function furnitureHomeCategory(Request $request): Response
     {
         $categorySlugName = $request->attributes->get('slugName');
-        $mstProductSubType = $this->getDoctrine()->getRepository(MstProductSubType::class)->findOneBy(['isActive'=>1,'productSubTypeSlugName'=>$categorySlugName]);
-        $mstFurnitureCategory = $this->getDoctrine()->getRepository(MstFurnitureCategory::class)->getFurnitureCategoryProductSubTypeId($mstProductSubType->getId());
+        $mstProductSubType = $this->managerRegistry->getRepository(MstProductSubType::class)->findOneBy(['isActive'=>1,'productSubTypeSlugName'=>$categorySlugName]);
+        $mstFurnitureCategory = $this->managerRegistry->getRepository(MstFurnitureCategory::class)->getFurnitureCategoryProductSubTypeId($mstProductSubType->getId());
         return $this->render('portal/page/furniture/home_furniture/category.html.twig', [
             'mstFurnitureCategory'=> $mstFurnitureCategory,
             'mstProductSubType'=> $mstProductSubType,
@@ -117,9 +125,9 @@ class FurnitureController extends AbstractController
     {
         $productSubTypeSlugName = $request->attributes->get('mstProductSubTypeSlugName');
         $mstFurnitureCategorySlugName = $request->attributes->get('mstFurnitureCategorySlugName');
-        $mstProductSubType = $this->getDoctrine()->getRepository(MstProductSubType::class)->findOneBy(['isActive'=>1,'productSubTypeSlugName'=>$productSubTypeSlugName]);
-        $mstFurnitureCategory = $this->getDoctrine()->getRepository(MstFurnitureCategory::class)->findOneBy(['isActive'=>1,'furnitureCategorySlugName'=>$mstFurnitureCategorySlugName]);
-        $trnFurniture = $this->getDoctrine()->getRepository(TrnFurniture::class)->findBy(['isActive'=>1,'mstProductSubType'=>$mstProductSubType,'mstFurnitureCategory'=> $mstFurnitureCategory]);
+        $mstProductSubType = $this->managerRegistry->getRepository(MstProductSubType::class)->findOneBy(['isActive'=>1,'productSubTypeSlugName'=>$productSubTypeSlugName]);
+        $mstFurnitureCategory = $this->managerRegistry->getRepository(MstFurnitureCategory::class)->findOneBy(['isActive'=>1,'furnitureCategorySlugName'=>$mstFurnitureCategorySlugName]);
+        $trnFurniture = $this->managerRegistry->getRepository(TrnFurniture::class)->findBy(['isActive'=>1,'mstProductSubType'=>$mstProductSubType,'mstFurnitureCategory'=> $mstFurnitureCategory]);
         return $this->render('portal/page/furniture/home_furniture/listing.html.twig', [
             'mstProductSubType'=> $mstProductSubType,
             'mstFurnitureCategory'=> $mstFurnitureCategory,
@@ -138,9 +146,9 @@ class FurnitureController extends AbstractController
         $productSubTypeSlugName = $request->attributes->get('mstProductSubTypeSlugName');
         $mstFurnitureCategorySlugName = $request->attributes->get('mstFurnitureCategorySlugName');
         $id = $request->attributes->get('id');
-        $mstProductSubType = $this->getDoctrine()->getRepository(MstProductSubType::class)->findOneBy(['isActive'=>1,'productSubTypeSlugName'=>$productSubTypeSlugName]);
-        $mstFurnitureCategory = $this->getDoctrine()->getRepository(MstFurnitureCategory::class)->findOneBy(['isActive'=>1,'furnitureCategorySlugName'=>$mstFurnitureCategorySlugName]);
-        $trnFurniture = $this->getDoctrine()->getRepository(TrnFurniture::class)->find($id);
+        $mstProductSubType = $this->managerRegistry->getRepository(MstProductSubType::class)->findOneBy(['isActive'=>1,'productSubTypeSlugName'=>$productSubTypeSlugName]);
+        $mstFurnitureCategory = $this->managerRegistry->getRepository(MstFurnitureCategory::class)->findOneBy(['isActive'=>1,'furnitureCategorySlugName'=>$mstFurnitureCategorySlugName]);
+        $trnFurniture = $this->managerRegistry->getRepository(TrnFurniture::class)->find($id);
         return $this->render('portal/page/furniture/home_furniture/detail.html.twig', [
             'mstProductSubType'=> $mstProductSubType,
             'mstFurnitureCategory'=> $mstFurnitureCategory,
@@ -156,10 +164,10 @@ class FurnitureController extends AbstractController
     public function furnitureOffice(Request $request): Response
     {
         $slugName  = 'office-furniture';
-        $mstProductType = $this->getDoctrine()->getRepository(MstProductType::class)->findOneBy(["isActive"=>1,"productTypeSlugName"=>$slugName]);
-        $mstProductSubType = $this->getDoctrine()->getRepository(MstProductSubType::class)->getProductSubTypeByProductTypeId($mstProductType->getId());
-        $mstFurnitureUniqueValuePreposition = $this->getDoctrine()->getRepository(MstFurnitureUniqueValuePreposition::class)->findBy(["isActive"=>1,"mstProductType"=>$mstProductType]);
-        $mstFurnitureProductCatalogue = $this->getDoctrine()->getRepository(TrnFurnitureProductCatalog::class)->findBy(["isActive"=>1,"mstProductType"=>$mstProductType]);
+        $mstProductType = $this->managerRegistry->getRepository(MstProductType::class)->findOneBy(["isActive"=>1,"productTypeSlugName"=>$slugName]);
+        $mstProductSubType = $this->managerRegistry->getRepository(MstProductSubType::class)->getProductSubTypeByProductTypeId($mstProductType->getId());
+        $mstFurnitureUniqueValuePreposition = $this->managerRegistry->getRepository(MstFurnitureUniqueValuePreposition::class)->findBy(["isActive"=>1,"mstProductType"=>$mstProductType]);
+        $mstFurnitureProductCatalogue = $this->managerRegistry->getRepository(TrnFurnitureProductCatalog::class)->findBy(["isActive"=>1,"mstProductType"=>$mstProductType]);
         return $this->render('portal/page/furniture/office_furniture/index.html.twig', [
             'mstProductType'=> $mstProductType,
             'mstProductSubType'=> $mstProductSubType,
@@ -176,8 +184,8 @@ class FurnitureController extends AbstractController
     public function furnitureOfficeCategory(Request $request): Response
     {
         $categorySlugName = $request->attributes->get('slugName');
-        $mstProductSubType = $this->getDoctrine()->getRepository(MstProductSubType::class)->findOneBy(['isActive'=>1,'productSubTypeSlugName'=>$categorySlugName]);
-        $mstFurnitureCategory = $this->getDoctrine()->getRepository(MstFurnitureCategory::class)->getFurnitureCategoryProductSubTypeId($mstProductSubType->getId());
+        $mstProductSubType = $this->managerRegistry->getRepository(MstProductSubType::class)->findOneBy(['isActive'=>1,'productSubTypeSlugName'=>$categorySlugName]);
+        $mstFurnitureCategory = $this->managerRegistry->getRepository(MstFurnitureCategory::class)->getFurnitureCategoryProductSubTypeId($mstProductSubType->getId());
         return $this->render('portal/page/furniture/office_furniture/category.html.twig', [
             'mstFurnitureCategory'=> $mstFurnitureCategory,
             'mstProductSubType'=> $mstProductSubType,
@@ -193,9 +201,9 @@ class FurnitureController extends AbstractController
     {
         $productSubTypeSlugName = $request->attributes->get('mstProductSubTypeSlugName');
         $mstFurnitureCategorySlugName = $request->attributes->get('mstFurnitureCategorySlugName');
-        $mstProductSubType = $this->getDoctrine()->getRepository(MstProductSubType::class)->findOneBy(['isActive'=>1,'productSubTypeSlugName'=>$productSubTypeSlugName]);
-        $mstFurnitureCategory = $this->getDoctrine()->getRepository(MstFurnitureCategory::class)->findOneBy(['isActive'=>1,'furnitureCategorySlugName'=>$mstFurnitureCategorySlugName]);
-        $trnFurniture = $this->getDoctrine()->getRepository(TrnFurniture::class)->findBy(['isActive'=>1,'mstProductSubType'=>$mstProductSubType,'mstFurnitureCategory'=> $mstFurnitureCategory]);
+        $mstProductSubType = $this->managerRegistry->getRepository(MstProductSubType::class)->findOneBy(['isActive'=>1,'productSubTypeSlugName'=>$productSubTypeSlugName]);
+        $mstFurnitureCategory = $this->managerRegistry->getRepository(MstFurnitureCategory::class)->findOneBy(['isActive'=>1,'furnitureCategorySlugName'=>$mstFurnitureCategorySlugName]);
+        $trnFurniture = $this->managerRegistry->getRepository(TrnFurniture::class)->findBy(['isActive'=>1,'mstProductSubType'=>$mstProductSubType,'mstFurnitureCategory'=> $mstFurnitureCategory]);
         return $this->render('portal/page/furniture/office_furniture/listing.html.twig', [
             'mstProductSubType'=> $mstProductSubType,
             'mstFurnitureCategory'=> $mstFurnitureCategory,
@@ -214,9 +222,9 @@ class FurnitureController extends AbstractController
         $productSubTypeSlugName = $request->attributes->get('mstProductSubTypeSlugName');
         $mstFurnitureCategorySlugName = $request->attributes->get('mstFurnitureCategorySlugName');
         $id = $request->attributes->get('id');
-        $mstProductSubType = $this->getDoctrine()->getRepository(MstProductSubType::class)->findOneBy(['isActive'=>1,'productSubTypeSlugName'=>$productSubTypeSlugName]);
-        $mstFurnitureCategory = $this->getDoctrine()->getRepository(MstFurnitureCategory::class)->findOneBy(['isActive'=>1,'furnitureCategorySlugName'=>$mstFurnitureCategorySlugName]);
-        $trnFurniture = $this->getDoctrine()->getRepository(TrnFurniture::class)->find($id);
+        $mstProductSubType = $this->managerRegistry->getRepository(MstProductSubType::class)->findOneBy(['isActive'=>1,'productSubTypeSlugName'=>$productSubTypeSlugName]);
+        $mstFurnitureCategory = $this->managerRegistry->getRepository(MstFurnitureCategory::class)->findOneBy(['isActive'=>1,'furnitureCategorySlugName'=>$mstFurnitureCategorySlugName]);
+        $trnFurniture = $this->managerRegistry->getRepository(TrnFurniture::class)->find($id);
         return $this->render('portal/page/furniture/office_furniture/detail.html.twig', [
             'mstProductSubType'=> $mstProductSubType,
             'mstFurnitureCategory'=> $mstFurnitureCategory,
@@ -233,9 +241,9 @@ class FurnitureController extends AbstractController
     public function furnitureLeadForm(Request $request, Mailer $mailer): Response
     {
         $formEnquiry = new FormFurnitureEnquiry();
-        $orgCompany = $this->getDoctrine()->getRepository(OrgCompany::class)->find(1);
-        $mstLeadStatus = $this->getDoctrine()->getRepository(MstLeadStatus::class)->find(1);
-        $mstProductCategory = $this->getDoctrine()->getRepository(MstProductCategory::class)->findOneBy(['productCategorySlugName'=>"furniture","isActive"=>1]);
+        $orgCompany = $this->managerRegistry->getRepository(OrgCompany::class)->find(1);
+        $mstLeadStatus = $this->managerRegistry->getRepository(MstLeadStatus::class)->find(1);
+        $mstProductCategory = $this->managerRegistry->getRepository(MstProductCategory::class)->findOneBy(['productCategorySlugName'=>"furniture","isActive"=>1]);
         $formEnquiry->setMstProductCategory($mstProductCategory);
         $formEnquiry->setOrgCompany($orgCompany);
         $formEnquiry->setMstLeadStatus($mstLeadStatus);
@@ -244,16 +252,16 @@ class FurnitureController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $filter = $request->query->get('filter');
             if (isset($filter['mstProductType'])){
-                $mstProductType =  $this->getDoctrine()->getRepository(MstProductType::class)->find($filter['mstProductType']);
+                $mstProductType =  $this->managerRegistry->getRepository(MstProductType::class)->find($filter['mstProductType']);
                 $formEnquiry->setMstProductType($mstProductType);
             }
             if (isset($filter['mstProductSubType'])){
-                $mstProductSubType =  $this->getDoctrine()->getRepository(MstProductSubType::class)->find($filter['mstProductSubType']);
+                $mstProductSubType =  $this->managerRegistry->getRepository(MstProductSubType::class)->find($filter['mstProductSubType']);
                 $formEnquiry->setMstProductSubType($mstProductSubType);
                 $formEnquiry->setMstProductType($mstProductSubType->getMstProductType()[0]);
             }
             if (isset($filter['mstFurnitureCategory'])){
-                $mstFurnitureCategory =  $this->getDoctrine()->getRepository(MstFurnitureCategory::class)->find($filter['mstFurnitureCategory']);
+                $mstFurnitureCategory =  $this->managerRegistry->getRepository(MstFurnitureCategory::class)->find($filter['mstFurnitureCategory']);
                 $formEnquiry->setMstFurnitureCategory($mstFurnitureCategory);
                 $formEnquiry->setMstProductType($mstFurnitureCategory->getMstProductType());
                 $formEnquiry->setMstProductSubType($mstFurnitureCategory->getMstProductSubType());
@@ -267,7 +275,7 @@ class FurnitureController extends AbstractController
             }else{
                 $formEnquiry->setFurnitureEnquiryLastName("-");
             }
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($formEnquiry);
             $entityManager->flush();
             $mailer->mailerFurnitureEnquiry($formEnquiry);
@@ -298,9 +306,9 @@ class FurnitureController extends AbstractController
     public function furnitureLeadFormDetail(Request $request, Mailer $mailer): Response
     {
         $formEnquiry = new FormFurnitureEnquiry();
-        $orgCompany = $this->getDoctrine()->getRepository(OrgCompany::class)->find(1);
-        $mstLeadStatus = $this->getDoctrine()->getRepository(MstLeadStatus::class)->find(1);
-        $mstProductCategory = $this->getDoctrine()->getRepository(MstProductCategory::class)->findOneBy(['productCategorySlugName'=>"furniture","isActive"=>1]);
+        $orgCompany = $this->managerRegistry->getRepository(OrgCompany::class)->find(1);
+        $mstLeadStatus = $this->managerRegistry->getRepository(MstLeadStatus::class)->find(1);
+        $mstProductCategory = $this->managerRegistry->getRepository(MstProductCategory::class)->findOneBy(['productCategorySlugName'=>"furniture","isActive"=>1]);
         $formEnquiry->setMstProductCategory($mstProductCategory);
         $formEnquiry->setOrgCompany($orgCompany);
         $formEnquiry->setMstLeadStatus($mstLeadStatus);
@@ -309,7 +317,7 @@ class FurnitureController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $filter = $request->query->get('filter');
             if (isset($filter['trnFurniture'])){
-                $trnFurniture =  $this->getDoctrine()->getRepository(TrnFurniture::class)->find($filter['trnFurniture']);
+                $trnFurniture =  $this->managerRegistry->getRepository(TrnFurniture::class)->find($filter['trnFurniture']);
                 $formEnquiry->setTrnFurniture($trnFurniture);
                 $formEnquiry->setMstFurnitureCategory($trnFurniture->getMstFurnitureCategory());
                 $formEnquiry->setMstProductType($trnFurniture->getMstProductType());
@@ -324,7 +332,7 @@ class FurnitureController extends AbstractController
             }else{
                 $formEnquiry->setFurnitureEnquiryLastName("-");
             }
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($formEnquiry);
             $entityManager->flush();
             $mailer->mailerFurnitureEnquiry($formEnquiry);
@@ -345,9 +353,9 @@ class FurnitureController extends AbstractController
     public function furnitureLeadFormCatalog(Request $request, Mailer $mailer): Response
     {
         $formEnquiry = new FormFurnitureEnquiry();
-        $orgCompany = $this->getDoctrine()->getRepository(OrgCompany::class)->find(1);
-        $mstLeadStatus = $this->getDoctrine()->getRepository(MstLeadStatus::class)->find(1);
-        $mstProductCategory = $this->getDoctrine()->getRepository(MstProductCategory::class)->findOneBy(['productCategorySlugName'=>"furniture","isActive"=>1]);
+        $orgCompany = $this->managerRegistry->getRepository(OrgCompany::class)->find(1);
+        $mstLeadStatus = $this->managerRegistry->getRepository(MstLeadStatus::class)->find(1);
+        $mstProductCategory = $this->managerRegistry->getRepository(MstProductCategory::class)->findOneBy(['productCategorySlugName'=>"furniture","isActive"=>1]);
         $formEnquiry->setMstProductCategory($mstProductCategory);
         $formEnquiry->setOrgCompany($orgCompany);
         $formEnquiry->setMstLeadStatus($mstLeadStatus);
@@ -356,7 +364,7 @@ class FurnitureController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $filter = $request->query->get('filter');
             if (isset($filter['trnFurnitureProductCatalog'])){
-                $trnFurnitureProductCatalog =  $this->getDoctrine()->getRepository(TrnFurnitureProductCatalog::class)->find($filter['trnFurnitureProductCatalog']);
+                $trnFurnitureProductCatalog =  $this->managerRegistry->getRepository(TrnFurnitureProductCatalog::class)->find($filter['trnFurnitureProductCatalog']);
                 $formEnquiry->setTrnFurnitureProductCatalog($trnFurnitureProductCatalog);
                 $formEnquiry->setMstProductType($trnFurnitureProductCatalog->getMstProductType());
             }
@@ -369,7 +377,7 @@ class FurnitureController extends AbstractController
             }else{
                 $formEnquiry->setFurnitureEnquiryLastName("-");
             }
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($formEnquiry);
             $entityManager->flush();
             $mailer->mailerFurnitureProductCataglogEnquiry($formEnquiry);

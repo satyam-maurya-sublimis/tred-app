@@ -2,6 +2,7 @@
 
 namespace App\Controller\Organization;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Organization\OrgCompany;
@@ -11,33 +12,30 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Knp\Component\Pager\PaginatorInterface;
 use Ramsey\Uuid\Uuid;
 use App\Service\FileUploaderHelper;
 
 /**
  * @Route("/core/organization/company", name="org_company_")
- * @IsGranted("ROLE_SYS_MODULE_ADMIN")
+ * @IsGranted("ROLE_SYS_ADMIN")
  */
 class OrgCompanyController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param OrgCompanyRepository $orgCompanyRepository
-     * @param PaginatorInterface $paginator
-     * @param Request $request
      * @return Response
      */
-    public function index(OrgCompanyRepository $orgCompanyRepository, PaginatorInterface $paginator, Request $request): Response
+    public function index(OrgCompanyRepository $orgCompanyRepository): Response
     {
-        $queryBuilder = $orgCompanyRepository->findAll();
-        $pagination = $paginator->paginate(
-            $queryBuilder,
-            $request->query->getInt('page', 1),
-            10
-        );
         return $this->render('organization/org_company/index.html.twig', [
-            'org_companies' => $pagination,
+            'org_companies' => $orgCompanyRepository->findAll(),
             'path_index' => 'org_company_index',
             'path_add' => 'org_company_add',
             'path_edit' => 'org_company_edit',
@@ -61,7 +59,7 @@ class OrgCompanyController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $orgCompany->setRowId(Uuid::uuid4()->toString());
             $file = $form['companyLogo']->getData();
             if ($file) {
@@ -132,7 +130,7 @@ class OrgCompanyController extends AbstractController
                 $orgCompany->setCompanyLogo($newFilename);
                 $orgCompany->setCompanyLogoFilePath($this->getParameter('public_file_folder'));
             }
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('org_company_index');
         }
@@ -146,20 +144,4 @@ class OrgCompanyController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="delete", methods={"DELETE"})
-     * @param Request $request
-     * @param OrgCompany $orgCompany
-     * @return Response
-     */
-    public function delete(Request $request, OrgCompany $orgCompany): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$orgCompany->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($orgCompany);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('org_company_index');
-    }
 }

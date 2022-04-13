@@ -4,6 +4,9 @@ namespace App\Controller\SystemApp;
 
 use App\Entity\SystemApp\AppUserInfo;
 use App\Form\SystemApp\AppUserAccessType;
+use DateTime;
+use DateTimeZone;
+use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\SystemApp\AppUser;
 use App\Form\SystemApp\AppUserType;
@@ -11,10 +14,10 @@ use App\Repository\SystemApp\AppUserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Ramsey\Uuid\Uuid;
 use Knp\Component\Pager\PaginatorInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * @Route("/core/system/user", name="system_user_")
@@ -22,6 +25,13 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
  */
 class AppUserController extends AbstractController
 {
+
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param AppUserRepository $appuserRepository
@@ -52,24 +62,25 @@ class AppUserController extends AbstractController
     /**
      * @Route("/add", name="add", methods={"GET","POST"})
      * @param Request $request
-     * @param UserPasswordEncoderInterface $encoder
+     * @param UserPasswordHasherInterface $encoder
      * @return Response
      * @throws \Exception
      */
-    public function new(Request $request, UserPasswordEncoderInterface $encoder): Response
+    public function new(Request $request, UserPasswordHasherInterface $encoder): Response
     {
         $appUser = new AppUser();
+        $appUserInfo = new AppUserInfo();
         $option = array('password_required' => true);
         $form = $this->createForm(AppUserType::class, $appUser, $option);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $uuidGenerator = Uuid::uuid4();
-            $rowId = $uuidGenerator->toString();
-            $appUser->setRowId($rowId);
+            $appUser->setRowId(Uuid::uuid4()->toString());
             $appUser->setUserRole($_POST['app_user']['userRole']);
-            $appUser->setUserPassword($encoder->encodePassword($appUser, $form->get('userPassword')->getData()));
+            $appUser->setUserPassword($encoder->hashPassword($appUser, $form->get('userPassword')->getData()));
+//            $appUser->setUserCreationDateTime(new DateTime('now', new DateTimeZone('UTC')));
+            $appUserInfo->setAppuser($appUser);
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($appUser);
             $entityManager->flush();
 
@@ -77,7 +88,7 @@ class AppUserController extends AbstractController
             return $this->redirectToRoute('system_user_index');
         }
 
-        return $this->render('system_app/app_user/form.html.twig', [
+        return $this->render('form/form.html.twig', [
             'app_user' => $appUser,
             'form' => $form->createView(),
             'index_path' => 'system_user_index',
@@ -107,12 +118,12 @@ class AppUserController extends AbstractController
      * @Route("/edit/{id}", name="edit", methods={"GET","POST"})
      * @param Request $request
      * @param AppUser $appUser
-     * @param UserPasswordEncoderInterface $encoder
+     * @param UserPasswordHasherInterface $encoder
      * @return Response
      */
-    public function edit(Request $request, AppUser $appUser, UserPasswordEncoderInterface $encoder): Response
+    public function edit(Request $request, AppUser $appUser, UserPasswordHasherInterface $encoder): Response
     {
-        // Get the original password ready in case the user does not change the password, we will user this password to update the password
+        // Get the original password ready in case the user does not change the password, we will use this password to update the password
         $originalPassword = $appUser->getPassword();
         $option = array('password_required' => false);
         $form = $this->createForm(AppUserType::class, $appUser, $option);
@@ -121,13 +132,12 @@ class AppUserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $appUser->setUserRole($_POST['app_user']['userRole']);
             if (!empty($form->get('userPassword')->getData())) {
-                $appUser->setUserPassword($encoder->encodePassword($appUser, $form->get('userPassword')->getData()));
-            }
-            else {
+                $appUser->setUserPassword($encoder->hashPassword($appUser, $form->get('userPassword')->getData()));
+            } else {
                 // Set the current password which the user has and have not changes in the edit form
                 $appUser->setUserPassword($originalPassword);
             }
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('system_user_index');
         }
@@ -156,7 +166,7 @@ class AppUserController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('system_user_index');
         }
@@ -180,7 +190,7 @@ class AppUserController extends AbstractController
     {
 
         if ($this->isCsrfTokenValid('delete' . $appUser->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($appUser);
             $entityManager->flush();
         }

@@ -17,31 +17,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\Persistence\ManagerRegistry;
 class InteriorController extends AbstractController
 {
-//    /**
-//     * @Route("/", name="index")
-//     * @param Request $request
-//     * @return Response
-//     */
-//    public function index(Request $request): Response
-//    {
-//        return $this->render('portal/page/interior/index.html.twig', [
-//        ]);
-//    }
-//    /**
-//     * @Route("/{slugName}", name="internal")
-//     * @param Request $request
-//     * @return Response
-//     */
-//    public function internalPages(Request $request, CommonHelper $helper): Response
-//    {
-//        $slugName  = $request->get('slugName');
-//        $cmsLandingPage = $this->getDoctrine()->getRepository(CmsLandingPage::class)->findOneBy(['isActive'=>1,"cmsLandingPageSlugName"=>$slugName]);
-//        return $this->render('portal/page/interior/internal.html.twig', [
-//            'cmsLandingPage'=> $cmsLandingPage
-//        ]);
-//    }
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
 
     /**
      * @Route("/interiors", name="portal_interior_designer")
@@ -53,12 +37,13 @@ class InteriorController extends AbstractController
         $slugName  = 'interiors';
         $formEnquiry = new FormEnquiry();
         $formEnquiry->setEnquiryForm($slugName);
-        $orgCompany = $this->getDoctrine()->getRepository(OrgCompany::class)->find(1);
-        $mstLeadStatus = $this->getDoctrine()->getRepository(MstLeadStatus::class)->find(1);
-        $mstProductCategory = $this->getDoctrine()->getRepository(MstProductCategory::class)->findOneBy(['productCategorySlugName'=>"interiors","isActive"=>1]);
-        $cmsPage = $this->getDoctrine()->getRepository(CmsPage::class)->findOneBy(['isActive'=>1,"pageSlugName"=>$slugName]);
+        $orgCompany = $this->managerRegistry->getRepository(OrgCompany::class)->find(1);
+        $mstLeadStatus = $this->managerRegistry->getRepository(MstLeadStatus::class)->find(1);
+        $mstProductCategory = $this->managerRegistry->getRepository(MstProductCategory::class)->findOneBy(['productCategorySlugName'=>"interiors","isActive"=>1]);
+        $cmsPage = $this->managerRegistry->getRepository(CmsPage::class)->findOneBy(['isActive'=>1,"pageSlugName"=>$slugName]);
+//        dd($cmsPage);
         $formEnquiry->setMstProductCategory($mstProductCategory);
-        $mstProductType = $this->getDoctrine()->getRepository(MstProductType::class)->findOneBy(['productTypeSlugName'=>$slugName,"isActive"=>1]);
+        $mstProductType = $this->managerRegistry->getRepository(MstProductType::class)->findOneBy(['productTypeSlugName'=>$slugName,"isActive"=>1]);
         $formEnquiry->setMstProductType($mstProductType);
         $form = $this->createForm(FormEnquiryTwoType::class, $formEnquiry);
         $form->handleRequest($request);
@@ -74,7 +59,7 @@ class InteriorController extends AbstractController
                 $formEnquiry->setEnquiryLastName("-");
             }
 //            $formEnquiry->setMstState($form->get("mstCity")->getData()->getMstState());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($formEnquiry);
             $entityManager->flush();
             $mailer->mailerFormEnquiry($formEnquiry);
@@ -95,15 +80,15 @@ class InteriorController extends AbstractController
     public function furnishing(Request $request, Mailer $mailer): Response
     {
         $slugName  = 'furnishing';
-        $cmsPage = $this->getDoctrine()->getRepository(CmsPage::class)->findOneBy(['isActive'=>1,"pageSlugName"=>$slugName]);
+        $cmsPage = $this->managerRegistry->getRepository(CmsPage::class)->findOneBy(['isActive'=>1,"pageSlugName"=>$slugName]);
         $formEnquiry = new FormEnquiry();
         $formEnquiry->setEnquiryForm($slugName);
-        $orgCompany = $this->getDoctrine()->getRepository(OrgCompany::class)->find(1);
-        $mstLeadStatus = $this->getDoctrine()->getRepository(MstLeadStatus::class)->find(1);
-        $mstProductCategory = $this->getDoctrine()->getRepository(MstProductCategory::class)->findOneBy(['productCategorySlugName'=>"interiors","isActive"=>1]);
-        $cmsPage = $this->getDoctrine()->getRepository(CmsPage::class)->findOneBy(['isActive'=>1,"pageSlugName"=>$slugName]);
+        $orgCompany = $this->managerRegistry->getRepository(OrgCompany::class)->find(1);
+        $mstLeadStatus = $this->managerRegistry->getRepository(MstLeadStatus::class)->find(1);
+        $mstProductCategory = $this->managerRegistry->getRepository(MstProductCategory::class)->findOneBy(['productCategorySlugName'=>"interiors","isActive"=>1]);
+        $cmsPage = $this->managerRegistry->getRepository(CmsPage::class)->findOneBy(['isActive'=>1,"pageSlugName"=>$slugName]);
         $formEnquiry->setMstProductCategory($mstProductCategory);
-        $mstProductType = $this->getDoctrine()->getRepository(MstProductType::class)->findOneBy(['productTypeSlugName'=>$slugName,"isActive"=>1]);
+        $mstProductType = $this->managerRegistry->getRepository(MstProductType::class)->findOneBy(['productTypeSlugName'=>$slugName,"isActive"=>1]);
         $formEnquiry->setMstProductType($mstProductType);
         $form = $this->createForm(FormEnquiryOneType::class, $formEnquiry);
         $form->handleRequest($request);
@@ -119,7 +104,7 @@ class InteriorController extends AbstractController
                 $formEnquiry->setEnquiryLastName("-");
             }
 //            $formEnquiry->setMstState($form->get("mstCity")->getData()->getMstState());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($formEnquiry);
             $entityManager->flush();
             $mailer->mailerFormEnquiry($formEnquiry);
@@ -140,15 +125,15 @@ class InteriorController extends AbstractController
     public function decor(Request $request, Mailer $mailer): Response
     {
         $slugName  = 'decor';
-        $cmsPage = $this->getDoctrine()->getRepository(CmsPage::class)->findOneBy(['isActive'=>1,"pageSlugName"=>$slugName]);
+        $cmsPage = $this->managerRegistry->getRepository(CmsPage::class)->findOneBy(['isActive'=>1,"pageSlugName"=>$slugName]);
         $formEnquiry = new FormEnquiry();
         $formEnquiry->setEnquiryForm($slugName);
-        $orgCompany = $this->getDoctrine()->getRepository(OrgCompany::class)->find(1);
-        $mstLeadStatus = $this->getDoctrine()->getRepository(MstLeadStatus::class)->find(1);
-        $mstProductCategory = $this->getDoctrine()->getRepository(MstProductCategory::class)->findOneBy(['productCategorySlugName'=>"interiors","isActive"=>1]);
-        $cmsPage = $this->getDoctrine()->getRepository(CmsPage::class)->findOneBy(['isActive'=>1,"pageSlugName"=>$slugName]);
+        $orgCompany = $this->managerRegistry->getRepository(OrgCompany::class)->find(1);
+        $mstLeadStatus = $this->managerRegistry->getRepository(MstLeadStatus::class)->find(1);
+        $mstProductCategory = $this->managerRegistry->getRepository(MstProductCategory::class)->findOneBy(['productCategorySlugName'=>"interiors","isActive"=>1]);
+        $cmsPage = $this->managerRegistry->getRepository(CmsPage::class)->findOneBy(['isActive'=>1,"pageSlugName"=>$slugName]);
         $formEnquiry->setMstProductCategory($mstProductCategory);
-        $mstProductType = $this->getDoctrine()->getRepository(MstProductType::class)->findOneBy(['productTypeSlugName'=>$slugName,"isActive"=>1]);
+        $mstProductType = $this->managerRegistry->getRepository(MstProductType::class)->findOneBy(['productTypeSlugName'=>$slugName,"isActive"=>1]);
         $formEnquiry->setMstProductType($mstProductType);
         $form = $this->createForm(FormEnquiryOneType::class, $formEnquiry);
         $form->handleRequest($request);
@@ -164,7 +149,7 @@ class InteriorController extends AbstractController
                 $formEnquiry->setEnquiryLastName("-");
             }
 //            $formEnquiry->setMstState($form->get("mstCity")->getData()->getMstState());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($formEnquiry);
             $entityManager->flush();
             $mailer->mailerFormEnquiry($formEnquiry);

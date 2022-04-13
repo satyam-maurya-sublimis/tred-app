@@ -2,6 +2,7 @@
 
 namespace App\Controller\SystemApp;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\SystemApp\AppRole;
 use App\Form\SystemApp\AppRoleType;
@@ -19,6 +20,12 @@ use Knp\Component\Pager\PaginatorInterface;
  */
 class AppRoleController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param AppRoleRepository $appRoleRepository
@@ -62,7 +69,7 @@ class AppRoleController extends AbstractController
             $uuidGenerator = Uuid::uuid4();
             $rowId = $uuidGenerator->toString();
             $appRole->setRowId($rowId);
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($appRole);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -104,7 +111,7 @@ class AppRoleController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('system_role_index');
         }
@@ -127,7 +134,7 @@ class AppRoleController extends AbstractController
     public function delete(Request $request, AppRole $appRole): Response
     {
         if ($this->isCsrfTokenValid('delete'.$appRole->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($appRole);
             $entityManager->flush();
         }

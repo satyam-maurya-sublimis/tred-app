@@ -2,6 +2,7 @@
 
 namespace App\Controller\Security;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Repository\SystemApp\AppUserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,6 +15,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class WelcomeController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/welcome", name="welcome")
      * @param AppUserRepository $appUsersRepository
@@ -27,7 +34,10 @@ class WelcomeController extends AbstractController
          */
         $user = $this->getUser();
         $user->setUserLastLogin(new \DateTime());
-        $this->getDoctrine()->getManager()->flush();
+//        dd($user);
+        $entityManager = $this->managerRegistry->getManager();
+        $entityManager->persist($user);
+        $this->managerRegistry->getManager()->flush();
         return $this->redirectToRoute('core_home');
     }
     /**

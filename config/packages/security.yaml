@@ -7,6 +7,13 @@ security:
         ROLE_SYS_ADMIN: [ROLE_SYS_MODULE_ADMIN ROLE_ALLOWED_TO_SWITCH]
         ROLE_SUPER_ADMIN: [ROLE_SYS_ADMIN, ROLE_APP_USER ROLE_ALLOWED_TO_SWITCH]
 
+    password_hashers:
+        App\Entity\SystemApp\AppUser: 'auto'
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+            algorithm: 'auto'
+            cost: 15
+        # https://symfony.com/doc/current/security/experimental_authenticators.html
+    enable_authenticator_manager: true
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         app_user_provider:
@@ -55,6 +62,7 @@ security:
     access_control:
 #        - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
 #        - { path: ^/$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+#        - { path: ^/login, roles: PUBLIC_ACCESS }
 #        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
-        - {path: ^/welcome, roles: IS_AUTHENTICATED_FULLY }
+#        - {path: ^/welcome, roles: IS_AUTHENTICATED_FULLY }
+#

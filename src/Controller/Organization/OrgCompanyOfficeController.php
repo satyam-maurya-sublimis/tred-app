@@ -3,6 +3,7 @@
 namespace App\Controller\Organization;
 
 use App\Entity\Organization\OrgCompany;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Organization\OrgCompanyOffice;
@@ -13,36 +14,34 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Ramsey\Uuid\Uuid;
-use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @Route("/core/organization/office", name="org_company_office_")
- * @IsGranted("ROLE_SYS_MODULE_ADMIN")
+ * @IsGranted("ROLE_SYS_ADMIN")
  */
 class OrgCompanyOfficeController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param OrgCompanyOfficeRepository $orgCompanyOfficeRepository
-     * @param PaginatorInterface $paginator
      * @param Request $request
      * @return Response
      */
-    public function index(OrgCompanyOfficeRepository $orgCompanyOfficeRepository, PaginatorInterface $paginator, Request $request): Response
+    public function index(OrgCompanyOfficeRepository $orgCompanyOfficeRepository, Request $request): Response
     {
         $company_id = $request->query->get('company_id');
-        if(!$company_id) {
+        if (!$company_id) {
             return $this->redirectToRoute('org_company_index');
-            }
-        $orgCompany = $this->getDoctrine()->getRepository(OrgCompany::class)->find($company_id);
-        $queryBuilder = $orgCompanyOfficeRepository->findBy(['orgCompany' => $company_id]);
-        $pagination = $paginator->paginate(
-            $queryBuilder,
-            $request->query->getInt('page', 1),
-            10
-        );
+        }
+        $orgCompany = $this->managerRegistry->getRepository(OrgCompany::class)->find($company_id);
         return $this->render('organization/org_company_office/index.html.twig', [
-            'org_company_offices' => $pagination,
+            'org_company_offices' => $orgCompanyOfficeRepository->findBy(['orgCompany' => $company_id]),
             'org_company' => $orgCompany,
             'path_index' => 'org_company_office_index',
             'path_add' => 'org_company_office_add',
@@ -61,12 +60,13 @@ class OrgCompanyOfficeController extends AbstractController
     public function new(Request $request): Response
     {
         $company_id = $request->query->get('company_id');
-        if(!$company_id) {
+        if (!$company_id) {
             return $this->redirectToRoute('org_company_index');
         }
 
         $orgCompanyOffice = new OrgCompanyOffice();
-        $orgCompany = $this->getDoctrine()->getRepository(OrgCompany::class)->find($request->query->get('company_id'));
+        $orgCompanyOffice->setOfficeTimeZone('Asia/Kolkata');
+        $orgCompany = $this->managerRegistry->getRepository(OrgCompany::class)->find($request->query->get('company_id'));
         $orgCompanyOffice->setOrgCompany($orgCompany);
 
         $form = $this->createForm(OrgCompanyOfficeType::class, $orgCompanyOffice);
@@ -74,7 +74,7 @@ class OrgCompanyOfficeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $orgCompanyOffice->setRowId(Uuid::uuid4()->toString());
-             $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($orgCompanyOffice);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -100,7 +100,7 @@ class OrgCompanyOfficeController extends AbstractController
     public function show(OrgCompanyOffice $orgCompanyOffice, Request $request): Response
     {
         $company_id = $request->query->get('company_id');
-        if(!$company_id) {
+        if (!$company_id) {
             return $this->redirectToRoute('org_company_index');
         }
 
@@ -123,7 +123,7 @@ class OrgCompanyOfficeController extends AbstractController
     public function edit(Request $request, OrgCompanyOffice $orgCompanyOffice): Response
     {
         $company_id = $request->query->get('company_id');
-        if(!$company_id) {
+        if (!$company_id) {
             return $this->redirectToRoute('org_company_index');
         }
 
@@ -131,7 +131,7 @@ class OrgCompanyOfficeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('org_company_office_index', $request->query->all());
         }
@@ -155,12 +155,12 @@ class OrgCompanyOfficeController extends AbstractController
     public function delete(Request $request, OrgCompanyOffice $orgCompanyOffice): Response
     {
         $company_id = $request->query->get('company_id');
-        if(!$company_id) {
+        if (!$company_id) {
             return $this->redirectToRoute('org_company_index');
         }
 
-        if ($this->isCsrfTokenValid('delete'.$orgCompanyOffice->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+        if ($this->isCsrfTokenValid('delete' . $orgCompanyOffice->getId(), $request->request->get('_token'))) {
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($orgCompanyOffice);
             $entityManager->flush();
         }

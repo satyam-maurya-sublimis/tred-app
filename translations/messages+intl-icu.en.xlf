@@ -1,0 +1,1755 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="en" datatype="plaintext" original="file.ext">
+        <body>
+            <trans-unit id="title.app">
+                <source>title.app</source>
+                <target>TRED</target>
+            </trans-unit>
+            <trans-unit id="title.login">
+                <source>title.login</source>
+                <target>Secure Sign in</target>
+            </trans-unit>
+            <trans-unit id="label.name">
+                <source>label.name</source>
+                <target>Name</target>
+            </trans-unit>
+            <trans-unit id="label.username">
+                <source>label.username</source>
+                <target>Username</target>
+            </trans-unit>
+            <trans-unit id="label.password">
+                <source>label.password</source>
+                <target>Password</target>
+            </trans-unit>
+            <trans-unit id="title.forgot_password">
+                <source>title.forgot_password</source>
+                <target>Forgot Password</target>
+            </trans-unit>
+            <trans-unit id="action.sign_in">
+                <source>action.sign_in</source>
+                <target>Sign in</target>
+            </trans-unit>
+            <trans-unit id="label.remember_me">
+                <source>label.remember_me</source>
+                <target>Remember me</target>
+            </trans-unit>
+            <trans-unit id="action.forgot_password">
+                <source>action.forgot_password</source>
+                <target>Forgot password</target>
+            </trans-unit>
+            <trans-unit id="action.reset_password">
+                <source>action.reset_password</source>
+                <target>Reset Password</target>
+            </trans-unit>
+            <trans-unit id="action.create_password">
+                <source>action.create_password</source>
+                <target>Create Password</target>
+            </trans-unit>
+            <trans-unit id="action.register">
+                <source>action.register</source>
+                <target>Register</target>
+            </trans-unit>
+            <trans-unit id="action.user_profile">
+                <source>action.user_profile</source>
+                <target>Profile</target>
+            </trans-unit>
+            <trans-unit id="action.user_logout">
+                <source>action.user_logout</source>
+                <target>Sign out</target>
+            </trans-unit>
+            <trans-unit id="label.change_password">
+                <source>label.change_password</source>
+                <target>Change Password</target>
+            </trans-unit>
+            <trans-unit id="label.reset_password">
+                <source>label.reset_password</source>
+                <target>Reset Password</target>
+            </trans-unit>
+            <trans-unit id="label.register">
+                <source>label.register</source>
+                <target>Register</target>
+            </trans-unit>
+            <trans-unit id="info.change_password">
+                <source>info.change_password</source>
+                <target>After changing your password, you will be logged out of the application.</target>
+            </trans-unit>
+            <trans-unit id="info.create_password">
+                <source>info.create_password</source>
+                <target>After creating your password, you will be redirected to login page.</target>
+            </trans-unit>
+            <trans-unit id="label.my_profile">
+                <source>label.my_profile</source>
+                <target>My Profile</target>
+            </trans-unit>
+            <trans-unit id="label.current_password">
+                <source>label.current_password</source>
+                <target>Current Password</target>
+            </trans-unit>
+            <trans-unit id="label.new_password">
+                <source>label.new_password</source>
+                <target>New Password</target>
+            </trans-unit>
+            <trans-unit id="label.confirm_new_password">
+                <source>label.confirm_new_password</source>
+                <target>Confirm New Password</target>
+            </trans-unit>
+            <trans-unit id="label.access_denied">
+                <source>label.access_denied</source>
+                <target>Access Denied</target>
+            </trans-unit>
+            <trans-unit id="label.parent">
+                <source>label.parent</source>
+                <target>Parent</target>
+            </trans-unit>
+            <trans-unit id="label.parentId">
+                <source>label.parentId</source>
+                <target>Parent ID</target>
+            </trans-unit>
+            <trans-unit id="label.parent_category">
+                <source>label.parent_category</source>
+                <target>Parent Category</target>
+            </trans-unit>
+            <trans-unit id="label.slug_name">
+                <source>label.slug_name</source>
+                <target>Slug Name</target>
+            </trans-unit>
+            <trans-unit id="label.create">
+                <source>label.create</source>
+                <target>Create</target>
+            </trans-unit>
+            <trans-unit id="label.update">
+                <source>label.update</source>
+                <target>Update</target>
+            </trans-unit>
+            <trans-unit id="label.reply">
+                <source>label.reply</source>
+                <target>Reply</target>
+            </trans-unit>
+            <trans-unit id="label.add">
+                <source>label.add</source>
+                <target>Add</target>
+            </trans-unit>
+            <trans-unit id="label.edit">
+                <source>label.edit</source>
+                <target>Edit</target>
+            </trans-unit>
+            <trans-unit id="label.delete">
+                <source>label.delete</source>
+                <target>Delete</target>
+            </trans-unit>
+            <trans-unit id="label.delete_media">
+                <source>label.delete_media</source>
+                <target>Delete Media</target>
+            </trans-unit>
+            <trans-unit id="label.view">
+                <source>label.view</source>
+                <target>View</target>
+            </trans-unit>
+            <trans-unit id="label.value">
+                <source>label.value</source>
+                <target>Value</target>
+            </trans-unit>
+            <trans-unit id="label.detail">
+                <source>label.detail</source>
+                <target>Detail</target>
+            </trans-unit>
+            <trans-unit id="label.description">
+                <source>label.description</source>
+                <target>Description</target>
+            </trans-unit>
+            <trans-unit id="action.back_to_list">
+                <source>action.back_to_list</source>
+                <target>Back to the list</target>
+            </trans-unit>
+            <trans-unit id="label.back_to_list">
+                <source>label.back_to_list</source>
+                <target>Back to list</target>
+            </trans-unit>
+            <trans-unit id="info.no_record_found">
+                <source>info.no_record_found</source>
+                <target>No record(s) found.</target>
+            </trans-unit>
+            <trans-unit id="info.total_records">
+                <source>info.total_records</source>
+                <target>Total records(s):</target>
+            </trans-unit>
+            <trans-unit id="form.created_successfully">
+                <source>form.created_successfully</source>
+                <target>Form Data Submitted Successfully</target>
+            </trans-unit>
+            <trans-unit id="form.updated_successfully">
+                <source>form.updated_successfully</source>
+                <target>Form Data Updated Successfully</target>
+            </trans-unit>
+            <trans-unit id="label.id">
+                <source>label.id</source>
+                <target>ID</target>
+            </trans-unit>
+            <trans-unit id="label.seq_no">
+                <source>label.seq_no</source>
+                <target>Sequence No</target>
+            </trans-unit>
+            <trans-unit id="label.is_active">
+                <source>label.is_active</source>
+                <target>Active</target>
+            </trans-unit>
+            <trans-unit id="label.is_publish">
+                <source>label.is_publish</source>
+                <target>Publish</target>
+            </trans-unit>
+            <trans-unit id="label.is_approved">
+                <source>label.is_approved</source>
+                <target>Approved</target>
+            </trans-unit>
+            <trans-unit id="label.is_child">
+                <source>label.is_child</source>
+                <target>Is Child</target>
+            </trans-unit>
+            <trans-unit id="help.form.select_multi">
+                    <source>help.form.select_multi</source>
+                    <target>Select one or more from the list</target>
+                </trans-unit>
+            <trans-unit id="help.form.select">
+                <source>help.form.select</source>
+                <target>Select from the list</target>
+            </trans-unit>
+            <trans-unit id="placeholder.form.select_multi">
+                <source>placeholder.form.select_multi</source>
+                <target>Select one or more from the list</target>
+            </trans-unit>
+            <trans-unit id="placeholder.form.select">
+                <source>placeholder.form.select</source>
+                <target>Select..</target>
+            </trans-unit>
+            <trans-unit id="label.group">
+                <source>label.group</source>
+                <target>Groups</target>
+            </trans-unit>
+            <trans-unit id="label.module">
+                    <source>label.module</source>
+                    <target>Modules</target>
+                </trans-unit>
+            <trans-unit id="label.submodule">
+                    <source>label.submodule</source>
+                    <target>Sub Modules</target>
+                </trans-unit>
+            <trans-unit id="label.submodule.access">
+                <source>label.submodule.access</source>
+                <target>Sub Module User(s) Access</target>
+            </trans-unit>
+            <trans-unit id="label.submodule.subModuleParentValue">
+                <source>label.submodule.subModuleParentValue</source>
+                <target>Parent Params</target>
+            </trans-unit>
+            <trans-unit id="label.submodule.subModuleStatic">
+                <source>label.submodule.subModuleStatic</source>
+                <target>Static Module</target>
+            </trans-unit>
+            <trans-unit id="label.submodule.subModuleDisplayMenu">
+                <source>label.submodule.subModuleDisplayMenu</source>
+                <target>Display in Menu</target>
+            </trans-unit>
+            <trans-unit id="label.submodule.subModuleParentId">
+                <source>label.submodule.subModuleParentId</source>
+                <target>Parent Sub Module ID</target>
+            </trans-unit>
+            <trans-unit id="label.role">
+                <source>label.role</source>
+                <target>Roles</target>
+            </trans-unit>
+            <trans-unit id="label.usercategory">
+                <source>label.usercategory</source>
+                <target>User Category</target>
+            </trans-unit>
+            <trans-unit id="label.user">
+                <source>label.user</source>
+                <target>User</target>
+            </trans-unit>
+            <trans-unit id="label.firstName">
+                <source>label.firstName</source>
+                <target>First Name</target>
+            </trans-unit>
+            <trans-unit id="label.lastName">
+                <source>label.lastName</source>
+                <target>Last Name</target>
+            </trans-unit>
+            <trans-unit id="label.middleName">
+                <source>label.middleName</source>
+                <target>Middle Name</target>
+            </trans-unit>
+            <trans-unit id="label.designation">
+                <source>label.designation</source>
+                <target>Designation</target>
+            </trans-unit>
+            <trans-unit id="label.uploadImage">
+                <source>label.uploadImage</source>
+                <target>Upload Image</target>
+            </trans-unit>
+            <trans-unit id="label.ipaccess">
+                <source>label.ipaccess</source>
+                <target>IP Restriction</target>
+            </trans-unit>
+            <trans-unit id="label.lastLogin">
+                <source>label.lastLogin</source>
+                <target>Last login</target>
+            </trans-unit>
+            <trans-unit id="label.website">
+                <source>label.website</source>
+                <target>Website</target>
+            </trans-unit>
+            <trans-unit id="label.organization">
+                <source>label.organization</source>
+                <target>Organization</target>
+            </trans-unit>
+            <trans-unit id="label.company">
+                <source>label.company</source>
+                <target>Company</target>
+            </trans-unit>
+            <trans-unit id="label.office">
+                <source>label.office</source>
+                <target>Office</target>
+            </trans-unit>
+            <trans-unit id="label.address">
+                <source>label.address</source>
+                <target>Address</target>
+            </trans-unit>
+            <trans-unit id="label.addressOne">
+                <source>label.addressOne</source>
+                <target>Address One</target>
+            </trans-unit>
+            <trans-unit id="label.addressTwo">
+                <source>label.addressTwo</source>
+                <target>Address Two</target>
+            </trans-unit>
+            <trans-unit id="label.pincode">
+                <source>label.pincode</source>
+                <target>Pincode</target>
+            </trans-unit>
+            <trans-unit id="label.city">
+                <source>label.city</source>
+                <target>City</target>
+            </trans-unit>
+            <trans-unit id="label.latitude">
+                <source>label.latitude</source>
+                <target>Latitude</target>
+            </trans-unit>
+            <trans-unit id="label.longitude">
+                <source>label.longitude</source>
+                <target>Longitude</target>
+            </trans-unit>
+            <trans-unit id="label.state">
+                <source>label.state</source>
+                <target>State / Region</target>
+            </trans-unit>
+            <trans-unit id="label.fips_code">
+                <source>label.fips_code</source>
+                <target>Fips Code</target>
+            </trans-unit>
+            <trans-unit id="label.country">
+                <source>label.country</source>
+                <target>Country</target>
+            </trans-unit>
+            <trans-unit id="label.telephone">
+                <source>label.telephone</source>
+                <target>Telephone</target>
+            </trans-unit>
+            <trans-unit id="label.phone">
+                <source>label.phone</source>
+                <target>Phone</target>
+            </trans-unit>
+            <trans-unit id="label.fax">
+                <source>label.fax</source>
+                <target>Fax</target>
+            </trans-unit>
+            <trans-unit id="label.type">
+                <source>label.type</source>
+                <target>Type</target>
+            </trans-unit>
+            <trans-unit id="label.alt">
+                <source>label.alt</source>
+                <target>Alternate Text</target>
+            </trans-unit>
+            <trans-unit id="label.start_date">
+                <source>label.start_date</source>
+                <target>Start Date</target>
+            </trans-unit>
+            <trans-unit id="label.end_date">
+                <source>label.end_date</source>
+                <target>End Date</target>
+            </trans-unit>
+            <trans-unit id="label.actual_cost">
+                <source>label.actual_cost</source>
+                <target>Actual Cost</target>
+            </trans-unit>
+            <trans-unit id="label.email">
+                <source>label.email</source>
+                <target>Email</target>
+            </trans-unit>
+            <trans-unit id="label.email_primary">
+                <source>label.email_primary</source>
+                <target>Email</target>
+            </trans-unit>
+            <trans-unit id="label.email_secondary">
+                <source>label.email_secondary</source>
+                <target>Secondary Email</target>
+            </trans-unit>
+            <trans-unit id="label.is_email_opt_out">
+                <source>label.is_email_opt_out</source>
+                <target>Email Opt Out</target>
+            </trans-unit>
+            <trans-unit id="label.timezone">
+                <source>label.timezone</source>
+                <target>Time Zone</target>
+            </trans-unit>
+            <trans-unit id="label.tax_category">
+                <source>label.tax_category</source>
+                <target>Tax Category</target>
+            </trans-unit>
+            <trans-unit id="label.product">
+                <source>label.product</source>
+                <target>Product</target>
+            </trans-unit>
+            <trans-unit id="label.enable_for_organization">
+                <source>label.enable_for_organization</source>
+                <target>Enable for Organization</target>
+            </trans-unit>
+            <trans-unit id="label.code">
+                <source>label.code</source>
+                <target>Code</target>
+            </trans-unit>
+            <trans-unit id="label.currency">
+                <source>label.currency</source>
+                <target>Currency</target>
+            </trans-unit>
+            <trans-unit id="label.capital">
+                <source>label.capital</source>
+                <target>Capital</target>
+            </trans-unit>
+            <trans-unit id="label.iso3">
+                <source>label.iso3</source>
+                <target>ISO 3</target>
+            </trans-unit>
+            <trans-unit id="label.iso2">
+                <source>label.iso2</source>
+                <target>ISO 2</target>
+            </trans-unit>
+            <trans-unit id="label.rating">
+                <source>label.rating</source>
+                <target>Rating</target>
+            </trans-unit>
+            <trans-unit id="label.like">
+                <source>label.like</source>
+                <target>Like</target>
+            </trans-unit>
+            <trans-unit id="label.mobile">
+                <source>label.mobile</source>
+                <target>Mobile Number</target>
+            </trans-unit>
+            <trans-unit id="label.calling_code">
+                <source>label.calling_code</source>
+                <target>Calling Code</target>
+            </trans-unit>
+            <trans-unit id="label.industry">
+                <source>label.industry</source>
+                <target>Industry</target>
+            </trans-unit>
+            <trans-unit id="label.account_category">
+                <source>label.account_category</source>
+                <target>Account Category</target>
+            </trans-unit>
+            <trans-unit id="label.salutation">
+                <source>label.salutation</source>
+                <target>Salutation</target>
+            </trans-unit>
+            <trans-unit id="label.lead">
+                <source>label.lead</source>
+                <target>Lead</target>
+            </trans-unit>
+            <trans-unit id="label.lead_source">
+                <source>label.lead_source</source>
+                <target>Lead Source</target>
+            </trans-unit>
+            <trans-unit id="label.lead_status">
+                <source>label.lead_status</source>
+                <target>Lead Status</target>
+            </trans-unit>
+            <trans-unit id="label.lead_description">
+                <source>label.lead_description</source>
+                <target>Lead Description</target>
+            </trans-unit>
+            <trans-unit id="label.sale_stage">
+                <source>label.sale_stage</source>
+                <target>Sale Stage</target>
+            </trans-unit>
+            <trans-unit id="label.office_category">
+                <source>label.office_category</source>
+                <target>Office Category</target>
+            </trans-unit>
+            <trans-unit id="label.fiscal_year">
+                <source>label.fiscal_year</source>
+                <target>Fiscal Year</target>
+            </trans-unit>
+            <trans-unit id="label.company_logo">
+                <source>label.company_logo</source>
+                <target>Company Logo</target>
+            </trans-unit>
+            <trans-unit id="label.company_office">
+                <source>label.company_office</source>
+                <target>Company Office</target>
+            </trans-unit>
+            <trans-unit id="label.company_user">
+                <source>label.company_user</source>
+                <target>Company User</target>
+            </trans-unit>
+            <trans-unit id="label.office_email">
+                <source>label.office_email</source>
+                <target>Office Email</target>
+            </trans-unit>
+            <trans-unit id="help.company">
+                <source>help.company</source>
+                <target>Enter your company legal name</target>
+            </trans-unit>
+            <trans-unit id="help.company_website">
+                <source>help.company_website</source>
+                <target>Enter your company official website</target>
+            </trans-unit>
+            <trans-unit id="help.company_gst">
+                <source>help.company_gst</source>
+                <target>Enter your company GST number</target>
+            </trans-unit>
+            <trans-unit id="help.company_pan">
+                <source>help.company_pan</source>
+                <target>Enter your company PAN detail</target>
+            </trans-unit>
+            <trans-unit id="help.company_office">
+                <source>help.company_office</source>
+                <target>Enter your office name</target>
+            </trans-unit>
+            <trans-unit id="label.contact_detail">
+                <source>label.contact_detail</source>
+                <target>Contact Detail</target>
+            </trans-unit>
+            <trans-unit id="label.contact">
+                <source>label.contact</source>
+                <target>Contact</target>
+            </trans-unit>
+            <trans-unit id="label.account_owner">
+                <source>label.account_owner</source>
+                <target>Account Owner</target>
+            </trans-unit>
+            <trans-unit id="label.address_category">
+                <source>label.address_category</source>
+                <target>Address Category</target>
+            </trans-unit>
+            <trans-unit id="label.job_title">
+                <source>label.job_title</source>
+                <target>Job Title</target>
+            </trans-unit>
+            <trans-unit id="label.department">
+                <source>label.department</source>
+                <target>Department</target>
+            </trans-unit>
+            <trans-unit id="label.office_tel">
+                <source>label.office_tel</source>
+                <target>Office Number</target>
+            </trans-unit>
+            <trans-unit id="label.status">
+                <source>label.status</source>
+                <target>Status</target>
+            </trans-unit>
+            <trans-unit id="label.source">
+                <source>label.source</source>
+                <target>Source</target>
+            </trans-unit>
+            <trans-unit id="label.target">
+                <source>label.target</source>
+                <target>Target</target>
+            </trans-unit>
+            <trans-unit id="label.account">
+                <source>label.account</source>
+                <target>Account</target>
+            </trans-unit>
+            <trans-unit id="label.member_account">
+                <source>label.member_account</source>
+                <target>Member Account</target>
+            </trans-unit>
+            <trans-unit id="label.account_number">
+                <source>label.account_number</source>
+                <target>Account Number</target>
+            </trans-unit>
+            <trans-unit id="label.is_primary">
+                <source>label.is_primary</source>
+                <target>Primary</target>
+            </trans-unit>
+            <trans-unit id="label.convert">
+                <source>label.convert</source>
+                <target>Convert</target>
+            </trans-unit>
+            <trans-unit id="label.duplicate">
+                <source>label.duplicate</source>
+                <target>Duplicate</target>
+            </trans-unit>
+            <trans-unit id="label.print">
+                <source>label.print</source>
+                <target>Print</target>
+            </trans-unit>
+            <trans-unit id="label.ownership">
+                <source>label.ownership</source>
+                <target>Ownership</target>
+            </trans-unit>
+            <trans-unit id="label.page">
+                <source>label.page</source>
+                <target>Page</target>
+            </trans-unit>
+            <trans-unit id="label.faq">
+                <source>label.faq</source>
+                <target>Faq</target>
+            </trans-unit>
+            <trans-unit id="label.banner">
+                <source>label.banner</source>
+                <target>Banner</target>
+            </trans-unit>
+            <trans-unit id="label.title">
+                <source>label.title</source>
+                <target>Title</target>
+            </trans-unit>
+            <trans-unit id="label.content">
+                <source>label.content</source>
+                <target>Content</target>
+            </trans-unit>
+            <trans-unit id="label.content_block">
+                <source>label.content_block</source>
+                <target>Content Block</target>
+            </trans-unit>
+            <trans-unit id="label.video">
+                <source>label.video</source>
+                <target>Video Name</target>
+            </trans-unit>
+            <trans-unit id="label.embedded_url">
+                <source>label.embedded_url</source>
+                <target>Embedded URL</target>
+            </trans-unit>
+            <trans-unit id="label.routing">
+                <source>label.routing</source>
+                <target>Page Routing</target>
+            </trans-unit>
+            <trans-unit id="label.meta_tag">
+                <source>label.meta_tag</source>
+                <target>Meta Tags</target>
+            </trans-unit>
+			<trans-unit id="label.schema">
+                <source>label.schema</source>
+                <target>Schema</target>
+            </trans-unit>
+            <trans-unit id="label.meta_title">
+                <source>label.meta_title</source>
+                <target>Meta Title</target>
+            </trans-unit>
+            <trans-unit id="label.meta_keyword">
+                <source>label.meta_keyword</source>
+                <target>Meta Keyword</target>
+            </trans-unit>
+            <trans-unit id="label.meta_description">
+                <source>label.meta_description</source>
+                <target>Meta Description</target>
+            </trans-unit>
+            <trans-unit id="label.focus_key_phrase">
+                <source>label.focus_key_phrase</source>
+                <target>Focus Key Phrase</target>
+            </trans-unit>
+            <trans-unit id="label.key_phrase_synonyms">
+                <source>label.key_phrase_synonyms</source>
+                <target>Key Phrase Synonyms</target>
+            </trans-unit>
+            <trans-unit id="label.canonical_url">
+                <source>label.canonical_url</source>
+                <target>Canonical URL</target>
+            </trans-unit>
+            <trans-unit id="label.parent_page">
+                <source>label.parent_page</source>
+                <target>Parent Page</target>
+            </trans-unit>
+            <trans-unit id="label.valid_from_date">
+                <source>label.valid_from_date</source>
+                <target>Valid From Date</target>
+            </trans-unit>
+            <trans-unit id="label.valid_to_date">
+                <source>label.valid_to_date</source>
+                <target>Valid To Date</target>
+            </trans-unit>
+            <trans-unit id="label.question">
+                <source>label.question</source>
+                <target>Question</target>
+            </trans-unit>
+            <trans-unit id="label.answer">
+                <source>label.answer</source>
+                <target>Answer</target>
+            </trans-unit>
+            <trans-unit id="label.faq_detail">
+                <source>label.faq_detail</source>
+                <target>Faq Detail</target>
+            </trans-unit>
+            <trans-unit id="label.pressroom">
+                <source>label.pressroom</source>
+                <target>Press Room</target>
+            </trans-unit>
+            <trans-unit id="label.date">
+                <source>label.date</source>
+                <target>Date</target>
+            </trans-unit>
+            <trans-unit id="label.subscription">
+                <source>label.subscription</source>
+                <target>Subscription</target>
+            </trans-unit>
+            <trans-unit id="label.testimonial">
+                <source>label.testimonial</source>
+                <target>Testimonial</target>
+            </trans-unit>
+            <trans-unit id="label.blog">
+                <source>label.blog</source>
+                <target>Blog</target>
+            </trans-unit>
+            <trans-unit id="label.brief">
+                <source>label.brief</source>
+                <target>Brief</target>
+            </trans-unit>
+            <trans-unit id="label.article">
+                <source>label.article</source>
+                <target>Article</target>
+            </trans-unit>
+            <trans-unit id="label.articleby">
+                <source>label.articleby</source>
+                <target>Article By</target>
+            </trans-unit>
+            <trans-unit id="label.image">
+                <source>label.image</source>
+                <target>Image</target>
+            </trans-unit>
+            <trans-unit id="label.intro">
+                <source>label.intro</source>
+                <target>Intro</target>
+            </trans-unit>
+            <trans-unit id="label.createby">
+                <source>label.createby</source>
+                <target>Created By</target>
+            </trans-unit>
+            <trans-unit id="label.createtime">
+                <source>label.createtime</source>
+                <target>Create Time</target>
+            </trans-unit>
+            <trans-unit id="label.updateby">
+                <source>label.updateby</source>
+                <target>Updated By</target>
+            </trans-unit>
+            <trans-unit id="label.updatetime">
+                <source>label.updatetime</source>
+                <target>Update Time</target>
+            </trans-unit>
+            <trans-unit id="label.comment">
+                <source>label.comment</source>
+                <target>Comment</target>
+            </trans-unit>
+            <trans-unit id="label.article_category">
+                <source>label.article_category</source>
+                <target>Article Category</target>
+            </trans-unit>
+            <trans-unit id="label.category">
+                <source>label.category</source>
+                <target>Category</target>
+            </trans-unit>
+            <trans-unit id="label.subcategory">
+                <source>label.subcategory</source>
+                <target>Sub Category</target>
+            </trans-unit>
+            <trans-unit id="label.media">
+                <source>label.media</source>
+                <target>Media</target>
+            </trans-unit>
+            <trans-unit id="label.keyword">
+                <source>label.keyword</source>
+                <target>Keyword</target>
+            </trans-unit>
+            <trans-unit id="label.tag">
+                <source>label.tag</source>
+                <target>Tags</target>
+            </trans-unit>
+            <trans-unit id="label.specification">
+                <source>label.specification</source>
+                <target>Specification</target>
+            </trans-unit>
+            <trans-unit id="label.testimonial_for">
+                <source>label.testimonial_for</source>
+                <target>Testimonial For</target>
+            </trans-unit>
+            <trans-unit id="label.remarks">
+                <source>label.remarks</source>
+                <target>Remarks</target>
+            </trans-unit>
+            <trans-unit id="label.social_title">
+                <source>label.social_title</source>
+                <target>Social Title</target>
+            </trans-unit>
+            <trans-unit id="label.social_description">
+                <source>label.social_description</source>
+                <target>Social Description</target>
+            </trans-unit>
+            <trans-unit id="label.social_type">
+                <source>label.social_type</source>
+                <target>Social Type</target>
+            </trans-unit>
+            <trans-unit id="label.social_image">
+                <source>label.social_image</source>
+                <target>Social Image</target>
+            </trans-unit>
+            <trans-unit id="label.gst">
+                <source>label.gst</source>
+                <target>GST Number</target>
+            </trans-unit>
+            <trans-unit id="label.pan">
+                <source>label.pan</source>
+                <target>PAN</target>
+            </trans-unit>
+            <trans-unit id="label.area_city">
+                <source>label.area_city</source>
+                <target>Area in City</target>
+            </trans-unit>
+            <trans-unit id="label.account_status">
+                <source>label.account_status</source>
+                <target>Account Status</target>
+            </trans-unit>
+            <trans-unit id="label.brand">
+                <source>label.brand</source>
+                <target>Brand</target>
+            </trans-unit>
+            <trans-unit id="label.furnishing">
+                <source>label.furnishing</source>
+                <target>Furnishing Type</target>
+            </trans-unit>
+            <trans-unit id="label.highlight">
+                <source>label.highlight</source>
+                <target>Highlights</target>
+            </trans-unit>
+            <trans-unit id="label.highlights">
+                <source>label.highlights</source>
+                <target>Highlights</target>
+            </trans-unit>
+            <trans-unit id="label.nature_of_business">
+                <source>label.nature_of_business</source>
+                <target>Nature of Business</target>
+            </trans-unit>
+            <trans-unit id="label.notification_status">
+                <source>label.notification_status</source>
+                <target>Notification Status</target>
+            </trans-unit>
+            <trans-unit id="label.packing_details">
+                <source>label.packing_details</source>
+                <target>Packing Details</target>
+            </trans-unit>
+            <trans-unit id="label.product_category">
+                <source>label.product_category</source>
+                <target>Product Category</target>
+            </trans-unit>
+            <trans-unit id="label.product_feature">
+                <source>label.product_feature</source>
+                <target>Product Feature</target>
+            </trans-unit>
+            <trans-unit id="label.product_service_mode">
+                <source>label.product_service_mode</source>
+                <target>Product Service Mode</target>
+            </trans-unit>
+            <trans-unit id="label.product_subtype">
+                <source>label.product_subtype</source>
+                <target>Product SubType</target>
+            </trans-unit>
+            <trans-unit id="label.product_type">
+                <source>label.product_type</source>
+                <target>Product Type</target>
+            </trans-unit>
+            <trans-unit id="label.product_use">
+                <source>label.product_use</source>
+                <target>Product Use</target>
+            </trans-unit>
+            <trans-unit id="label.project_amenities">
+                <source>label.project_amenities</source>
+                <target>Amenities</target>
+            </trans-unit>
+            <trans-unit id="label.project_amenity">
+                <source>label.project_amenity</source>
+                <target>Amenity</target>
+            </trans-unit>
+            <trans-unit id="label.project_specification">
+                <source>label.project_specification</source>
+                <target>Product Specification</target>
+            </trans-unit>
+            <trans-unit id="label.project_type">
+                <source>label.project_type</source>
+                <target>Project Type</target>
+            </trans-unit>
+            <trans-unit id="label.request_for_price_or_setup_price">
+                <source>label.request_for_price_or_setup_price</source>
+                <target>Request for Price or Setup Price</target>
+            </trans-unit>
+            <trans-unit id="label.vendor_type">
+                <source>label.vendor_type</source>
+                <target>Vendor Type</target>
+            </trans-unit>
+            <trans-unit id="label.days_of_week">
+                <source>label.days_of_week</source>
+                <target>Days of Week</target>
+            </trans-unit>
+            <trans-unit id="label.delivery_time">
+                <source>label.delivery_time</source>
+                <target>Delivery Time</target>
+            </trans-unit>
+            <trans-unit id="label.upload_document_type">
+                <source>label.upload_document_type</source>
+                <target>Upload Document Type</target>
+            </trans-unit>
+            <trans-unit id="label.document_for">
+                <source>label.document_for</source>
+                <target>Document For</target>
+            </trans-unit>
+            <trans-unit id="label.user_member_type">
+                <source>label.user_member_type</source>
+                <target>User Member Type</target>
+            </trans-unit>
+            <trans-unit id="label.bid_status">
+                <source>label.bid_status</source>
+                <target>BID Status</target>
+            </trans-unit>
+            <trans-unit id="label.call_purpose">
+                <source>label.call_purpose</source>
+                <target>Call Purpose</target>
+            </trans-unit>
+            <trans-unit id="label.call_status">
+                <source>label.call_status</source>
+                <target>Call Status</target>
+            </trans-unit>
+            <trans-unit id="label.client_type">
+                <source>label.client_type</source>
+                <target>Client Type</target>
+            </trans-unit>
+            <trans-unit id="label.meeting_status">
+                <source>label.meeting_status</source>
+                <target>Meeting Status</target>
+            </trans-unit>
+            <trans-unit id="label.message_status">
+                <source>label.message_status</source>
+                <target>Message Status</target>
+            </trans-unit>
+            <trans-unit id="label.order_status">
+                <source>label.order_status</source>
+                <target>Order Status</target>
+            </trans-unit>
+            <trans-unit id="label.task_status">
+                <source>label.task_status</source>
+                <target>Task Status</target>
+            </trans-unit>
+            <trans-unit id="label.consumption_category">
+                <source>label.consumption_category</source>
+                <target>Consumption Category</target>
+            </trans-unit>
+            <trans-unit id="label.material_category">
+                <source>label.material_category</source>
+                <target>Material Category</target>
+            </trans-unit>
+            <trans-unit id="label.sub_category">
+                <source>label.sub_category</source>
+                <target>Sub Category</target>
+            </trans-unit>
+            <trans-unit id="label.exchange_rate">
+                <source>label.exchange_rate</source>
+                <target>Exchange Rate</target>
+            </trans-unit>
+            <trans-unit id="label.payment_gateway">
+                <source>label.payment_gateway</source>
+                <target>Payment Gateway</target>
+            </trans-unit>
+            <trans-unit id="label.payment_gateway_charges">
+                <source>label.payment_gateway_charges</source>
+                <target>Payment Gateway Charges</target>
+            </trans-unit>
+            <trans-unit id="label.payment_mode">
+                <source>label.payment_mode</source>
+                <target>Payment Mode</target>
+            </trans-unit>
+            <trans-unit id="label.service_charges">
+                <source>label.service_charges</source>
+                <target>Service Charges</target>
+            </trans-unit>
+            <trans-unit id="label.tax">
+                <source>label.tax</source>
+                <target>Tax</target>
+            </trans-unit>
+            <trans-unit id="label.tax_group">
+                <source>label.tax_group</source>
+                <target>Tax Group</target>
+            </trans-unit>
+            <trans-unit id="label.tax_option">
+                <source>label.tax_option</source>
+                <target>Tax Option</target>
+            </trans-unit>
+            <trans-unit id="label.tax_amount_type">
+                <source>label.tax_amount_type</source>
+                <target>Tax Amount Type</target>
+            </trans-unit>
+            <trans-unit id="label.service_charges_amount_type">
+                <source>label.service_charges_amount_type</source>
+                <target>Service Charges Amount Type</target>
+            </trans-unit>
+            <trans-unit id="label.property_type">
+                <source>label.property_type</source>
+                <target>Property Status</target>
+            </trans-unit>
+<!--            <trans-unit id="label.project_button">-->
+<!--                <source>label.project_button</source>-->
+<!--                <target>Project</target>-->
+<!--            </trans-unit>-->
+            <trans-unit id="label.project_button">
+                <source>label.project_button</source>
+                <target>Property</target>
+            </trans-unit>
+            <trans-unit id="label.project_name">
+                <source>label.project_name</source>
+                <target>Property Name</target>
+            </trans-unit>
+<!--            <trans-unit id="label.project_name">-->
+<!--                <source>label.project_name</source>-->
+<!--                <target>Project Name</target>-->
+<!--            </trans-unit>-->
+            <trans-unit id="label.app_user">
+                <source>label.app_user</source>
+                <target>Organization / Member Name</target>
+            </trans-unit>
+            <trans-unit id="label.builder_name">
+                <source>label.builder_name</source>
+                <target>Builder Name</target>
+            </trans-unit>
+            <trans-unit id="label.tower_name">
+                <source>label.tower_name</source>
+                <target>Tower Name</target>
+            </trans-unit>
+            <trans-unit id="label.phase">
+                <source>label.phase</source>
+                <target>Phase</target>
+            </trans-unit>
+            <trans-unit id="label.maharera_reg_no">
+                <source>label.maharera_reg_no</source>
+                <target>RERA ID</target>
+            </trans-unit>
+<!--            <trans-unit id="label.maharera_reg_no">-->
+<!--                <source>label.maharera_reg_no</source>-->
+<!--                <target>MAHARERA Reg. No</target>-->
+<!--            </trans-unit>-->
+            <trans-unit id="label.launch_year">
+                <source>label.launch_year</source>
+                <target>Launch Year</target>
+            </trans-unit>
+            <trans-unit id="label.approved_by">
+                <source>label.approved_by</source>
+                <target>Approved by</target>
+            </trans-unit>
+            <trans-unit id="label.project_overview">
+                <source>label.project_overview</source>
+                <target>Property Details</target>
+            </trans-unit>
+            <trans-unit id="label.occupancy_cerificate">
+                <source>label.occupancy_cerificate</source>
+                <target>Occupancy Certificate</target>
+            </trans-unit>
+            <trans-unit id="label.commencement_certificate">
+                <source>label.commencement_certificate</source>
+                <target>Commencement Certificate</target>
+            </trans-unit>
+            <trans-unit id="label.total_number_towers">
+                <source>label.total_number_towers</source>
+                <target>Total No of Towers</target>
+            </trans-unit>
+            <trans-unit id="label.total_number_floor">
+                <source>label.total_number_floor</source>
+                <target>Total No. of Floors</target>
+            </trans-unit>
+            <trans-unit id="label.project_area">
+                <source>label.project_area</source>
+                <target>Area</target>
+            </trans-unit>
+            <trans-unit id="label.open_space_percentage">
+                <source>label.open_space_percentage</source>
+                <target>Open Space %</target>
+            </trans-unit>
+            <trans-unit id="label.org_company">
+                <source>label.org_company</source>
+                <target>Company</target>
+            </trans-unit>
+            <trans-unit id="label.type_of_partner">
+                <source>label.type_of_partner</source>
+                <target>Type of Partner</target>
+            </trans-unit>
+            <trans-unit id="label.partner_organization">
+                <source>label.partner_organization</source>
+                <target>Partner Organization</target>
+            </trans-unit>
+            <trans-unit id="label.date_of_birth">
+                <source>label.date_of_birth</source>
+                <target>Date Of Birth</target>
+            </trans-unit>
+            <trans-unit id="label.partner">
+                <source>label.partner</source>
+                <target>Partner</target>
+            </trans-unit>
+            <trans-unit id="label.vendor_partner">
+                <source>label.vendor_partner</source>
+                <target>Vendor / Partner</target>
+            </trans-unit>
+            <trans-unit id="label.vendor_partner_name">
+                <source>label.vendor_partner_name</source>
+                <target>Vendor / Partner Name</target>
+            </trans-unit>
+            <trans-unit id="label.vendor_partner_created_date">
+                <source>label.vendor_partner_created_date</source>
+                <target>Vendor / Partner Created Date</target>
+            </trans-unit>
+            <trans-unit id="label.tower_created_date">
+                <source>label.tower_created_date</source>
+                <target>Tower Created Date</target>
+            </trans-unit>
+            <trans-unit id="label.company_name">
+                <source>label.company_name</source>
+                <target>Company Name</target>
+            </trans-unit>
+            <trans-unit id="label.operating_cities">
+                <source>label.operating_cities</source>
+                <target>Operating Cities</target>
+            </trans-unit>
+            <trans-unit id="label.experience">
+                <source>label.experience</source>
+                <target>Experience</target>
+            </trans-unit>
+            <trans-unit id="label.gst_number">
+                <source>label.gst_number</source>
+                <target>GST Number</target>
+            </trans-unit>
+            <trans-unit id="label.legal_status_of_firm">
+                <source>label.legal_status_of_firm</source>
+                <target>Legal Status of Firm</target>
+            </trans-unit>
+            <trans-unit id="label.year_of_establishment">
+                <source>label.year_of_establishment</source>
+                <target>Year of Establishment</target>
+            </trans-unit>
+            <trans-unit id="label.no_of_employees">
+                <source>label.no_of_employees</source>
+                <target>No Of Employees</target>
+            </trans-unit>
+            <trans-unit id="label.annual_turn_over">
+                <source>label.annual_turn_over</source>
+                <target>Annual Turn Over</target>
+            </trans-unit>
+            <trans-unit id="label.projects_completed">
+                <source>label.projects_completed</source>
+                <target>Projects Completed</target>
+            </trans-unit>
+            <trans-unit id="label.website_url">
+                <source>label.website_url</source>
+                <target>Website URL</target>
+            </trans-unit>
+            <trans-unit id="label.introduction">
+                <source>label.introduction</source>
+                <target>Introduction</target>
+            </trans-unit>
+            <trans-unit id="label.vendor_partner_office">
+                <source>label.vendor_partner_office</source>
+                <target>Vendor Partner Office</target>
+            </trans-unit>
+            <trans-unit id="label.office_name">
+                <source>label.office_name</source>
+                <target>Office Name</target>
+            </trans-unit>
+            <trans-unit id="label.Office_type">
+                <source>label.Office_type</source>
+                <target>Office Type</target>
+            </trans-unit>
+            <trans-unit id="label.vendor_partner_user">
+                <source>label.vendor_partner_user</source>
+                <target>Vendor / Partner User</target>
+            </trans-unit>
+            <trans-unit id="label.user_email">
+                <source>label.user_email</source>
+                <target>User Email</target>
+            </trans-unit>
+            <trans-unit id="label.contact_no_country_code">
+                <source>label.contact_no_country_code</source>
+                <target>Country Code</target>
+            </trans-unit>
+            <trans-unit id="label.contact_no_city_code">
+                <source>label.contact_no_city_code</source>
+                <target>City Code</target>
+            </trans-unit>
+            <trans-unit id="label.contact_no">
+                <source>label.contact_no</source>
+                <target>Contact Number</target>
+            </trans-unit>
+            <trans-unit id="label.working_time_from">
+                <source>label.working_time_from</source>
+                <target>Working Time From</target>
+            </trans-unit>
+            <trans-unit id="label.working_time_to">
+                <source>label.working_time_to</source>
+                <target>Working Time To</target>
+            </trans-unit>
+            <trans-unit id="label.landline_number">
+                <source>label.landline_number</source>
+                <target>Landline Number</target>
+            </trans-unit>
+            <trans-unit id="label.enable_access_to_vendor_portal">
+                <source>label.enable_access_to_vendor_portal</source>
+                <target>Enable access to Vendor Portal</target>
+            </trans-unit>
+            <trans-unit id="label.profile_pic">
+                <source>label.profile_pic</source>
+                <target>Profile Pic</target>
+            </trans-unit>
+            <trans-unit id="label.agent_type">
+                <source>label.agent_type</source>
+                <target>Agent Type</target>
+            </trans-unit>
+            <trans-unit id="label.property_in">
+                <source>label.property_in</source>
+                <target>Property In</target>
+            </trans-unit>
+            <trans-unit id="label.facing">
+                <source>label.facing</source>
+                <target>Facing</target>
+            </trans-unit>
+            <trans-unit id="label.posted_by">
+                <source>label.posted_by</source>
+                <target>Posted By</target>
+            </trans-unit>
+            <trans-unit id="label.possession">
+                <source>label.possession</source>
+                <target>Possession</target>
+            </trans-unit>
+            <trans-unit id="label.icon">
+                <source>label.icon</source>
+                <target>Icon</target>
+            </trans-unit>
+            <trans-unit id="label.desktop_image">
+                <source>label.desktop_image</source>
+                <target>Desktop - 1280 x 350 pixels</target>
+            </trans-unit>
+            <trans-unit id="label.tablet_image">
+                <source>label.tablet_image</source>
+                <target>Tablet - 767 x 350 pixels</target>
+            </trans-unit>
+            <trans-unit id="label.mobile_image">
+                <source>label.mobile_image</source>
+                <target>Mobile - 350 x 250 pixels</target>
+            </trans-unit>
+            <trans-unit id="label.project_floor">
+                <source>label.project_floor</source>
+                <target>Floors</target>
+            </trans-unit>
+            <trans-unit id="label.project_created_date">
+                <source>label.project_created_date</source>
+                <target>Project Created Date</target>
+            </trans-unit>
+            <trans-unit id="label.possession_on">
+                <source>label.possession_on</source>
+                <target>Possession On</target>
+            </trans-unit>
+            <trans-unit id="label.rera_id">
+                <source>label.rera_id</source>
+                <target>RERA ID</target>
+            </trans-unit>
+            <trans-unit id="label.configuration">
+                <source>label.configuration</source>
+                <target>Configuration</target>
+            </trans-unit>
+<!--            <trans-unit id="label.property_type_new">-->
+<!--                <source>label.property_type_new</source>-->
+<!--                <target>Project Type</target>-->
+<!--            </trans-unit>-->
+            <trans-unit id="label.property_type_new">
+                <source>label.property_type_new</source>
+                <target>Property Type</target>
+            </trans-unit>
+            <trans-unit id="label.room_configuration">
+                <source>label.room_configuration</source>
+                <target>Room Configuration</target>
+            </trans-unit>
+            <trans-unit id="label.super_area">
+                <source>label.super_area</source>
+                <target>Super Area</target>
+            </trans-unit>
+            <trans-unit id="label.price_per">
+                <source>label.price_per</source>
+                <target>Price Per</target>
+            </trans-unit>
+            <trans-unit id="label.area">
+                <source>label.area</source>
+                <target>Area</target>
+            </trans-unit>
+            <trans-unit id="label.carpet_area">
+                <source>label.carpet_area</source>
+                <target>Carpet Area</target>
+            </trans-unit>
+            <trans-unit id="label.loading">
+                <source>label.loading</source>
+                <target>Loading</target>
+            </trans-unit>
+            <trans-unit id="label.car_parking">
+                <source>label.car_parking</source>
+                <target>Car Parking</target>
+            </trans-unit>
+            <trans-unit id="label.bank_approved">
+                <source>label.bank_approved</source>
+                <target>Bank Approved</target>
+            </trans-unit>
+            <trans-unit id="label.occupancy_certificate">
+                <source>label.occupancy_certificate</source>
+                <target>Occupancy Certificate</target>
+            </trans-unit>
+<!--            <trans-unit id="label.total_no_units">-->
+<!--                <source>label.total_no_units</source>-->
+<!--                <target>Total No. Units</target>-->
+<!--            </trans-unit>-->
+            <trans-unit id="label.total_no_units">
+                <source>label.total_no_units</source>
+                <target>Total No. Floors</target>
+            </trans-unit>
+            <trans-unit id="label.project_feature">
+                <source>label.project_feature</source>
+                <target>Feature</target>
+            </trans-unit>
+<!--            <trans-unit id="label.project_feature">-->
+<!--                <source>label.project_feature</source>-->
+<!--                <target>Project Feature</target>-->
+<!--            </trans-unit>-->
+            <trans-unit id="label.device_type">
+                <source>label.device_type</source>
+                <target>Device Type</target>
+            </trans-unit>
+            <trans-unit id="label.image_resolution">
+                <source>label.image_resolution</source>
+                <target>Image Resolution</target>
+            </trans-unit>
+            <trans-unit id="label.upload_image">
+                <source>label.upload_image</source>
+                <target>Upload Image/Video</target>
+            </trans-unit>
+            <trans-unit id="label.media_file_path">
+                <source>label.media_file_path</source>
+                <target>Media File Path</target>
+            </trans-unit>
+            <trans-unit id="label.media_file_type">
+                <source>label.media_file_type</source>
+                <target>Media File Type</target>
+            </trans-unit>
+            <trans-unit id="label.media_file_name">
+                <source>label.media_file_name</source>
+                <target>Media File Name</target>
+            </trans-unit>
+            <trans-unit id="label.media_name">
+                <source>label.media_name</source>
+                <target>Media Name</target>
+            </trans-unit>
+            <trans-unit id="label.media_alt_text">
+                <source>label.media_alt_text</source>
+                <target>Media Alt Text</target>
+            </trans-unit>
+            <trans-unit id="label.media_title">
+                <source>label.media_title</source>
+                <target>Media Title</target>
+            </trans-unit>
+            <trans-unit id="label.media_url">
+                <source>label.media_url</source>
+                <target>Media URL</target>
+            </trans-unit>
+            <trans-unit id="label.map_view">
+                <source>label.map_view</source>
+                <target>Map View</target>
+            </trans-unit>
+            <trans-unit id="label.location_latitude">
+                <source>label.location_latitude</source>
+                <target>Location Latitude</target>
+            </trans-unit>
+            <trans-unit id="label.location_longitude">
+                <source>label.location_longitude</source>
+                <target>Location Longitude</target>
+            </trans-unit>
+            <trans-unit id="label.position">
+                <source>label.position</source>
+                <target>Position</target>
+            </trans-unit>
+            <trans-unit id="label.tower_button">
+                <source>label.tower_button</source>
+                <target>Tower</target>
+            </trans-unit>
+            <trans-unit id="label.tower_feature">
+                <source>label.tower_feature</source>
+                <target>Tower Feature</target>
+            </trans-unit>
+            <trans-unit id="label.denomination">
+                <source>label.denomination</source>
+                <target>Denomination</target>
+            </trans-unit>
+            <trans-unit id="label.no_of_bedroom">
+                <source>label.no_of_bedroom</source>
+                <target>No Of Bedrooms</target>
+            </trans-unit>
+            <trans-unit id="label.no_of_bathroom">
+                <source>label.no_of_bathroom</source>
+                <target>No Of Bathrooms</target>
+            </trans-unit>
+            <trans-unit id="label.area_per_unit">
+                <source>label.area_per_unit</source>
+                <target>Area Per Unit</target>
+            </trans-unit>
+            <trans-unit id="label.amount_per_area">
+                <source>label.amount_per_area</source>
+                <target>Amount Per Area</target>
+            </trans-unit>
+            <trans-unit id="label.agreement_amount">
+                <source>label.agreement_amount</source>
+                <target>Agreement Amount</target>
+            </trans-unit>
+            <trans-unit id="label.project_status">
+                <source>label.project_status</source>
+                <target>Project Status</target>
+            </trans-unit>
+            <trans-unit id="label.no_of_balcony">
+                <source>label.no_of_balcony</source>
+                <target>No Of Balcony</target>
+            </trans-unit>
+            <trans-unit id="label.denomination_numeric_value">
+                <source>label.denomination_numeric_value</source>
+                <target>Denomination Numeric Value</target>
+            </trans-unit>
+            <trans-unit id="label.project_additional_detail">
+                <source>label.project_additional_detail</source>
+                <target>Additional Detail</target>
+            </trans-unit>
+            <trans-unit id="label.project_area_type">
+                <source>label.project_area_type</source>
+                <target>Area Category</target>
+            </trans-unit>
+            <trans-unit id="label.project_area_measurement">
+                <source>label.project_area_measurement</source>
+                <target>Area Measurement</target>
+            </trans-unit>
+            <trans-unit id="label.project_area_value">
+                <source>label.project_area_value</source>
+                <target>Area Value</target>
+            </trans-unit>
+            <trans-unit id="label.project_price_per_area">
+                <source>label.project_price_per_area</source>
+                <target>Price per Area</target>
+            </trans-unit>
+            <trans-unit id="label.media_type">
+                <source>label.media_type</source>
+                <target>Media Type</target>
+            </trans-unit>
+            <trans-unit id="label.file_name">
+                <source>label.file_name</source>
+                <target>Media File Name</target>
+            </trans-unit>
+            <trans-unit id="label.image_title">
+                <source>label.image_title</source>
+                <target>Media Title</target>
+            </trans-unit>
+            <trans-unit id="label.advertisement">
+                <source>label.advertisement</source>
+                <target>Advertisement Banner</target>
+            </trans-unit>
+            <trans-unit id="label.advertisement_url">
+                <source>label.advertisement_url</source>
+                <target>Advertisement Banner URL</target>
+            </trans-unit>
+            <trans-unit id="label.possession_note">
+                <source>label.possession_note</source>
+                <target>Possession Note</target>
+            </trans-unit>
+            <trans-unit id="label.abbreviation">
+                <source>label.abbreviation</source>
+                <target>Abbreviation</target>
+            </trans-unit>
+            <trans-unit id="label.isRera">
+                <source>label.isRera</source>
+                <target>Rera</target>
+            </trans-unit>
+            <trans-unit id="label.isTredRecommended">
+                <source>label.isTredRecommended</source>
+                <target>Tred Recommended</target>
+            </trans-unit>
+            <trans-unit id="label.isNewProperty">
+                <source>label.isNewProperty</source>
+                <target>New Property</target>
+            </trans-unit>
+            <trans-unit id="label.media_display_position">
+                <source>label.media_display_position</source>
+                <target>Media Position</target>
+            </trans-unit>
+            <trans-unit id="label.project_additional_detail_type">
+                <source>label.project_additional_detail_type</source>
+                <target>Additional Detail Type</target>
+            </trans-unit>
+            <trans-unit id="label.is_meeting_schdule_with_tred_Expert">
+                <source>label.is_meeting_schdule_with_tred_Expert</source>
+                <target>I agree to be contacted by TRED and other agents via WhatsApp, SMS, Phone, Email etc. </target>
+            </trans-unit>
+            <trans-unit id="label.residential_enquiry">
+                <source>label.residential_enquiry</source>
+                <target>Residential Enquiry</target>
+            </trans-unit>
+            <trans-unit id="label.content_position">
+                <source>label.content_position</source>
+                <target>Content Position</target>
+            </trans-unit>
+            <trans-unit id="label.landing_page">
+                <source>label.landing_page</source>
+                <target>Landing Page</target>
+            </trans-unit>
+            <trans-unit id="label.landing_page_banner_title">
+                <source>label.landing_page_banner_title</source>
+                <target>Landing Page Banner Title</target>
+            </trans-unit>
+            <trans-unit id="label.landing_page_hero_banner_image">
+                <source>label.landing_page_hero_banner_image</source>
+                <target>Landing Page Image</target>
+            </trans-unit>
+            <trans-unit id="label.enquiry">
+                <source>label.enquiry</source>
+                <target>Enquiry</target>
+            </trans-unit>
+            <trans-unit id="label.comments">
+                <source>label.comments</source>
+                <target>Comments</target>
+            </trans-unit>
+            <trans-unit id="label.budget">
+                <source>label.budget</source>
+                <target>Budget</target>
+            </trans-unit>
+            <trans-unit id="label.brochure_name">
+                <source>label.brochure_name</source>
+                <target>Brochure Name</target>
+            </trans-unit>
+            <trans-unit id="label.is_top_partner">
+                <source>label.is_top_partner</source>
+                <target>Top Partner</target>
+            </trans-unit>
+            <trans-unit id="label.is_featured">
+                <source>label.is_featured</source>
+                <target>Featured Properties</target>
+            </trans-unit>
+            <trans-unit id="label.enquiry_need">
+                <source>label.enquiry_need</source>
+                <target>More Details of Work</target>
+            </trans-unit>
+            <trans-unit id="label.property_transaction_category">
+                <source>label.property_transaction_category</source>
+                <target>Property Transaction Type</target>
+            </trans-unit>
+            <trans-unit id="label.preferred_tenant">
+                <source>label.preferred_tenant</source>
+                <target>Preferred Tenants</target>
+            </trans-unit>
+            <trans-unit id="label.no_of_lifts">
+                <source>label.no_of_lifts</source>
+                <target>No of Lifts</target>
+            </trans-unit>
+            <trans-unit id="label.property_age">
+                <source>label.property_age</source>
+                <target>Age of Property</target>
+            </trans-unit>
+            <trans-unit id="label.electricity_status">
+                <source>label.electricity_status</source>
+                <target>Electricity Status</target>
+            </trans-unit>
+            <trans-unit id="label.water_availability">
+                <source>label.water_availability</source>
+                <target>Water Availability</target>
+            </trans-unit>
+            <trans-unit id="label.rent_per_month">
+                <source>label.rent_per_month</source>
+                <target>Rent Per Month</target>
+            </trans-unit>
+            <trans-unit id="label.deposit">
+                <source>label.deposit</source>
+                <target>Deposit</target>
+            </trans-unit>
+            <trans-unit id="label.floor">
+                <source>label.floor</source>
+                <target>Floor</target>
+            </trans-unit>
+            <trans-unit id="label.possession_date">
+                <source>label.possession_date</source>
+                <target>Possession Date</target>
+            </trans-unit>
+            <trans-unit id="label.possession_month">
+                <source>label.possession_month</source>
+                <target>Possession Month</target>
+            </trans-unit>
+            <trans-unit id="label.possession_year">
+                <source>label.possession_year</source>
+                <target>Possession Year</target>
+            </trans-unit>
+            <trans-unit id="label.availability_date">
+                <source>label.availability_date</source>
+                <target>Availability From Date</target>
+            </trans-unit>
+            <trans-unit id="label.is_negotiable">
+                <source>label.is_negotiable</source>
+                <target>Negotiable</target>
+            </trans-unit>
+            <trans-unit id="label.search">
+                <source>label.search</source>
+                <target>Search</target>
+            </trans-unit>
+            <trans-unit id="label.pincode_area">
+                <source>label.pincode_area</source>
+                <target>Pincode wise Area</target>
+            </trans-unit>
+            <trans-unit id="label.property_sale_category">
+                <source>label.property_sale_category</source>
+                <target>Sale Type</target>
+            </trans-unit>
+            <trans-unit id="label.location">
+                <source>label.location</source>
+                <target>Location</target>
+            </trans-unit>
+            <trans-unit id="label.furniture_button">
+                <source>label.furniture_button</source>
+                <target>Furniture</target>
+            </trans-unit>
+            <trans-unit id="label.furniture_product_name">
+                <source>label.furniture_product_name</source>
+                <target>Furniture Product Name</target>
+            </trans-unit>
+            <trans-unit id="label.color">
+                <source>label.color</source>
+                <target>Color</target>
+            </trans-unit>
+            <trans-unit id="label.option">
+                <source>label.option</source>
+                <target>Option</target>
+            </trans-unit>
+            <trans-unit id="label.option_value">
+                <source>label.option_value</source>
+                <target>Option Value</target>
+            </trans-unit>
+            <trans-unit id="label.og_width">
+                <source>label.og_width</source>
+                <target>Image width</target>
+            </trans-unit>
+            <trans-unit id="label.furniture_category">
+                <source>label.furniture_category</source>
+                <target>Furniture Category</target>
+            </trans-unit>
+            <trans-unit id="label.price">
+                <source>label.price</source>
+                <target>Price</target>
+            </trans-unit>
+            <trans-unit id="label.price_starting_from">
+                <source>label.price_starting_from</source>
+                <target>Price Starting From</target>
+            </trans-unit>
+            <trans-unit id="label.furniture_product_catalog">
+                <source>label.furniture_product_catalog</source>
+                <target>Product Catalogue</target>
+            </trans-unit>
+            <trans-unit id="label.furniture_finish">
+                <source>label.furniture_finish</source>
+                <target>Furniture Finish</target>
+            </trans-unit>
+            <trans-unit id="label.dimension">
+                <source>label.dimension</source>
+                <target>Dimension</target>
+            </trans-unit>
+            <trans-unit id="label.is_free_home_delivery">
+                <source>label.is_free_home_delivery</source>
+                <target>Free Home Delivery</target>
+            </trans-unit>
+            <trans-unit id="label.is_free_installation">
+                <source>label.is_free_installation</source>
+                <target>Free Installation</target>
+            </trans-unit>
+            <trans-unit id="label.product_name">
+                <source>label.product_name</source>
+                <target>Product Name</target>
+            </trans-unit>
+            <trans-unit id="label.dimension_media">
+                <source>label.dimension_media</source>
+                <target>Display image in Dimension section on website</target>
+            </trans-unit>
+            <trans-unit id="label.unique_value_preposition">
+                <source>label.unique_value_preposition</source>
+                <target>Unique Value Preposition</target>
+            </trans-unit>
+            <trans-unit id="label.furniture_enquiry">
+                <source>label.furniture_enquiry</source>
+                <target>Furniture Enquiry</target>
+            </trans-unit>
+            <trans-unit id="label.creation_date">
+                <source>label.creation_date</source>
+                <target>Creation Date</target>
+            </trans-unit>
+            <trans-unit id="label.project_property_media">
+                <source>label.project_property_media</source>
+                <target>Property Media</target>
+            </trans-unit>
+            <trans-unit id="label.project_property_feedback">
+                <source>label.project_property_feedback</source>
+                <target>Feedback</target>
+            </trans-unit>
+            <trans-unit id="label.project_property_feedback_topic">
+                <source>label.project_property_feedback_topic</source>
+                <target>Subject</target>
+            </trans-unit>
+            <trans-unit id="label.top_vendor_partner">
+                <source>label.top_vendor_partner</source>
+                <target>Top Vendor Partner</target>
+            </trans-unit>
+            <trans-unit id="label.business_year">
+                <source>label.business_year</source>
+                <target>Number of years in Business</target>
+            </trans-unit>
+            <trans-unit id="label.team_size">
+                <source>label.team_size</source>
+                <target>Team Size</target>
+            </trans-unit>
+            <trans-unit id="label.annual_sold_unit">
+                <source>label.annual_sold_unit</source>
+                <target>Number of Units Sold Annually</target>
+            </trans-unit>
+            <trans-unit id="label.subscription_agent_type">
+                <source>label.subscription_agent_type</source>
+                <target>Subscription Agent Type</target>
+            </trans-unit>
+            <trans-unit id="label.geographical_presence">
+                <source>label.geographical_presence</source>
+                <target>Geographical Presence</target>
+            </trans-unit>
+            <trans-unit id="label.subscription_type">
+                <source>label.subscription_type</source>
+                <target>Subscription Type</target>
+            </trans-unit>
+            <trans-unit id="label.vastu">
+                <source>label.vastu</source>
+                <target>Vastu</target>
+            </trans-unit>
+            <trans-unit id="label.contact_person_name">
+                <source>label.contact_person_name</source>
+                <target>Contact Person Name</target>
+            </trans-unit>
+            <trans-unit id="label.top_agents">
+                <source>label.top_agents</source>
+                <target>Top Vendor Partner</target>
+            </trans-unit>
+            <trans-unit id="label.delete_image">
+                <source>label.delete_image</source>
+                <target>Remove Image</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

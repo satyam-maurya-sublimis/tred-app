@@ -16,7 +16,7 @@ use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @Route("/core/cms/pressroom", name="cms_pressroom_")
- * @IsGranted("ROLE_SYS_CONTENT_USER")
+ * @IsGranted("ROLE_APP_USER")
  */
 class CmsPressRoomController extends AbstractController
 {
