@@ -9,6 +9,7 @@ use App\Form\Media\MdaFurnitureType;
 use App\Repository\Media\MdaFurnitureRepository;
 use App\Service\CommonHelper;
 use App\Service\FileUploaderHelper;
+use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,6 +22,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TrnFurnitureProductCatalogMediaController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MdaFurnitureRepository $mdaFurnitureRepository
@@ -33,7 +40,7 @@ class TrnFurnitureProductCatalogMediaController extends AbstractController
         if(!$furniture_id) {
             return $this->redirectToRoute('product_furniture_product_catalog_index');
         }
-        $trnFurnitureProductCatalog = $this->getDoctrine()->getRepository(TrnFurnitureProductCatalog::class)->find($furniture_id);
+        $trnFurnitureProductCatalog = $this->managerRegistry->getRepository(TrnFurnitureProductCatalog::class)->find($furniture_id);
         return $this->render('transaction/trn_furniture_product_catalog_media/index.html.twig', [
             'medias' => $mdaFurnitureRepository->findBy(['trnFurnitureProductCatalog'=>$furniture_id]),
             'trnFurnitureProductCatalog' => $trnFurnitureProductCatalog,
@@ -60,14 +67,14 @@ class TrnFurnitureProductCatalogMediaController extends AbstractController
         if(!$furniture_id) {
             return $this->redirectToRoute('product_furniture_product_catalog_index');
         }
-        $trnFurnitureProductCatalog = $this->getDoctrine()->getRepository(TrnFurnitureProductCatalog::class)->find($furniture_id);
-        $position = $this->getDoctrine()->getRepository(MdaFurniture::class)->getProductCatalogueMediaBySeqNo($furniture_id);
+        $trnFurnitureProductCatalog = $this->managerRegistry->getRepository(TrnFurnitureProductCatalog::class)->find($furniture_id);
+        $position = $this->managerRegistry->getRepository(MdaFurniture::class)->getProductCatalogueMediaBySeqNo($furniture_id);
         $trnFurnitureProductCatalogMedia = new MdaFurniture();
         $trnFurnitureProductCatalogMedia->setPosition($position['cnt']+1);
         $form = $this->createForm(MdaFurnitureCatalogType::class, $trnFurnitureProductCatalogMedia);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $imageFile = $form['mediaFileName']->getData();
             $newFilename = $fileUploaderHelper->uploadPublicFile($imageFile, $commonHelper->slugify($form['mediaName']->getData()), $existingMedia = null);
             $trnFurnitureProductCatalogMedia->setTrnFurnitureProductCatalog($trnFurnitureProductCatalog);
@@ -107,7 +114,7 @@ class TrnFurnitureProductCatalogMediaController extends AbstractController
             return $this->redirectToRoute('product_furniture_product_catalog_index');
         }
         $existingMedia = $trnFurnitureProductCatalogMedia->getMediaFileName();
-        $trnFurnitureProductCatalog = $this->getDoctrine()->getRepository(TrnFurnitureProductCatalog::class)->find($furniture_id);
+        $trnFurnitureProductCatalog = $this->managerRegistry->getRepository(TrnFurnitureProductCatalog::class)->find($furniture_id);
         $form = $this->createForm(MdaFurnitureCatalogType::class, $trnFurnitureProductCatalogMedia);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -121,7 +128,7 @@ class TrnFurnitureProductCatalogMediaController extends AbstractController
                 $trnFurnitureProductCatalogMedia->setMediaFileName($newFilename);
                 $trnFurnitureProductCatalogMedia->setMediaFilePath($this->getParameter('public_file_folder'));
             }
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('product_furniture_product_catalog_media_index', $request->query->all());
         }
@@ -150,7 +157,7 @@ class TrnFurnitureProductCatalogMediaController extends AbstractController
         if (!$furniture_id) {
             return $this->redirectToRoute('product_furniture_product_catalog_index');
         }
-        $trnFurnitureProductCatalog = $this->getDoctrine()->getRepository(TrnFurnitureProductCatalog::class)->find($furniture_id);
+        $trnFurnitureProductCatalog = $this->managerRegistry->getRepository(TrnFurnitureProductCatalog::class)->find($furniture_id);
         return $this->render('transaction/trn_furniture_product_catalog_media/show.html.twig', [
             'data' => $trnFurnitureProductCatalogMedia,
             'trnFurnitureProductCatalog'=>$trnFurnitureProductCatalog,

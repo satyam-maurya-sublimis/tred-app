@@ -10,6 +10,7 @@ use App\Repository\Transaction\TrnUploadDocumentRepository;
 use App\Service\CommonHelper;
 use App\Service\FileUploaderHelper;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,6 +23,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TrnPropertyMediaController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param TrnUploadDocumentRepository $trnUploadDocumentRepository
@@ -34,7 +41,7 @@ class TrnPropertyMediaController extends AbstractController
         if(!$projectId) {
             return $this->redirectToRoute('product_properties_index');
         }
-        $trnProject = $this->getDoctrine()->getRepository(TrnProject::class)->find($projectId);
+        $trnProject = $this->managerRegistry->getRepository(TrnProject::class)->find($projectId);
         return $this->render('transaction/property/property_media/index.html.twig', [
             'trnUploadDocuments' => $trnUploadDocumentRepository->findBy(['trnProject' => $projectId,'createdBy'=>$this->getUser()]),
             'trnProject' => $trnProject,
@@ -62,16 +69,16 @@ class TrnPropertyMediaController extends AbstractController
         if(!$projectId) {
             return $this->redirectToRoute('product_properties_index');
         }
-        $position = $this->getDoctrine()->getRepository(TrnUploadDocument::class)->getMediaBySeqNo($projectId);
+        $position = $this->managerRegistry->getRepository(TrnUploadDocument::class)->getMediaBySeqNo($projectId);
         $trnUploadDocument = new TrnUploadDocument();
         if($trnProjectRoomConfigurations){
             foreach($trnProjectRoomConfigurations as $trnProjectRoomConfigurationId){
-                $trnProjectRoomConfiguration = $this->getDoctrine()->getRepository(TrnProjectRoomConfiguration::class)->find($trnProjectRoomConfigurationId);
+                $trnProjectRoomConfiguration = $this->managerRegistry->getRepository(TrnProjectRoomConfiguration::class)->find($trnProjectRoomConfigurationId);
                 $trnUploadDocument->addTrnProjectRoomConfiguration($trnProjectRoomConfiguration);
             }
         }
         $trnUploadDocument->setPosition($position['cnt']+1);
-        $trnProject = $this->getDoctrine()->getRepository(TrnProject::class)->find($projectId);
+        $trnProject = $this->managerRegistry->getRepository(TrnProject::class)->find($projectId);
         $form = $this->createForm(TrnUploadDocumentType::class, $trnUploadDocument,['projectId'=>$projectId]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -97,7 +104,7 @@ class TrnPropertyMediaController extends AbstractController
                     $trnUploadDocument->setMediaPath($form['mediaPath']->getData());
                 }
             }
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $trnUploadDocument->setTrnProject($trnProject);
             $trnUploadDocument->setCreatedBy($this->getUser());
             $trnUploadDocument->setAppUser($this->getUser());
@@ -130,9 +137,9 @@ class TrnPropertyMediaController extends AbstractController
         if(!$projectId) {
             return $this->redirectToRoute('product_properties_index');
         }
-        $trnProject = $this->getDoctrine()->getRepository(TrnProject::class)->find($projectId);
-        $trnUploadDocuments = $this->getDoctrine()->getRepository(TrnUploadDocument::class)->findBy(['isActive'=>1,'createdBy'=>$this->getUser()]);
-        $trnProjectRoomConfigurations = $this->getDoctrine()->getRepository(TrnProjectRoomConfiguration::class)->findBy(['isActive'=>1,'trnProject'=>$trnProject,'createdBy'=>$this->getUser()]);
+        $trnProject = $this->managerRegistry->getRepository(TrnProject::class)->find($projectId);
+        $trnUploadDocuments = $this->managerRegistry->getRepository(TrnUploadDocument::class)->findBy(['isActive'=>1,'createdBy'=>$this->getUser()]);
+        $trnProjectRoomConfigurations = $this->managerRegistry->getRepository(TrnProjectRoomConfiguration::class)->findBy(['isActive'=>1,'trnProject'=>$trnProject,'createdBy'=>$this->getUser()]);
 
         return $this->render('transaction/property/property_media/another.html.twig', [
             'trnUploadDocuments' => $trnUploadDocuments,
@@ -163,7 +170,7 @@ class TrnPropertyMediaController extends AbstractController
         if(!$projectId) {
             return $this->redirectToRoute('product_properties_index');
         }
-        $trnProject = $this->getDoctrine()->getRepository(TrnProject::class)->find($projectId);
+        $trnProject = $this->managerRegistry->getRepository(TrnProject::class)->find($projectId);
         $originalTrnUploadDocument = new ArrayCollection();
         $originalTrnUploadDocument->add($trnUploadDocument);
         $form = $this->createForm(TrnUploadDocumentType::class, $trnUploadDocument,['projectId'=>$projectId]);
@@ -199,7 +206,7 @@ class TrnPropertyMediaController extends AbstractController
                     }
                 }
             }
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('product_property_media_index', $request->query->all());
         }

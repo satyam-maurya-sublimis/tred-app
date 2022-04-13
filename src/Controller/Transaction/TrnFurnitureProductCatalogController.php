@@ -10,6 +10,7 @@ use App\Repository\Transaction\TrnFurnitureProductCatalogRepository;
 use App\Service\CommonHelper;
 use App\Service\FileUploaderHelper;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,6 +24,12 @@ use Knp\Component\Pager\PaginatorInterface;
  */
 class TrnFurnitureProductCatalogController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param TrnFurnitureProductCatalogRepository $trnFurnitureProductCatalogRepository
@@ -56,7 +63,7 @@ class TrnFurnitureProductCatalogController extends AbstractController
     public function new(Request $request,FileUploaderHelper $fileUploaderHelper, CommonHelper $commonHelper): Response
     {
         $trnFurnitureProductCatalog = new TrnFurnitureProductCatalog();
-        $mstProductCategory = $this->getDoctrine()->getRepository(MstProductCategory::class)->findOneBy(["isActive"=>true,"productCategorySlugName"=>"furniture"]);
+        $mstProductCategory = $this->managerRegistry->getRepository(MstProductCategory::class)->findOneBy(["isActive"=>true,"productCategorySlugName"=>"furniture"]);
         $trnFurnitureProductCatalog->setMstProductCategory($mstProductCategory);
         $form = $this->createForm(TrnFurnitureProductCatalogType::class, $trnFurnitureProductCatalog);
         $form->handleRequest($request);
@@ -67,7 +74,7 @@ class TrnFurnitureProductCatalogController extends AbstractController
                 $trnFurnitureProductCatalog->setOgImage($newFilename);
                 $trnFurnitureProductCatalog->setOgImagePath($this->getParameter('public_file_folder'));
             }
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
 //            foreach ($form->get('trnFurnitureProductCatalogDimensionMedia') as $content) {
 //                $trnFurnitureProductCatalogDimensionMedia = $content->getData();
 //                $mediaType = $trnFurnitureProductCatalogDimensionMedia->getMediaType();
@@ -128,7 +135,7 @@ class TrnFurnitureProductCatalogController extends AbstractController
         $form = $this->createForm(TrnFurnitureProductCatalogType::class, $trnFurnitureProductCatalog);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $ogImageFile = $form['ogImage']->getData();
             if ($ogImageFile) {
                 if ($existingOgImageFile != ''){
@@ -142,7 +149,7 @@ class TrnFurnitureProductCatalogController extends AbstractController
             }
 //            foreach($originalUploadFiles as $originalUploadFile){
 //                if($trnFurnitureProductCatalog->getTrnFurnitureProductCatalogDimensionMedia()->contains($originalUploadFile)==false){
-//                    $this->getDoctrine()->getManager()->remove($originalUploadFile);
+//                    $this->managerRegistry->getManager()->remove($originalUploadFile);
 //                }
 //            }
 //            foreach ($form->get('trnFurnitureProductCatalogDimensionMedia') as $content) {

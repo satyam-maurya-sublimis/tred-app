@@ -12,6 +12,7 @@ use App\Repository\Transaction\TrnFurnitureRepository;
 use App\Service\CommonHelper;
 use App\Service\FileUploaderHelper;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Repository\Transaction\TrnProjectRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,6 +27,12 @@ use Knp\Component\Pager\PaginatorInterface;
  */
 class TrnFurnitureController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param TrnFurnitureRepository $trnFurnitureRepository
@@ -59,11 +66,11 @@ class TrnFurnitureController extends AbstractController
     public function new(Request $request,FileUploaderHelper $fileUploaderHelper, CommonHelper $commonHelper): Response
     {
         $trnFurniture = new TrnFurniture();
-        $mstProductCategory = $this->getDoctrine()->getRepository(MstProductCategory::class)->findOneBy(["isActive"=>true,"productCategorySlugName"=>"furniture"]);
+        $mstProductCategory = $this->managerRegistry->getRepository(MstProductCategory::class)->findOneBy(["isActive"=>true,"productCategorySlugName"=>"furniture"]);
         $trnFurniture->setMstProductCategory($mstProductCategory);
         $form = $this->createForm(TrnFurnitureType::class, $trnFurniture);
         $form->handleRequest($request);
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->managerRegistry->getManager();
         if ($form->isSubmitted() && $form->isValid()) {
             $ogImageFile = $form['ogImage']->getData();
             if ($ogImageFile) {
@@ -130,7 +137,7 @@ class TrnFurnitureController extends AbstractController
         $existingOgImageFile = $trnFurniture->getOgImage();
         $form = $this->createForm(TrnFurnitureType::class, $trnFurniture);
         $form->handleRequest($request);
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->managerRegistry->getManager();
         if ($form->isSubmitted() && $form->isValid()) {
             $ogImageFile = $form['ogImage']->getData();
             if ($ogImageFile) {
@@ -144,7 +151,7 @@ class TrnFurnitureController extends AbstractController
             }
             foreach($originalUploadFiles as $originalUploadFile){
                 if($trnFurniture->getMdaFurniture()->contains($originalUploadFile)==false){
-                    $this->getDoctrine()->getManager()->remove($originalUploadFile);
+                    $this->managerRegistry->getManager()->remove($originalUploadFile);
                 }
             }
             foreach ($form->get('mdaFurniture') as $key=>$content) {

@@ -8,6 +8,7 @@ use App\Form\Transaction\TrnProjectRoomConfigurationType;
 use App\Repository\Transaction\TrnProjectRoomConfigurationRepository;
 use App\Service\CommonHelper;
 use App\Service\FileUploaderHelper;
+use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +21,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TrnPropertyRoomConfigurationController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param TrnProjectRoomConfigurationRepository $trnProjectRoomConfigurationRepository
@@ -32,7 +39,7 @@ class TrnPropertyRoomConfigurationController extends AbstractController
         if(!$projectId) {
             return $this->redirectToRoute('product_properties_index');
         }
-        $trnProject = $this->getDoctrine()->getRepository(TrnProject::class)->find($projectId);
+        $trnProject = $this->managerRegistry->getRepository(TrnProject::class)->find($projectId);
         return $this->render('transaction/property/room_configuration/index.html.twig', [
             'trnProjectRoomConfigurations' => $trnProjectRoomConfigurationRepository->findBy(['trnProject' => $projectId,'createdBy'=>$this->getUser()]),
             'trnProject' => $trnProject,
@@ -63,7 +70,7 @@ class TrnPropertyRoomConfigurationController extends AbstractController
         $existingTrnProjectRoomConfigurationId = $request->query->get('trnProjectRoomConfiguration');
         if ($existingTrnProjectRoomConfigurationId){
             if($existingTrnProjectRoomConfigurationId != "New"){
-                $existingTrnProjectRoomConfiguration = $this->getDoctrine()->getRepository(TrnProjectRoomConfiguration::class)->find($existingTrnProjectRoomConfigurationId);
+                $existingTrnProjectRoomConfiguration = $this->managerRegistry->getRepository(TrnProjectRoomConfiguration::class)->find($existingTrnProjectRoomConfigurationId);
                 $trnProjectRoomConfiguration->setMstPropertyTransactionCategory($existingTrnProjectRoomConfiguration->getMstPropertyTransactionCategory());
                 $trnProjectRoomConfiguration->setMstRoomConfiguration($existingTrnProjectRoomConfiguration->getMstRoomConfiguration());
                 $trnProjectRoomConfiguration->setMstFacing($existingTrnProjectRoomConfiguration->getMstFacing());
@@ -77,11 +84,11 @@ class TrnPropertyRoomConfigurationController extends AbstractController
                 $trnProjectRoomConfiguration->setMstCurrency($existingTrnProjectRoomConfiguration->getMstCurrency());
             }
         }
-        $trnProject = $this->getDoctrine()->getRepository(TrnProject::class)->find($projectId);
+        $trnProject = $this->managerRegistry->getRepository(TrnProject::class)->find($projectId);
         $form = $this->createForm(TrnProjectRoomConfigurationType::class, $trnProjectRoomConfiguration);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $imageFile = $form['mediaFileName']->getData();
             if ($imageFile){
                 $newFilename = $fileUploaderHelper->uploadPublicFile($imageFile, $commonHelper->slugify($form['mediaName']->getData()), $existingMedia = null);
@@ -119,8 +126,8 @@ class TrnPropertyRoomConfigurationController extends AbstractController
         if(!$projectId) {
             return $this->redirectToRoute('product_properties_index');
         }
-        $trnProject = $this->getDoctrine()->getRepository(TrnProject::class)->find($projectId);
-        $trnProjectRoomConfigurations = $this->getDoctrine()->getRepository(TrnProjectRoomConfiguration::class)->getUniqueRoomConfiguration(['trnProjectId'=>$trnProject->getId()]);
+        $trnProject = $this->managerRegistry->getRepository(TrnProject::class)->find($projectId);
+        $trnProjectRoomConfigurations = $this->managerRegistry->getRepository(TrnProjectRoomConfiguration::class)->getUniqueRoomConfiguration(['trnProjectId'=>$trnProject->getId()]);
         return $this->render('transaction/property/room_configuration/another.html.twig', [
             'trnProjectRoomConfigurations' => $trnProjectRoomConfigurations,
             'trnProject' => $trnProject,
@@ -150,7 +157,7 @@ class TrnPropertyRoomConfigurationController extends AbstractController
             return $this->redirectToRoute('product_properties_index');
         }
         $existingMedia = $trnProjectRoomConfiguration->getMediaFileName();
-        $trnProject = $this->getDoctrine()->getRepository(TrnProject::class)->find($projectId);
+        $trnProject = $this->managerRegistry->getRepository(TrnProject::class)->find($projectId);
         $form = $this->createForm(TrnProjectRoomConfigurationType::class, $trnProjectRoomConfiguration);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -164,7 +171,7 @@ class TrnPropertyRoomConfigurationController extends AbstractController
                 $trnProjectRoomConfiguration->setMediaFileName($newFilename);
                 $trnProjectRoomConfiguration->setMediaFilePath($this->getParameter('public_file_folder'));
             }
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('product_room_configuration_index', $request->query->all());
         }

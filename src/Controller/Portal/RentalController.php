@@ -4,6 +4,7 @@ namespace App\Controller\Portal;
 
 use App\Entity\Cms\CmsPage;
 use App\Entity\Transaction\TrnProject;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,6 +15,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class RentalController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET","POST"})
      * @return Response
@@ -32,7 +39,7 @@ class RentalController extends AbstractController
     public function propertyFilter(Request $request): Response
     {
         $filters = $this->customFilters($request);
-        $trnProject = $this->getDoctrine()->getManager()->getRepository(TrnProject::class)->getProject(null,$filters);
+        $trnProject = $this->managerRegistry->getManager()->getRepository(TrnProject::class)->getProject(null,$filters);
         if ($request->get('sort') == "High"){
             return $this->render('portal/page/product/property-listings.html.twig', [
                 'projects'=> array_reverse($trnProject),
@@ -68,9 +75,9 @@ class RentalController extends AbstractController
     public function propertyDetail(Request $request): Response
     {
         $id  = $request->get('id');
-        $trnProject = $this->getDoctrine()->getManager()->getRepository(TrnProject::class)->findOneBy(['isActive'=>1,"id"=>$id]);
+        $trnProject = $this->managerRegistry->getManager()->getRepository(TrnProject::class)->findOneBy(['isActive'=>1,"id"=>$id]);
         $trnProject->setProjectViews($trnProject->getProjectViews()+1);
-        $this->getDoctrine()->getManager()->flush();
+        $this->managerRegistry->getManager()->flush();
         return $this->render('portal/page/product/property-detail.html.twig', [
             'project'=> $trnProject
         ]);
@@ -90,7 +97,7 @@ class RentalController extends AbstractController
 //        if ($status){
 //            $filters['projectStatus'] = $status;
 //        }
-        $trnProject = $this->getDoctrine()->getManager()->getRepository(TrnProject::class)->getProject(null,$filters);
+        $trnProject = $this->managerRegistry->getManager()->getRepository(TrnProject::class)->getProject(null,$filters);
         return $this->render('portal/page/product/property-list.html.twig', [
             'projects'=> $trnProject
         ]);

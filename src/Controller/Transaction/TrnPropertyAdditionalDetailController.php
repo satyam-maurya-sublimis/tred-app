@@ -9,6 +9,7 @@ use App\Form\Transaction\TrnProjectAdditionalDetailType;
 use App\Repository\Transaction\TrnProjectAdditionalDetailRepository;
 use App\Service\CommonHelper;
 use App\Service\FileUploaderHelper;
+use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,6 +22,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TrnPropertyAdditionalDetailController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param TrnProjectAdditionalDetailRepository $trnProjectAdditionalDetailRepository
@@ -33,7 +40,7 @@ class TrnPropertyAdditionalDetailController extends AbstractController
         if(!$projectId) {
             return $this->redirectToRoute('product_properties_index');
         }
-        $trnProject = $this->getDoctrine()->getRepository(TrnProject::class)->find($projectId);
+        $trnProject = $this->managerRegistry->getRepository(TrnProject::class)->find($projectId);
         return $this->render('transaction/property/additional_detail/index.html.twig', [
             'trnProjectAdditionalDetails' => $trnProjectAdditionalDetailRepository->findBy(['trnProject' => $projectId,'createdBy'=>$this->getUser()]),
             'trnProject' => $trnProject,
@@ -64,15 +71,15 @@ class TrnPropertyAdditionalDetailController extends AbstractController
         $trnProjectAdditionalDetail = new TrnProjectAdditionalDetail();
         if($trnProjectRoomConfigurations){
             foreach($trnProjectRoomConfigurations as $trnProjectRoomConfigurationId){
-                $trnProjectRoomConfiguration = $this->getDoctrine()->getRepository(TrnProjectRoomConfiguration::class)->find($trnProjectRoomConfigurationId);
+                $trnProjectRoomConfiguration = $this->managerRegistry->getRepository(TrnProjectRoomConfiguration::class)->find($trnProjectRoomConfigurationId);
                 $trnProjectAdditionalDetail->addTrnProjectRoomConfiguration($trnProjectRoomConfiguration);
             }
         }
-        $trnProject = $this->getDoctrine()->getRepository(TrnProject::class)->find($projectId);
+        $trnProject = $this->managerRegistry->getRepository(TrnProject::class)->find($projectId);
         $form = $this->createForm(TrnProjectAdditionalDetailType::class, $trnProjectAdditionalDetail,['projectId'=>$projectId]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $trnProjectAdditionalDetail->setTrnProject($trnProject);
             $trnProjectAdditionalDetail->setCreatedBy($this->getUser());
             $entityManager->persist($trnProjectAdditionalDetail);
@@ -103,9 +110,9 @@ class TrnPropertyAdditionalDetailController extends AbstractController
         if(!$projectId) {
             return $this->redirectToRoute('product_properties_index');
         }
-        $trnProject = $this->getDoctrine()->getRepository(TrnProject::class)->find($projectId);
-        $trnProjectAdditionalDetails = $this->getDoctrine()->getRepository(TrnProjectAdditionalDetail::class)->findBy(['isActive'=>1,'createdBy'=>$this->getUser()]);
-        $trnProjectRoomConfigurations = $this->getDoctrine()->getRepository(TrnProjectRoomConfiguration::class)->findBy(['isActive'=>1,'trnProject'=>$trnProject,'createdBy'=>$this->getUser()]);
+        $trnProject = $this->managerRegistry->getRepository(TrnProject::class)->find($projectId);
+        $trnProjectAdditionalDetails = $this->managerRegistry->getRepository(TrnProjectAdditionalDetail::class)->findBy(['isActive'=>1,'createdBy'=>$this->getUser()]);
+        $trnProjectRoomConfigurations = $this->managerRegistry->getRepository(TrnProjectRoomConfiguration::class)->findBy(['isActive'=>1,'trnProject'=>$trnProject,'createdBy'=>$this->getUser()]);
 
         return $this->render('transaction/property/additional_detail/another.html.twig', [
             'trnProjectAdditionalDetails' => $trnProjectAdditionalDetails,
@@ -136,11 +143,11 @@ class TrnPropertyAdditionalDetailController extends AbstractController
         if(!$projectId) {
             return $this->redirectToRoute('product_properties_index');
         }
-        $trnProject = $this->getDoctrine()->getRepository(TrnProject::class)->find($projectId);
+        $trnProject = $this->managerRegistry->getRepository(TrnProject::class)->find($projectId);
         $form = $this->createForm(TrnProjectAdditionalDetailType::class, $trnProjectAdditionalDetail,['projectId'=>$projectId]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('product_additional_detail_index', $request->query->all());
         }

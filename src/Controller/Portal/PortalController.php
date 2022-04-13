@@ -28,6 +28,7 @@ use App\Form\Portal\FormEnquiryTwoType;
 use App\Service\CommonHelper;
 use App\Service\Mailer;
 use App\Service\Portal\PortalCommonHelper;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,6 +38,12 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PortalController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="portal_index", methods={"GET"}, priority="10")
      * @return Response
@@ -67,8 +74,8 @@ class PortalController extends AbstractController
     public function contactUs(Request $request,Mailer $mailer): Response
     {
         $formEnquiry = new FormEnquiryContactUs();
-        $orgCompany = $this->getDoctrine()->getRepository(OrgCompany::class)->find(1);
-        $mstLeadStatus = $this->getDoctrine()->getRepository(MstLeadStatus::class)->find(1);
+        $orgCompany = $this->managerRegistry->getRepository(OrgCompany::class)->find(1);
+        $mstLeadStatus = $this->managerRegistry->getRepository(MstLeadStatus::class)->find(1);
         $form = $this->createForm(FormEnquirySixType::class, $formEnquiry);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -83,7 +90,7 @@ class PortalController extends AbstractController
                 $formEnquiry->setEnquiryLastName("-");
             }
             //$formEnquiry->setMstState($form->get("mstCity")->getData()->getMstState());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($formEnquiry);
             $entityManager->flush();
             $mailer->mailerFormEnquiryContact($formEnquiry);
@@ -101,8 +108,8 @@ class PortalController extends AbstractController
     public function vastuTips(Request $request, Mailer $mailer): Response
     {
         $formEnquiry = new FormEnquiryVastuTips();
-        $orgCompany = $this->getDoctrine()->getRepository(OrgCompany::class)->find(1);
-        $mstLeadStatus = $this->getDoctrine()->getRepository(MstLeadStatus::class)->find(1);
+        $orgCompany = $this->managerRegistry->getRepository(OrgCompany::class)->find(1);
+        $mstLeadStatus = $this->managerRegistry->getRepository(MstLeadStatus::class)->find(1);
         $form = $this->createForm(FormEnquirySevenType::class, $formEnquiry);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -117,7 +124,7 @@ class PortalController extends AbstractController
                 $formEnquiry->setEnquiryLastName("-");
             }
 //            $formEnquiry->setMstState($form->get("mstCity")->getData()->getMstState());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($formEnquiry);
             $entityManager->flush();
             $mailer->mailerFormEnquiryVastu($formEnquiry);
@@ -137,16 +144,16 @@ class PortalController extends AbstractController
     {
         $email =  $request->request->get("email");
         if ($email) {
-            $checkEmailSubscription = $this->getDoctrine()->getRepository(CmsUserSubscription::class)->findOneBy(['userSubscriptionEmail' => $email]);
+            $checkEmailSubscription = $this->managerRegistry->getRepository(CmsUserSubscription::class)->findOneBy(['userSubscriptionEmail' => $email]);
             if (empty($checkEmailSubscription)) {
 
                 $cmsUserSubscription = new CmsUserSubscription();
-                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager = $this->managerRegistry->getManager();
                 if (!empty($this->getUser())) {
                     $cmsUserSubscription->setAppuser($this->getUser());
                 }
                 $cmsUserSubscription->setUserSubscriptionEmail(trim($email));
-                //$cmsUserSubscription->setOrgCompany($this->getDoctrine()->getRepository(OrgCompany::class)->find($this->getParameter('company_id')));
+                //$cmsUserSubscription->setOrgCompany($this->managerRegistry->getRepository(OrgCompany::class)->find($this->getParameter('company_id')));
                 $cmsUserSubscription->setIsSubscriptionActive(1);
                 $cmsUserSubscription->setSubscriptionDateTime(new \DateTime('now', new \DateTimeZone('Asia/Kolkata')));
                 $entityManager->persist($cmsUserSubscription);
@@ -172,10 +179,10 @@ class PortalController extends AbstractController
         $mstPropertyTransactionCategory  = $request->get('mstPropertyTransactionCategory');
         $formResidentialEnquiry = new FormResidentialEnquiry();
         $formResidentialEnquiry->setResidentialEnquiryTitle("Property Enquiry : ".$mstPropertyTransactionCategory);
-        $orgCompany = $this->getDoctrine()->getRepository(OrgCompany::class)->find(1);
-        $mstLeadStatus = $this->getDoctrine()->getRepository(MstLeadStatus::class)->find(1);
+        $orgCompany = $this->managerRegistry->getRepository(OrgCompany::class)->find(1);
+        $mstLeadStatus = $this->managerRegistry->getRepository(MstLeadStatus::class)->find(1);
         if ($trnProjectRoomConfigurationId){
-            $trnProjectRoomConfiguration = $this->getDoctrine()->getRepository(TrnProjectRoomConfiguration::class)->find($trnProjectRoomConfigurationId);
+            $trnProjectRoomConfiguration = $this->managerRegistry->getRepository(TrnProjectRoomConfiguration::class)->find($trnProjectRoomConfigurationId);
             $formResidentialEnquiry->setTrnProjectRoomConfiguration($trnProjectRoomConfiguration);
             $form = $this->createForm(ContactTredExperts2Type::class, $formResidentialEnquiry);
         }else{
@@ -199,7 +206,7 @@ class PortalController extends AbstractController
                 $formResidentialEnquiry->setResidentialEnquiryLastName("-");
             }
             //$formResidentialEnquiry->setMstState($form->get("mstCity")->getData()->getMstState());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($formResidentialEnquiry);
             $entityManager->flush();
             $mailer->mailerPropertiesFormEnquiry($formResidentialEnquiry);
@@ -228,10 +235,10 @@ class PortalController extends AbstractController
     public function portalLike(Request $request): Response
     {
         $id  = $request->get('id');
-        $trnProject = $this->getDoctrine()->getManager()->getRepository(TrnProject::class)->findOneBy(['isActive'=>1,"id"=>$id]);
+        $trnProject = $this->managerRegistry->getManager()->getRepository(TrnProject::class)->findOneBy(['isActive'=>1,"id"=>$id]);
         if ($request->isXMLHttpRequest()) {
             $trnProject->setProjectLikes($trnProject->getProjectLikes()+1);
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             return new JsonResponse(array('data' => $trnProject->getProjectLikes()));
         }
         return new Response('This is not ajax!', 400);
@@ -257,14 +264,14 @@ class PortalController extends AbstractController
         $slugName  = $request->get('slugName');
         $formEnquiry = new FormEnquiry();
         $formEnquiry->setEnquiryForm($slugName);
-        $orgCompany = $this->getDoctrine()->getRepository(OrgCompany::class)->find(1);
-        $mstLeadStatus = $this->getDoctrine()->getRepository(MstLeadStatus::class)->find(1);
-//        $cmsLandingPage = $this->getDoctrine()->getRepository(CmsLandingPage::class)->findOneBy(['isActive'=>1,"cmsLandingPageSlugName"=>$slugName]);
+        $orgCompany = $this->managerRegistry->getRepository(OrgCompany::class)->find(1);
+        $mstLeadStatus = $this->managerRegistry->getRepository(MstLeadStatus::class)->find(1);
+//        $cmsLandingPage = $this->managerRegistry->getRepository(CmsLandingPage::class)->findOneBy(['isActive'=>1,"cmsLandingPageSlugName"=>$slugName]);
 
         if ($slugName == 'interior-designers' || $slugName == 'home-decor' || $slugName == 'home-furnishing'){
-            $mstProductCategory = $this->getDoctrine()->getRepository(MstProductCategory::class)->findOneBy(['productCategorySlugName'=>"interiors","isActive"=>1]);
+            $mstProductCategory = $this->managerRegistry->getRepository(MstProductCategory::class)->findOneBy(['productCategorySlugName'=>"interiors","isActive"=>1]);
             $formEnquiry->setMstProductCategory($mstProductCategory);
-            $mstProductType = $this->getDoctrine()->getRepository(MstProductType::class)->findOneBy(['productTypeSlugName'=>$slugName,"isActive"=>1]);
+            $mstProductType = $this->managerRegistry->getRepository(MstProductType::class)->findOneBy(['productTypeSlugName'=>$slugName,"isActive"=>1]);
             $formEnquiry->setMstProductType($mstProductType);
             if ($mstProductType->getProductTypeFormType() == "FormEnquiryOneType"){
                 $form = $this->createForm(FormEnquiryOneType::class, $formEnquiry);
@@ -274,7 +281,7 @@ class PortalController extends AbstractController
             }
         }
         if ($slugName == 'logistics'){
-            $mstProductCategory = $this->getDoctrine()->getRepository(MstProductCategory::class)->findOneBy(['productCategorySlugName'=>"logistics","isActive"=>1]);
+            $mstProductCategory = $this->managerRegistry->getRepository(MstProductCategory::class)->findOneBy(['productCategorySlugName'=>"logistics","isActive"=>1]);
             $form = $this->createForm(FormEnquiryFiveType::class, $formEnquiry);
         }
 
@@ -324,7 +331,7 @@ class PortalController extends AbstractController
                 $formEnquiry->setEnquiryLastName("-");
             }
 //            $formEnquiry->setMstState($form->get("mstCity")->getData()->getMstState());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($formEnquiry);
             $entityManager->flush();
             $mailer->mailerFormEnquiry($formEnquiry);
@@ -398,8 +405,8 @@ class PortalController extends AbstractController
 //    public function formEnquiryContactUs(Request $request, Mailer $mailer): Response
 //    {
 //        $formEnquiry = new FormEnquiryContactUs();
-//        $orgCompany = $this->getDoctrine()->getRepository(OrgCompany::class)->find(1);
-//        $mstLeadStatus = $this->getDoctrine()->getRepository(MstLeadStatus::class)->find(1);
+//        $orgCompany = $this->managerRegistry->getRepository(OrgCompany::class)->find(1);
+//        $mstLeadStatus = $this->managerRegistry->getRepository(MstLeadStatus::class)->find(1);
 //        $form = $this->createForm(FormEnquirySixType::class, $formEnquiry);
 //        $form->handleRequest($request);
 //        if ($form->isSubmitted() && $form->isValid()) {
@@ -414,7 +421,7 @@ class PortalController extends AbstractController
 //                $formEnquiry->setEnquiryLastName("-");
 //            }
 //            //$formEnquiry->setMstState($form->get("mstCity")->getData()->getMstState());
-//            $entityManager = $this->getDoctrine()->getManager();
+//            $entityManager = $this->managerRegistry->getManager();
 //            $entityManager->persist($formEnquiry);
 //            $entityManager->flush();
 //            $mailer->mailerFormEnquiryContact($formEnquiry);
@@ -444,8 +451,8 @@ class PortalController extends AbstractController
     public function formVastuTips(Request $request,Mailer $mailer): Response
     {
         $formEnquiry = new FormEnquiryVastuTips();
-        $orgCompany = $this->getDoctrine()->getRepository(OrgCompany::class)->find(1);
-        $mstLeadStatus = $this->getDoctrine()->getRepository(MstLeadStatus::class)->find(1);
+        $orgCompany = $this->managerRegistry->getRepository(OrgCompany::class)->find(1);
+        $mstLeadStatus = $this->managerRegistry->getRepository(MstLeadStatus::class)->find(1);
         $form = $this->createForm(FormEnquirySevenType::class, $formEnquiry);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -460,7 +467,7 @@ class PortalController extends AbstractController
                 $formEnquiry->setEnquiryLastName("-");
             }
             $formEnquiry->setMstState($form->get("mstCity")->getData()->getMstState());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($formEnquiry);
             $entityManager->flush();
             $mailer->mailerFormEnquiryVastu($formEnquiry);
@@ -558,10 +565,10 @@ class PortalController extends AbstractController
     public function roomConfigurationLike(Request $request): Response
     {
         $id  = $request->get('id');
-        $trnProjectRoomConfiguration = $this->getDoctrine()->getManager()->getRepository(TrnProjectRoomConfiguration::class)->findOneBy(['isActive'=>1,"id"=>$id]);
+        $trnProjectRoomConfiguration = $this->managerRegistry->getManager()->getRepository(TrnProjectRoomConfiguration::class)->findOneBy(['isActive'=>1,"id"=>$id]);
         if ($request->isXMLHttpRequest()) {
             $trnProjectRoomConfiguration->setRoomConfigurationLikes($trnProjectRoomConfiguration->getRoomConfigurationLikes()+1);
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             return new JsonResponse(array('data' => $trnProjectRoomConfiguration->getRoomConfigurationLikes()));
         }
         return new Response('This is not ajax!', 400);

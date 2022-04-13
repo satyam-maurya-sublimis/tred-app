@@ -3,6 +3,7 @@
 namespace App\Controller\Transaction;
 
 use DateTime;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Transaction\TrnProjectTowerDetails;
@@ -24,7 +25,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
  */
 class TrnProjectTowerDetailsController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
 
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param TrnProjectTowerDetailsRepository $trnProjectTowerDetailsRepository
@@ -127,7 +133,7 @@ class TrnProjectTowerDetailsController extends AbstractController
                     }
                 }
             }
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $trnProjectTowerDetails->setUserIpAddress($_SERVER['SERVER_ADDR']);
             $trnProjectTowerDetails->setCreatedOn(new DateTime());
             $entityManager->persist($trnProjectTowerDetails);
@@ -218,7 +224,7 @@ class TrnProjectTowerDetailsController extends AbstractController
                     }
                 }
             }
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $trnProjectTowerDetails->setUserIpAddress($_SERVER['SERVER_ADDR']);
             $trnProjectTowerDetails->setCreatedOn(new DateTime());
             $entityManager->persist($trnProjectTowerDetails);

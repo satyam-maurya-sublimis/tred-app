@@ -10,6 +10,7 @@ use App\Entity\Master\MstState;
 use App\Form\Transaction\CheckProjectType;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Transaction\TrnProject;
@@ -32,6 +33,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
  */
 class TrnProjectController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param TrnProjectRepository $trnProjectRepository
@@ -81,10 +88,10 @@ class TrnProjectController extends AbstractController
                 $options['vendorId'] = $userCompany->getId();
             }
 
-            $mstPincode = $this->getDoctrine()->getRepository(MstPincode::class)->find($pincode);
-//            $mstCountry = $this->getDoctrine()->getRepository(MstCountry::class)->findOneBy(["country"=>"India"]);
-//            $mstState = $this->getDoctrine()->getRepository(MstState::class)->findOneBy(["state"=>$mstPincode->getStateName()]);
-            $mstcity = $this->getDoctrine()->getRepository(MstCity::class)->getCityByPincodeCity($mstPincode->getDistrict(),"India");
+            $mstPincode = $this->managerRegistry->getRepository(MstPincode::class)->find($pincode);
+//            $mstCountry = $this->managerRegistry->getRepository(MstCountry::class)->findOneBy(["country"=>"India"]);
+//            $mstState = $this->managerRegistry->getRepository(MstState::class)->findOneBy(["state"=>$mstPincode->getStateName()]);
+            $mstcity = $this->managerRegistry->getRepository(MstCity::class)->getCityByPincodeCity($mstPincode->getDistrict(),"India");
             $trnProject = new TrnProject();
             $trnProject->setMstPincode($mstPincode);
 //            $trnProject->setMstVendorType($userVendorType);
@@ -191,7 +198,7 @@ class TrnProjectController extends AbstractController
                         }
                     }
                 }
-                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager = $this->managerRegistry->getManager();
                 $trnProject->setCreatedOn(new DateTime());
                 //$trnProject->setUserIpAddress($_SERVER['SERVER_ADDR']);
                 $entityManager->persist($trnProject);
@@ -245,7 +252,7 @@ class TrnProjectController extends AbstractController
             }
             foreach($originalTrnUploadDocument as $trnUploadDocument){
                 if($trnProject->getTrnUploadDocument()->contains($trnUploadDocument)==false){
-                    $this->getDoctrine()->getManager()->remove($trnUploadDocument);
+                    $this->managerRegistry->getManager()->remove($trnUploadDocument);
                 }
             }
             // Upload the OG Image for SEO
@@ -349,7 +356,7 @@ class TrnProjectController extends AbstractController
                     }
                 }
             }
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $trnProject->setCreatedOn(new DateTime());
             $entityManager->persist($trnProject);
             $entityManager->flush();
@@ -389,7 +396,7 @@ class TrnProjectController extends AbstractController
     {
         $mstPincode = trim($request->query->get('mstPincode'));
         $projectName = ucwords($request->query->get('projectName'));
-        $trnProject = $this->getDoctrine()->getRepository(TrnProject::class)->getProjectByPincodeandName($projectName,$mstPincode);
+        $trnProject = $this->managerRegistry->getRepository(TrnProject::class)->getProjectByPincodeandName($projectName,$mstPincode);
 
         return $this-> render('transaction/project/_ajax_listing.html.twig', [
             'projects' => $trnProject,

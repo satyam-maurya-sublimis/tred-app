@@ -8,6 +8,7 @@ use App\Form\Media\MdaFurnitureType;
 use App\Repository\Media\MdaFurnitureRepository;
 use App\Service\CommonHelper;
 use App\Service\FileUploaderHelper;
+use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +21,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TrnFurnitureMediaController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MdaFurnitureRepository $mdaFurnitureRepository
@@ -32,7 +39,7 @@ class TrnFurnitureMediaController extends AbstractController
         if(!$furniture_id) {
             return $this->redirectToRoute('product_furniture_index');
         }
-        $trnFurniture = $this->getDoctrine()->getRepository(TrnFurniture::class)->find($furniture_id);
+        $trnFurniture = $this->managerRegistry->getRepository(TrnFurniture::class)->find($furniture_id);
         return $this->render('transaction/trn_furniture_media/index.html.twig', [
             'medias' => $mdaFurnitureRepository->findBy(['trnFurniture' => $furniture_id]),
             'trnFurniture' => $trnFurniture,
@@ -59,13 +66,13 @@ class TrnFurnitureMediaController extends AbstractController
         if(!$furniture_id) {
             return $this->redirectToRoute('product_furniture_index');
         }
-        $trnFurniture = $this->getDoctrine()->getRepository(TrnFurniture::class)->find($furniture_id);
+        $trnFurniture = $this->managerRegistry->getRepository(TrnFurniture::class)->find($furniture_id);
         $trnFurnitureMedia = new MdaFurniture();
         $form = $this->createForm(MdaFurnitureType::class, $trnFurnitureMedia);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $imageFile = $form['mediaFileName']->getData();
             $newFilename = $fileUploaderHelper->uploadPublicFile($imageFile, $commonHelper->slugify($form['mediaName']->getData()), $existingMedia = null);
             $trnFurnitureMedia->setTrnFurniture($trnFurniture);
@@ -105,7 +112,7 @@ class TrnFurnitureMediaController extends AbstractController
             return $this->redirectToRoute('product_furniture_index');
         }
         $existingMedia = $trnFurnitureMedia->getMediaFileName();
-        $trnFurniture = $this->getDoctrine()->getRepository(TrnFurniture::class)->find($furniture_id);
+        $trnFurniture = $this->managerRegistry->getRepository(TrnFurniture::class)->find($furniture_id);
         $form = $this->createForm(MdaFurnitureType::class, $trnFurnitureMedia);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -119,7 +126,7 @@ class TrnFurnitureMediaController extends AbstractController
                 $trnFurnitureMedia->setMediaFileName($newFilename);
                 $trnFurnitureMedia->setMediaFilePath($this->getParameter('public_file_folder'));
             }
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('product_furniture_media_index', $request->query->all());
         }
@@ -148,7 +155,7 @@ class TrnFurnitureMediaController extends AbstractController
         if (!$furniture_id) {
             return $this->redirectToRoute('product_furniture_index');
         }
-        $trnFurniture = $this->getDoctrine()->getRepository(TrnFurniture::class)->find($furniture_id);
+        $trnFurniture = $this->managerRegistry->getRepository(TrnFurniture::class)->find($furniture_id);
 
         return $this->render('transaction/trn_furniture_media/show.html.twig', [
             'data' => $trnFurnitureMedia,

@@ -9,6 +9,7 @@ use App\Form\Transaction\TrnProjectFeedbackReplyType;
 use App\Form\Transaction\TrnProjectFeedbackType;
 use App\Repository\Transaction\TrnProjectFeedbackRepository;
 use App\Service\Mailer;
+use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,6 +22,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TrnPropertyFeedbackController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param TrnProjectFeedbackRepository $trnProjectFeedbackRepository
@@ -34,7 +41,7 @@ class TrnPropertyFeedbackController extends AbstractController
             return $this->redirectToRoute('product_properties_index');
         }
         $user = $this->getUser();
-        $trnProject = $this->getDoctrine()->getRepository(TrnProject::class)->find($projectId);
+        $trnProject = $this->managerRegistry->getRepository(TrnProject::class)->find($projectId);
         if (in_array("ROLE_SUPER_ADMIN", $user->getRoles())) {
             $trnProjectFeedbacks = $trnProjectFeedbackRepository->findBy(['trnProjects' => $projectId], ['createdOn'=>'Desc']);
         }else{
@@ -68,11 +75,11 @@ class TrnPropertyFeedbackController extends AbstractController
             return $this->redirectToRoute('product_properties_index');
         }
         $trnProjectFeedback = new TrnProjectFeedback();
-        $trnProject = $this->getDoctrine()->getRepository(TrnProject::class)->find($projectId);
+        $trnProject = $this->managerRegistry->getRepository(TrnProject::class)->find($projectId);
         $form = $this->createForm(TrnProjectFeedbackType::class, $trnProjectFeedback,['projectId'=>$projectId]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $trnProjectFeedback->setTrnProjects($trnProject);
             $trnProjectFeedback->setCreatedBy($this->getUser());
             $trnProjectFeedback->setCreatedOn(new \DateTime());
@@ -108,11 +115,11 @@ class TrnPropertyFeedbackController extends AbstractController
         if(!$projectId && (!in_array("ROLE_SUPER_ADMIN", $user->getRoles()))) {
             return $this->redirectToRoute('product_properties_index');
         }
-        $trnProject = $this->getDoctrine()->getRepository(TrnProject::class)->find($projectId);
+        $trnProject = $this->managerRegistry->getRepository(TrnProject::class)->find($projectId);
         $form = $this->createForm(TrnProjectFeedbackReplyType::class, $trnProjectFeedback,['projectId'=>$projectId]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $trnProjectFeedback->setReplyBy($this->getUser());
             $trnProjectFeedback->setReplyOn(new \DateTime());
             $entityManager->persist($trnProjectFeedback);

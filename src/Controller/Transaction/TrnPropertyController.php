@@ -9,6 +9,7 @@ use App\Form\Transaction\CheckProjectType;
 use App\Form\Transaction\TrnPropertiesType;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Transaction\TrnProject;
@@ -29,6 +30,12 @@ use App\Service\FileUploaderHelper;
  */
 class TrnPropertyController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param TrnProjectRepository $trnProjectRepository
@@ -43,7 +50,7 @@ class TrnPropertyController extends AbstractController
         if($search){
             $mstPincode = trim($search["pincodeId"]);
             $projectName = ucwords($search["projectName"]);
-            $queryBuilder = $this->getDoctrine()->getRepository(TrnProject::class)->getProjectByPincodeandName($projectName,$mstPincode);
+            $queryBuilder = $this->managerRegistry->getRepository(TrnProject::class)->getProjectByPincodeandName($projectName,$mstPincode);
         }else{
             $queryBuilder = $trnProjectRepository->findAll();
         }
@@ -82,8 +89,8 @@ class TrnPropertyController extends AbstractController
                 $options['vendorId'] = $userCompany->getId();
             }
 
-            $mstPincode = $this->getDoctrine()->getRepository(MstPincode::class)->find($pincode);
-            $mstcity = $this->getDoctrine()->getRepository(MstCity::class)->getCityByPincodeCity($mstPincode->getDistrict(),"India");
+            $mstPincode = $this->managerRegistry->getRepository(MstPincode::class)->find($pincode);
+            $mstcity = $this->managerRegistry->getRepository(MstCity::class)->getCityByPincodeCity($mstPincode->getDistrict(),"India");
             $trnProject = new TrnProject();
             $trnProject->setMstPincode($mstPincode);
             $trnProject->setMstCountry($mstcity->getMstCountry());
@@ -188,7 +195,7 @@ class TrnPropertyController extends AbstractController
 //                        }
 //                    }
 //                }
-                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager = $this->managerRegistry->getManager();
                 $trnProject->setCreatedOn(new DateTime());
                 //$trnProject->setUserIpAddress($_SERVER['SERVER_ADDR']);
                 $entityManager->persist($trnProject);
@@ -242,7 +249,7 @@ class TrnPropertyController extends AbstractController
             }
             foreach($originalTrnUploadDocument as $trnUploadDocument){
                 if($trnProject->getTrnUploadDocument()->contains($trnUploadDocument)==false){
-                    $this->getDoctrine()->getManager()->remove($trnUploadDocument);
+                    $this->managerRegistry->getManager()->remove($trnUploadDocument);
                 }
             }
             // Upload the OG Image for SEO
@@ -346,7 +353,7 @@ class TrnPropertyController extends AbstractController
 //                    }
 //                }
 //            }
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $trnProject->setCreatedOn(new DateTime());
             $entityManager->persist($trnProject);
             $entityManager->flush();
@@ -386,7 +393,7 @@ class TrnPropertyController extends AbstractController
     {
         $mstPincode = trim($request->query->get('mstPincode'));
         $projectName = ucwords($request->query->get('projectName'));
-        $trnProject = $this->getDoctrine()->getRepository(TrnProject::class)->getProjectByPincodeandName($projectName,$mstPincode);
+        $trnProject = $this->managerRegistry->getRepository(TrnProject::class)->getProjectByPincodeandName($projectName,$mstPincode);
         $session->set("search",[
             "pincodeId" => $mstPincode,
             'projectName' => $projectName
