@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 use App\Entity\SystemApp\AppUser;
 use App\Entity\SystemApp\AppUserCategory;
 use App\Entity\SystemApp\AppUserInfo;
+use Doctrine\Persistence\ManagerRegistry;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Ramsey\Uuid\Nonstandard\Uuid;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,14 +18,19 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class AuthController extends ApiController
 {
+    private ManagerRegistry $managerRegistry;
 
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/register", name="register", methods={"POST"})
      */
     public function register(Request $request, UserPasswordEncoderInterface $encoder)
     {
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->managerRegistry->getManager();
         $request = $this->transformJsonBody($request);
         $firstName = $request->get('firstname');
         $middleName = $request->get('middlename');
@@ -78,7 +84,7 @@ class AuthController extends ApiController
     public function changePassword(Request $request, UserPasswordEncoderInterface $encoder)
     {
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->managerRegistry->getManager();
         $request = $this->transformJsonBody($request);
         $oldPassword = $request->get('oldpassword');
         $newPassword = $request->get('newpassword');

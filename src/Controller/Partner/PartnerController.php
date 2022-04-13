@@ -8,6 +8,7 @@ use App\Form\SystemApp\AppUserpartnerType;
 use App\Form\Transaction\TrnVendorPartnerDetailsType;
 use App\Repository\Transaction\TrnVendorPartnerDetailsRepository;
 use App\Service\Mailer;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,6 +26,12 @@ use App\Service\FileUploaderHelper;
  */
 class PartnerController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="vendor_index", methods={"GET"})
      * @param Request $request
@@ -37,10 +44,10 @@ class PartnerController extends AbstractController
         if ($user->getAppUserInfo()->getTrnVendorPartnerDetails())
         {
             $trnVendorPartnerDetails = $user->getAppUserInfo()->getTrnVendorPartnerDetails();
-            $queryBuilder = $this->getDoctrine()->getRepository(TrnVendorPartnerDetails::class)->findBy(["id"=>$trnVendorPartnerDetails->getId(),"isActive"=>1]);
+            $queryBuilder = $this->managerRegistry->getRepository(TrnVendorPartnerDetails::class)->findBy(["id"=>$trnVendorPartnerDetails->getId(),"isActive"=>1]);
         }
         if (in_array("ROLE_SUPER_ADMIN", $user->getRoles())) {
-            $queryBuilder = $this->getDoctrine()->getRepository(TrnVendorPartnerDetails::class)->findBy(["isActive"=>1]);
+            $queryBuilder = $this->managerRegistry->getRepository(TrnVendorPartnerDetails::class)->findBy(["isActive"=>1]);
         }
 
         return $this->render('partner/register/index.html.twig', [
@@ -66,7 +73,7 @@ class PartnerController extends AbstractController
     {
         $trnVendorPartnerDetails = new TrnVendorPartnerDetails();
         $form = $this->createForm(TrnVendorPartnerDetailsType::class, $trnVendorPartnerDetails);
-        $mstCountry = $this->getDoctrine()->getRepository(MstCountry::class)->find(101);
+        $mstCountry = $this->managerRegistry->getRepository(MstCountry::class)->find(101);
         $trnVendorPartnerDetails->setMstCountry($mstCountry);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -78,9 +85,9 @@ class PartnerController extends AbstractController
                 $trnVendorPartnerDetails->setCompanyLogo($newFilename);
             }
             $trnVendorPartnerDetails->setCreatedOn(new \DateTime());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($trnVendorPartnerDetails);
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             #Send Reset Password Email
             $this->addFlash('success', 'form.created_successfully');
             return $this->redirectToRoute('partner_vendor_index');
@@ -115,9 +122,9 @@ class PartnerController extends AbstractController
                 $trnVendorPartnerDetails->setCompanyLogo($newFilename);
             }
             $trnVendorPartnerDetails->setCreatedOn(new \DateTime());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($trnVendorPartnerDetails);
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             #Send Reset Password Email
             $this->addFlash('success', 'form.created_successfully');
             return $this->redirectToRoute('partner_vendor_index');

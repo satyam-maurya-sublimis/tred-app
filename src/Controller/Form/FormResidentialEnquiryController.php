@@ -6,6 +6,7 @@ use App\Entity\Form\FormResidentialEnquiry;
 use App\Form\Form\FormResidentialEnquiryType;
 use App\Repository\Form\FormResidentialEnquiryRepository;
 use DateTime;
+use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +19,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class FormResidentialEnquiryController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param FormResidentialEnquiryRepository $formResidentialEnquiryRepository
@@ -48,7 +55,7 @@ class FormResidentialEnquiryController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $formResidentialEnquiry->setResidentialEnquiryCreateTime(new DateTime());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($formResidentialEnquiry);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -93,7 +100,7 @@ class FormResidentialEnquiryController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('form_residential_enquiry_index');
         }
@@ -116,7 +123,7 @@ class FormResidentialEnquiryController extends AbstractController
     public function delete(Request $request, FormResidentialEnquiry $formResidentialEnquiry): Response
     {
         if ($this->isCsrfTokenValid('delete'.$formResidentialEnquiry->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($formResidentialEnquiry);
             $entityManager->flush();
         }

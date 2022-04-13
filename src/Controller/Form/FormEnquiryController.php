@@ -10,6 +10,7 @@ use App\Form\Form\FormEnquiryType;
 use App\Form\Form\FormResidentialEnquiryType;
 use App\Repository\Form\FormEnquiryRepository;
 use DateTime;
+use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,6 +23,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class FormEnquiryController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param FormEnquiryRepository $formEnquiryRepository
@@ -47,7 +54,7 @@ class FormEnquiryController extends AbstractController
     public function search(Request $request): Response
     {
         $formEnquiry = trim($request->query->get('formEnquiry'));
-        $formEnquiries = $this->getDoctrine()->getRepository(FormEnquiry::class)->findBy(['enquiryForm' => $formEnquiry]);
+        $formEnquiries = $this->managerRegistry->getRepository(FormEnquiry::class)->findBy(['enquiryForm' => $formEnquiry]);
         return $this->render('form/form_enquiry/_ajax_listing.html.twig', [
             'form_enquiries' => $formEnquiries,
             'path_add' => 'form_enquiry_add',
@@ -65,7 +72,7 @@ class FormEnquiryController extends AbstractController
     public function standalone(Request $request,FormEnquiryRepository $formEnquiryRepository): Response
     {
         $slugName  = $request->get('slugName');
-        $formEnquiry = $this->getDoctrine()->getRepository(FormEnquiry::class)->findBy(['enquiryForm' => $slugName]);
+        $formEnquiry = $this->managerRegistry->getRepository(FormEnquiry::class)->findBy(['enquiryForm' => $slugName]);
         return $this->render('form/form_enquiry/alone.html.twig', [
             'form_enquiries' => $formEnquiry,
             'path_index' => 'form_enquiry_index',
@@ -104,7 +111,7 @@ class FormEnquiryController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $slugName = $form->getData()->getEnquiryForm();
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('form_enquiry_index',['slugName'=>$slugName]);
         }

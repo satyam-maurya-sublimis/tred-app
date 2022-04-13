@@ -7,6 +7,7 @@ use App\Form\Transaction\TrnVendorPartnerDetailsType;
 use App\Service\CommonHelper;
 use App\Service\FileUploaderHelper;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -20,6 +21,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TopPartnerController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param Request $request
@@ -30,7 +37,7 @@ class TopPartnerController extends AbstractController
         $user = $this->getUser();
 //        $queryBuilder=[];
 //        if (in_array("ROLE_SUPER_ADMIN", $user->getRoles())) {
-            $queryBuilder = $this->getDoctrine()->getRepository(TrnTopVendorPartners::class)->findAll();
+            $queryBuilder = $this->managerRegistry->getRepository(TrnTopVendorPartners::class)->findAll();
 //        }
         return $this->render('partner/top_partner/index.html.twig', [
             'trnTopVendorPartners' => $queryBuilder,
@@ -67,7 +74,7 @@ class TopPartnerController extends AbstractController
             }
             $trnTopVendorPartners->setCreatedOn(new \DateTime());
             $trnTopVendorPartners->setCreatedBy($this->getUser());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($trnTopVendorPartners);
             $entityManager->flush();
             #Send Reset Password Email
@@ -100,7 +107,7 @@ class TopPartnerController extends AbstractController
         $form = $this->createForm(TrnTopVendorPartnersType::class, $trnTopVendorPartners);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             foreach($originalContent as $cntnt){
                 if($trnTopVendorPartners->getTrnTopVendorPartnersLocalities()->contains($cntnt)==false){
                     $entityManager->remove($cntnt);

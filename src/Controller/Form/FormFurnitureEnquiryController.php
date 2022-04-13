@@ -6,6 +6,7 @@ use App\Entity\Form\FormFurnitureEnquiry;
 use App\Form\Form\FormFurnitureEnquiryType;
 use App\Repository\Form\FormFurnitureEnquiryRepository;
 use DateTime;
+use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +19,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class FormFurnitureEnquiryController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param FormFurnitureEnquiryRepository $formFurnitureEnquiryRepository
@@ -48,7 +55,7 @@ class FormFurnitureEnquiryController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $formFurnitureEnquiry->setFurnitureEnquiryCreateTime(new DateTime());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($formFurnitureEnquiry);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -93,7 +100,7 @@ class FormFurnitureEnquiryController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('form_furniture_enquiry_index');
         }
@@ -116,7 +123,7 @@ class FormFurnitureEnquiryController extends AbstractController
     public function delete(Request $request, FormFurnitureEnquiry $formFurnitureEnquiry): Response
     {
         if ($this->isCsrfTokenValid('delete'.$formFurnitureEnquiry->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($formFurnitureEnquiry);
             $entityManager->flush();
         }

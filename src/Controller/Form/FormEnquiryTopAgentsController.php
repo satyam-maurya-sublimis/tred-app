@@ -6,6 +6,7 @@ use App\Entity\Form\FormEnquiryTopAgents;
 use App\Form\Form\FormEnquiryTopAgentsType;
 use App\Repository\Form\FormEnquiryTopAgentsRepository;
 use DateTime;
+use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +19,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class FormEnquiryTopAgentsController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param FormEnquiryTopAgentsRepository $formEnquiryTopAgentsRepository
@@ -43,7 +50,7 @@ class FormEnquiryTopAgentsController extends AbstractController
     public function search(Request $request): Response
     {
         $formEnquiry = trim($request->query->get('formEnquiry'));
-        $formEnquiries = $this->getDoctrine()->getRepository(FormEnquiryTopAgents::class)->findBy(['enquiryForm' => $formEnquiry]);
+        $formEnquiries = $this->managerRegistry->getRepository(FormEnquiryTopAgents::class)->findBy(['enquiryForm' => $formEnquiry]);
         return $this->render('form/form_top_agents/_ajax_listing.html.twig', [
             'form_enquiries' => $formEnquiries,
             'path_add' => 'form_top_agents_add',
@@ -80,7 +87,7 @@ class FormEnquiryTopAgentsController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('form_top_agents_index');
         }

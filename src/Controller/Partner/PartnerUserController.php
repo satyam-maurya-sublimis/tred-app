@@ -7,6 +7,7 @@ use App\Entity\Transaction\TrnVendorPartnerDetails;
 use App\Form\SystemApp\AppUserVendorPartnerType;
 use App\Repository\SystemApp\AppUserInfoRepository;
 use App\Service\Mailer;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,6 +26,12 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
  */
 class PartnerUserController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param AppUserInfoRepository $appUserInfoRepository
@@ -46,7 +53,7 @@ class PartnerUserController extends AbstractController
         if (empty($vendor_partner_id))
             $queryBuilder = $appUserInfoRepository->getOnlyApplicationUsers();
         else {
-            $TrnVendorPartnerDetails = $this->getDoctrine()->getRepository(TrnVendorPartnerDetails::class)->find($vendor_partner_id);
+            $TrnVendorPartnerDetails = $this->managerRegistry->getRepository(TrnVendorPartnerDetails::class)->find($vendor_partner_id);
             $queryBuilder = $appUserInfoRepository->getOnlyApplicationUsersByVendorPartner($TrnVendorPartnerDetails);
         }
         $pagination = $paginator->paginate(
@@ -79,7 +86,7 @@ class PartnerUserController extends AbstractController
         $appUser = new AppUser();
         $vendor_partner_id = $request->get('vendor_partner_id');
         if (!empty($vendor_partner_id)) {
-            $TrnVendorPartnerDetails = $this->getDoctrine()->getRepository(TrnVendorPartnerDetails::class)->find($vendor_partner_id);
+            $TrnVendorPartnerDetails = $this->managerRegistry->getRepository(TrnVendorPartnerDetails::class)->find($vendor_partner_id);
             $appUser->getAppUserInfo()->setTrnVendorPartnerDetails($TrnVendorPartnerDetails);
         }
         $loggedUser = $this->getUser();
@@ -101,9 +108,9 @@ class PartnerUserController extends AbstractController
             $appUser->setUserPassword($encoder->encodePassword($appUser, $form->get('userPassword')->getData()));
             $appUser->setUserCreationToken($token);
             $appUser->getAppUserInfo()->setUserIpAddress($_SERVER['SERVER_ADDR']);
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($appUser);
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             #Send Reset Password Email
             $tokenExpiryTime = new \DateTime('+24 hour');
             $userName = $appUser->getUserName();
@@ -111,7 +118,7 @@ class PartnerUserController extends AbstractController
             $appUser->setUserResetPasswordToken($token);
             $appUser->setUserResetPasswordTokenExpiry($tokenExpiryTime);
             $entityManager->persist($appUser);
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             // Send Reset Email to User
             $mailer->mailerResetPassword($userEmail, $userName, $token);
             #Send Reset Password Email
@@ -159,9 +166,9 @@ class PartnerUserController extends AbstractController
                 $newFilename = $fileUploaderHelper->uploadPublicFile($imageContentFile, $strSaveFileName,null);
                 $appUser->getAppUserInfo()->setUserAvatarImagePath($newFilename);
             }
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($appUser);
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
 
             //echo $appUser->getAppUserInfo()->getUserAvatarImagePath();
             //die;

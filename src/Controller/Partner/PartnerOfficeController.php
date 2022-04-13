@@ -7,6 +7,7 @@ use App\Entity\Transaction\TrnVendorPartnerDetails;
 use App\Entity\Transaction\TrnVendorPartnerOffices;
 use App\Form\Transaction\TrnVendorPartnerOfficesType;
 use App\Repository\Transaction\TrnVendorPartnerOfficesRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,6 +23,12 @@ use Ramsey\Uuid\Uuid;
  */
 class PartnerOfficeController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param TrnVendorPartnerOfficesRepository $trnVendorPartnerOfficesRepository
@@ -43,7 +50,7 @@ class PartnerOfficeController extends AbstractController
         if (empty($vendor_partner_id))
             $queryBuilder = $trnVendorPartnerOfficesRepository->findAll();
         else{
-            $TrnVendorPartnerDetails = $this->getDoctrine()->getRepository(TrnVendorPartnerDetails::class)->find($vendor_partner_id);
+            $TrnVendorPartnerDetails = $this->managerRegistry->getRepository(TrnVendorPartnerDetails::class)->find($vendor_partner_id);
             $queryBuilder = $trnVendorPartnerOfficesRepository->findBy(['trnVendorPartnerDetails' => $TrnVendorPartnerDetails]);
         }
 
@@ -75,16 +82,16 @@ class PartnerOfficeController extends AbstractController
         $trnVendorPartnerOffices = new TrnVendorPartnerOffices();
         $vendor_partner_id = $request->get('vendor_partner_id');
         if (!empty($vendor_partner_id)) {
-            $TrnVendorPartnerDetails = $this->getDoctrine()->getRepository(TrnVendorPartnerDetails::class)->find($vendor_partner_id);
+            $TrnVendorPartnerDetails = $this->managerRegistry->getRepository(TrnVendorPartnerDetails::class)->find($vendor_partner_id);
             $trnVendorPartnerOffices->setTrnVendorPartnerDetails($TrnVendorPartnerDetails);
         }
         $form = $this->createForm(TrnVendorPartnerOfficesType::class, $trnVendorPartnerOffices);
         $form->handleRequest($request); //echo '<pre>'; print_r($request->request); die;
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($trnVendorPartnerOffices);
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             #Send Reset Password Email
             $this->addFlash('success', 'form.created_successfully');
             return $this->redirectToRoute('partner_office_index');
@@ -110,9 +117,9 @@ class PartnerOfficeController extends AbstractController
         $form = $this->createForm(TrnVendorPartnerOfficesType::class, $trnVendorPartnerOffices);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($trnVendorPartnerOffices);
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             #Send Reset Password Email
             $this->addFlash('success', 'form.created_successfully');
             return $this->redirectToRoute('partner_office_index');

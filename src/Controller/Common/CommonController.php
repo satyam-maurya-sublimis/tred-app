@@ -17,6 +17,7 @@ use App\Entity\Transaction\TrnVendorPartnerDetails;
 use App\Entity\Transaction\TrnVendorPartnerOffices;
 use App\Entity\Transaction\TrnProject;
 use App\Service\CommonHelper;
+use Doctrine\Persistence\ManagerRegistry;
 use Proxies\__CG__\App\Entity\Master\MstPropertyType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -31,6 +32,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class CommonController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/core/location/state_list", name="location_state_list", methods={"GET","POST"})
      * @param Request $request
@@ -39,7 +46,7 @@ class CommonController extends AbstractController
     public function statesList(Request $request): Response
     {
         $country_id = $request->query->get('q');
-        $stateList = $this->getDoctrine()->getRepository(MstState::class)->getStateListByCountryId($country_id);
+        $stateList = $this->managerRegistry->getRepository(MstState::class)->getStateListByCountryId($country_id);
         return $this->json($stateList);
     }
 
@@ -51,7 +58,7 @@ class CommonController extends AbstractController
     public function citiesList(Request $request): Response
     {
         $state_id = $request->query->get('q');
-        $cityList = $this->getDoctrine()->getRepository(MstCity::class)->getCityListByStateId($state_id);
+        $cityList = $this->managerRegistry->getRepository(MstCity::class)->getCityListByStateId($state_id);
         return $this->json($cityList);
     }
 
@@ -63,7 +70,7 @@ class CommonController extends AbstractController
     public function areacitiesList(Request $request): Response
     {
         $city_id = $request->query->get('q');
-        $areaInCityList = $this->getDoctrine()->getRepository(MstAreaInCity::class)->getAreaInCityListByCityId($city_id);
+        $areaInCityList = $this->managerRegistry->getRepository(MstAreaInCity::class)->getAreaInCityListByCityId($city_id);
         return $this->json($areaInCityList);
     }
 
@@ -76,7 +83,7 @@ class CommonController extends AbstractController
     public function getVendorPartnerOfficesList(Request $request): Response
     {
         $vendor_partner_id = $request->query->get('q');
-        $vendorOffices = $this->getDoctrine()->getRepository(TrnVendorPartnerOffices::class)
+        $vendorOffices = $this->managerRegistry->getRepository(TrnVendorPartnerOffices::class)
             ->getVendorPartnerOfficesList($vendor_partner_id);
         return $this->json($vendorOffices);
     }
@@ -90,7 +97,7 @@ class CommonController extends AbstractController
     public function getVendorPartnerOfficeCategoriesList(Request $request): Response
     {
         $vendor_partner_office_id = $request->query->get('q');
-        $vendorOffices = $this->getDoctrine()->getRepository(TrnVendorPartnerOffices::class)
+        $vendorOffices = $this->managerRegistry->getRepository(TrnVendorPartnerOffices::class)
             ->getVendorPartnerOfficeCategoriesList($vendor_partner_office_id);
         return $this->json($vendorOffices);
     }
@@ -105,7 +112,7 @@ class CommonController extends AbstractController
     public function getProjectDetails(Request $request): Response
     {
         $projectId = $request->query->get('q');
-        $vendorOffices = $this->getDoctrine()->getRepository(TrnProject::class)
+        $vendorOffices = $this->managerRegistry->getRepository(TrnProject::class)
             ->getProjectDetails($projectId);
         return $this->json($vendorOffices);
     }
@@ -118,7 +125,7 @@ class CommonController extends AbstractController
     public function productType(Request $request): Response
     {
         $productCategoryId = $request->query->get('q');
-        $mstProductType = $this->getDoctrine()->getRepository(MstProductType::class)->getProductTypeByCategoryId($productCategoryId);
+        $mstProductType = $this->managerRegistry->getRepository(MstProductType::class)->getProductTypeByCategoryId($productCategoryId);
         $productType = [];
         foreach($mstProductType as $val){
             $productType[] = ["id"=>$val->getId(),"name"=>$val->getProductType()];
@@ -134,7 +141,7 @@ class CommonController extends AbstractController
     public function amenitiesCategory(Request $request): Response
     {
         $subCategoryId = $request->query->get('q');
-        $mstProjectAmenties = $this->getDoctrine()->getRepository(MstProjectAmenities::class)->getAmenitiesBySubCategoryId($subCategoryId);
+        $mstProjectAmenties = $this->managerRegistry->getRepository(MstProjectAmenities::class)->getAmenitiesBySubCategoryId($subCategoryId);
         return $this->json($mstProjectAmenties);
     }
 
@@ -146,7 +153,7 @@ class CommonController extends AbstractController
     public function productSubType(Request $request): Response
     {
         $mstProductTypeId = $request->query->get('q');
-        $mstProductSubType = $this->getDoctrine()->getRepository(MstProductSubType::class)->getProductSubTypeByProductTypeId($mstProductTypeId);
+        $mstProductSubType = $this->managerRegistry->getRepository(MstProductSubType::class)->getProductSubTypeByProductTypeId($mstProductTypeId);
         $productSubType = [];
         foreach($mstProductSubType as $val){
             $productSubType[] = ["id"=>$val->getId(),"name"=>$val->getProductSubType()];
@@ -162,15 +169,15 @@ class CommonController extends AbstractController
     public function productStatus(Request $request): Response
     {
         $mstProductTypeId = $request->query->get('q');
-        $mstProductType = $this->getDoctrine()->getRepository(MstProductType::class)->findOneBy(['isActive'=>1,"id"=>$mstProductTypeId]);
+        $mstProductType = $this->managerRegistry->getRepository(MstProductType::class)->findOneBy(['isActive'=>1,"id"=>$mstProductTypeId]);
         if ($mstProductType){
             if ($mstProductType->getProductTypeSlugName() == "resale"){
-                $mstProjectStatus = $this->getDoctrine()->getRepository(MstPropertyType::class)->findBy(['isActive'=>1,"rowId"=>"402032f7-0d7f-456a-8f58-03cdecfb5c27"]);
+                $mstProjectStatus = $this->managerRegistry->getRepository(MstPropertyType::class)->findBy(['isActive'=>1,"rowId"=>"402032f7-0d7f-456a-8f58-03cdecfb5c27"]);
             }else{
-                $mstProjectStatus = $this->getDoctrine()->getRepository(MstPropertyType::class)->findBy(['isActive'=>1]);
+                $mstProjectStatus = $this->managerRegistry->getRepository(MstPropertyType::class)->findBy(['isActive'=>1]);
             }
         }else{
-            $mstProjectStatus = $this->getDoctrine()->getRepository(MstPropertyType::class)->findBy(['isActive'=>1]);
+            $mstProjectStatus = $this->managerRegistry->getRepository(MstPropertyType::class)->findBy(['isActive'=>1]);
         }
         $productStatus = [];
         foreach($mstProjectStatus as $val){
@@ -191,7 +198,7 @@ class CommonController extends AbstractController
         if ($this->getUser()->getAppUserInfo()->getTrnVendorPartnerDetails()){
             $userVendorCompanyId = $this->getUser()->getAppUserInfo()->getTrnVendorPartnerDetails()->getId();
         }
-        $vendor = $this->getDoctrine()->getRepository(TrnVendorPartnerDetails::class)->getVendorPartnerlist($vendor_type_id,$userVendorCompanyId);
+        $vendor = $this->managerRegistry->getRepository(TrnVendorPartnerDetails::class)->getVendorPartnerlist($vendor_type_id,$userVendorCompanyId);
         return $this->json($vendor);
     }
 
@@ -203,7 +210,7 @@ class CommonController extends AbstractController
     public function getPincodeList(Request $request): Response
     {
         $pincode = $request->query->get('pincode');
-        $mstPincode = $this->getDoctrine()->getRepository(MstPincode::class)->getPincodelist($pincode);
+        $mstPincode = $this->managerRegistry->getRepository(MstPincode::class)->getPincodelist($pincode);
         return $this->json($mstPincode);
     }
     /**
@@ -213,7 +220,7 @@ class CommonController extends AbstractController
      */
     public function getUpdateDate(Request $request, CommonHelper $commonHelper): Response
     {
-        $trnProjects = $this->getDoctrine()->getRepository(TrnProject::class)->findBy(["isActive"=>1]);
+        $trnProjects = $this->managerRegistry->getRepository(TrnProject::class)->findBy(["isActive"=>1]);
         $posssionCollectionDate = [];
         foreach($trnProjects as $trnProject){
             $possessionDate = $trnProject->getPossessionDate();
@@ -224,10 +231,10 @@ class CommonController extends AbstractController
             if ($posssionCollectionDate1){
                 $date = new \DateTime($posssionCollectionDate1);
                 $trnProject->setActualPossessionDate($date);
-                $this->getDoctrine()->getManager()->persist($trnProject);
+                $this->managerRegistry->getManager()->persist($trnProject);
             }
         }
-        $this->getDoctrine()->getManager()->flush();
+        $this->managerRegistry->getManager()->flush();
         dd($posssionCollectionDate);
     }
 
@@ -239,7 +246,7 @@ class CommonController extends AbstractController
     public function furnitureCategory(Request $request): Response
     {
         $mstProductSubTypeId = $request->query->get('q');
-        $mstFurnitureCategory = $this->getDoctrine()->getRepository(MstFurnitureCategory::class)->findBy(['isActive'=>1,'mstProductSubType'=>$mstProductSubTypeId]);
+        $mstFurnitureCategory = $this->managerRegistry->getRepository(MstFurnitureCategory::class)->findBy(['isActive'=>1,'mstProductSubType'=>$mstProductSubTypeId]);
         $furnitureCategory = [];
         foreach($mstFurnitureCategory as $val){
             $furnitureCategory[] = ["id"=>$val->getId(),"name"=>$val->getFurnitureCategory()];
@@ -254,7 +261,7 @@ class CommonController extends AbstractController
     public function furnitureProductCatalog(Request $request): Response
     {
         $mstProductTypeId = $request->query->get('q');
-        $trnFurnitureProductCatalog = $this->getDoctrine()->getRepository(TrnFurnitureProductCatalog::class)->findBy(['isActive'=>1,'mstProductType'=>$mstProductTypeId]);
+        $trnFurnitureProductCatalog = $this->managerRegistry->getRepository(TrnFurnitureProductCatalog::class)->findBy(['isActive'=>1,'mstProductType'=>$mstProductTypeId]);
         $furnitureCategory = [];
         foreach($trnFurnitureProductCatalog as $val){
             $furnitureCategory[] = ["id"=>$val->getId(),"name"=>$val->getCatalogName()];
@@ -270,8 +277,8 @@ class CommonController extends AbstractController
     public function localityList(Request $request): Response
     {
         $city_id = $request->query->get('q');
-        $mstCity = $this->getDoctrine()->getRepository(MstCity::class)->find($city_id);
-        $mstPincode = $this->getDoctrine()->getRepository(MstPincode::class)->getPincodelistByCityName($mstCity->getCity());
+        $mstCity = $this->managerRegistry->getRepository(MstCity::class)->find($city_id);
+        $mstPincode = $this->managerRegistry->getRepository(MstPincode::class)->getPincodelistByCityName($mstCity->getCity());
         return $this->json($mstPincode);
     }
 }

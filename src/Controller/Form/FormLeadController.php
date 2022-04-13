@@ -6,6 +6,7 @@ use App\Entity\Form\FormLead;
 use App\Form\Form\FormLeadType;
 use App\Repository\Form\FormLeadRepository;
 use DateTime;
+use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +19,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class FormLeadController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param FormLeadRepository $formLeadRepository

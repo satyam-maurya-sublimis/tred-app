@@ -10,6 +10,7 @@ use App\Form\Form\FormEnquiryType;
 use App\Form\Portal\FormEnquirySixType;
 use App\Repository\Form\FormEnquiryVastuTipsRepository;
 use DateTime;
+use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,6 +23,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class FormEnquiryVastuTipsController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param FormEnquiryVastuTipsRepository $formEnquiryVastuTipsRepository
@@ -47,7 +54,7 @@ class FormEnquiryVastuTipsController extends AbstractController
     public function search(Request $request): Response
     {
         $formEnquiry = trim($request->query->get('formEnquiry'));
-        $formEnquiries = $this->getDoctrine()->getRepository(FormEnquiryVastuTips::class)->findBy(['enquiryForm' => $formEnquiry]);
+        $formEnquiries = $this->managerRegistry->getRepository(FormEnquiryVastuTips::class)->findBy(['enquiryForm' => $formEnquiry]);
         return $this->render('form/form_vastu_tips/_ajax_listing.html.twig', [
             'form_enquiries' => $formEnquiries,
             'path_add' => 'form_vastu_tips_add',
@@ -84,7 +91,7 @@ class FormEnquiryVastuTipsController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('form_vastu_tips_index');
         }
