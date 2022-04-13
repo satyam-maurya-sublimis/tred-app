@@ -5,6 +5,7 @@ namespace App\Controller\Product;
 use App\Entity\Product\PrdBrand;
 use App\Form\Product\PrdBrandType;
 use App\Repository\Product\PrdBrandRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,6 +21,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
  */
 class PrdBrandController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param PrdBrandRepository $prdBrandRepository
@@ -51,7 +58,7 @@ class PrdBrandController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $PrdBrand->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($PrdBrand);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -80,7 +87,7 @@ class PrdBrandController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('product_brand_index');
         }

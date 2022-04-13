@@ -7,6 +7,7 @@ use App\Form\Product\PrdColorType;
 use App\Repository\Product\PrdColorRepository;
 use App\Service\CommonHelper;
 use App\Service\FileUploaderHelper;
+use Doctrine\Persistence\ManagerRegistry;
 use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,6 +21,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class PrdColorController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param PrdColorRepository $prdColorRepository
@@ -63,7 +70,7 @@ class PrdColorController extends AbstractController
                     $prdColor->setColorImagePath($this->getParameter('public_file_folder'));
                 }
             }
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($prdColor);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -110,7 +117,7 @@ class PrdColorController extends AbstractController
                     $prdColor->setColorImagePath($this->getParameter('public_file_folder'));
                 }
             }
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('prd_color_index', $request->query->all());
         }
