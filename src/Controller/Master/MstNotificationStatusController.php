@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstNotificationStatus;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstNotificationStatusController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstNotificationStatusRepository $mstNotificationStatusRepository
@@ -52,7 +59,7 @@ class MstNotificationStatusController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstNotificationStatus->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstNotificationStatus);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstNotificationStatusController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $mstNotificationStatus = ucwords($request->query->get('notification_statusSearch'));
 
-        $mstNotificationStatus = $this->getDoctrine()->getRepository(MstNotificationStatus::class)->getCityListByCountryId($mstNotificationStatus, $countryId);
+        $mstNotificationStatus = $this->managerRegistry->getRepository(MstNotificationStatus::class)->getCityListByCountryId($mstNotificationStatus, $countryId);
         return $this->render('master/mst_notification_status/_ajax_listing.html.twig', [
             'mst_cities' => $mstNotificationStatus,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstNotificationStatusController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_notification_status_index');
         }
@@ -127,7 +134,7 @@ class MstNotificationStatusController extends AbstractController
     public function delete(Request $request, MstNotificationStatus $mstNotificationStatus): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstNotificationStatus->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstNotificationStatus);
             $entityManager->flush();
         }

@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstFurnitureFinish;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstFurnitureFinishController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstFurnitureFinishRepository $furnitureFinishRepository
@@ -52,7 +59,7 @@ class MstFurnitureFinishController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $furnitureFinish->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($furnitureFinish);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -77,7 +84,7 @@ class MstFurnitureFinishController extends AbstractController
     public function search(Request $request): Response
     {
         $furnitureFinish = ucwords($request->query->get('furnitureFinishSearch'));
-        $furnitureFinish = $this->getDoctrine()->getRepository(MstFurnitureFinish::class)->getFurnitureFinish($furnitureFinish);
+        $furnitureFinish = $this->managerRegistry->getRepository(MstFurnitureFinish::class)->getFurnitureFinish($furnitureFinish);
         return $this->render('master/mst_furniture_finish/_ajax_listing.html.twig', [
             'data' => $furnitureFinish,
             'path_add' => 'master_furniture_finish_add',
@@ -100,7 +107,7 @@ class MstFurnitureFinishController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_furniture_finish_index');
         }
@@ -124,7 +131,7 @@ class MstFurnitureFinishController extends AbstractController
     public function delete(Request $request, MstFurnitureFinish $furnitureFinish): Response
     {
         if ($this->isCsrfTokenValid('delete'.$furnitureFinish->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($furnitureFinish);
             $entityManager->flush();
         }

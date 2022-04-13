@@ -5,6 +5,7 @@ namespace App\Controller\Master;
 use App\Entity\Master\MstRating;
 use App\Form\Master\MstRatingType;
 use App\Repository\Master\MstRatingRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,6 +21,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
  */
 class MstRatingController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstRatingRepository $mstRatingRepository
@@ -59,7 +66,7 @@ class MstRatingController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstRating->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstRating);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -88,7 +95,7 @@ class MstRatingController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_rating_index');
         }
@@ -112,7 +119,7 @@ class MstRatingController extends AbstractController
     public function delete(Request $request, MstRating $mstRating): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstRating->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstRating);
             $entityManager->flush();
         }

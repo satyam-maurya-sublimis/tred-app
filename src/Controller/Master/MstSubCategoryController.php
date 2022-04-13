@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstSubCategory;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstSubCategoryController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstSubCategoryRepository $mstSubCategoryRepository
@@ -52,7 +59,7 @@ class MstSubCategoryController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstSubCategory->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstSubCategory);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstSubCategoryController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $mstSubCategory = ucwords($request->query->get('sub_categorySearch'));
 
-        $mstSubCategory = $this->getDoctrine()->getRepository(MstSubCategory::class)->getCityListByCountryId($mstSubCategory, $countryId);
+        $mstSubCategory = $this->managerRegistry->getRepository(MstSubCategory::class)->getCityListByCountryId($mstSubCategory, $countryId);
         return $this->render('master/mst_sub_category/_ajax_listing.html.twig', [
             'mst_cities' => $mstSubCategory,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstSubCategoryController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_sub_category_index');
         }
@@ -127,7 +134,7 @@ class MstSubCategoryController extends AbstractController
     public function delete(Request $request, MstSubCategory $mstSubCategory): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstSubCategory->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstSubCategory);
             $entityManager->flush();
         }

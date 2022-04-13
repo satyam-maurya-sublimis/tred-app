@@ -4,6 +4,7 @@ namespace App\Controller\Master;
 
 use App\Service\CommonHelper;
 use App\Service\FileUploaderHelper;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstProductFeature;
@@ -21,6 +22,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstProductFeatureController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstProductFeatureRepository $mstProductFeatureRepository
@@ -76,7 +83,7 @@ class MstProductFeatureController extends AbstractController
                 $mstProductFeature->setMobileImage($newFilename);
             }
             $mstProductFeature->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstProductFeature);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -103,7 +110,7 @@ class MstProductFeatureController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $mstProductFeature = ucwords($request->query->get('product_featureSearch'));
 
-        $mstProductFeature = $this->getDoctrine()->getRepository(MstProductFeature::class)->getCityListByCountryId($mstProductFeature, $countryId);
+        $mstProductFeature = $this->managerRegistry->getRepository(MstProductFeature::class)->getCityListByCountryId($mstProductFeature, $countryId);
         return $this->render('master/mst_product_feature/_ajax_listing.html.twig', [
             'mst_cities' => $mstProductFeature,
             'country_id' => $countryId,
@@ -150,9 +157,9 @@ class MstProductFeatureController extends AbstractController
                 $newFilename = $fileUploaderHelper->uploadPublicFile($imageContentFile, $strSaveFileName,null);
                 $mstProductFeature->setMobileImage($newFilename);
             }
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstProductFeature);
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_product_feature_index');
         }
@@ -176,7 +183,7 @@ class MstProductFeatureController extends AbstractController
     public function delete(Request $request, MstProductFeature $mstProductFeature): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstProductFeature->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstProductFeature);
             $entityManager->flush();
         }

@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstClientType;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstClientTypeController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstClientTypeRepository $mstClientTypeRepository
@@ -52,7 +59,7 @@ class MstClientTypeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstClientType->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstClientType);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstClientTypeController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $client_type = ucwords($request->query->get('client_typeSearch'));
 
-        $mstClientType = $this->getDoctrine()->getRepository(MstClientType::class)->getCityListByCountryId($client_type, $countryId);
+        $mstClientType = $this->managerRegistry->getRepository(MstClientType::class)->getCityListByCountryId($client_type, $countryId);
         return $this->render('master/mst_client_type/_ajax_listing.html.twig', [
             'mst_cities' => $mstClientType,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstClientTypeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_client_type_index');
         }
@@ -127,7 +134,7 @@ class MstClientTypeController extends AbstractController
     public function delete(Request $request, MstClientType $mstClientType): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstClientType->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstClientType);
             $entityManager->flush();
         }

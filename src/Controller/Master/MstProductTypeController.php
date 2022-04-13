@@ -4,6 +4,7 @@ namespace App\Controller\Master;
 
 use App\Service\CommonHelper;
 use App\Service\FileUploaderHelper;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstProductType;
@@ -21,6 +22,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstProductTypeController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstProductTypeRepository $mstProductTypeRepository
@@ -68,7 +75,7 @@ class MstProductTypeController extends AbstractController
                 $mstProductType->setProductTypeVideo($form['productTypeVideo']->getData());
                 $mstProductType->setProductTypeVideoPath($form['productTypeVideoPath']->getData());
             }
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstProductType);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -95,7 +102,7 @@ class MstProductTypeController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $product_type = ucwords($request->query->get('product_typeSearch'));
 
-        $mstProductType = $this->getDoctrine()->getRepository(MstProductType::class)->getCityListByCountryId($product_type, $countryId);
+        $mstProductType = $this->managerRegistry->getRepository(MstProductType::class)->getCityListByCountryId($product_type, $countryId);
         return $this->render('master/mst_product_type/_ajax_listing.html.twig', [
             'mst_cities' => $mstProductType,
             'country_id' => $countryId,
@@ -145,7 +152,7 @@ class MstProductTypeController extends AbstractController
                 $mstProductType->setProductTypeVideo($form['productTypeVideo']->getData());
                 $mstProductType->setProductTypeVideoPath($form['productTypeVideoPath']->getData());
             }
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_product_type_index');
         }
@@ -169,7 +176,7 @@ class MstProductTypeController extends AbstractController
     public function delete(Request $request, MstProductType $mstProductType): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstProductType->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstProductType);
             $entityManager->flush();
         }

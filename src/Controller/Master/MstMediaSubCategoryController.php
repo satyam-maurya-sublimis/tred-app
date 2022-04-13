@@ -5,6 +5,7 @@ namespace App\Controller\Master;
 use App\Entity\Master\MstMediaSubCategory;
 use App\Form\Master\MstMediaSubCategoryType;
 use App\Repository\Master\MstMediaSubCategoryRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\PaginatorInterface;
 use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -19,6 +20,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class MstMediaSubCategoryController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstMediaSubCategoryRepository $mstMediaSubCategoryRepository
@@ -60,7 +67,7 @@ class MstMediaSubCategoryController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstMediaSubCategory->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstMediaSubCategory);
             $entityManager->flush();
 
@@ -89,7 +96,7 @@ class MstMediaSubCategoryController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
 
             return $this->redirectToRoute('master_media_subcategory_index');
         }
@@ -112,7 +119,7 @@ class MstMediaSubCategoryController extends AbstractController
     public function subCategoryList(Request $request): Response
     {
         $category_id = $request->query->get('q');
-        $subCategoryList = $this->getDoctrine()->getRepository(MstMediaSubCategory::class)->getSubCategoryByCategoryId($category_id);
+        $subCategoryList = $this->managerRegistry->getRepository(MstMediaSubCategory::class)->getSubCategoryByCategoryId($category_id);
         return $this->json($subCategoryList);
     }
 
@@ -125,7 +132,7 @@ class MstMediaSubCategoryController extends AbstractController
     public function delete(Request $request, MstMediaSubCategory $mstMediaSubCategory): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstMediaSubCategory->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstMediaSubCategory);
             $entityManager->flush();
         }

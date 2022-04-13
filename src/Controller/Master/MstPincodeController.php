@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -20,6 +21,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstPincodeController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstPincodeRepository $mstPincodeRepository
@@ -58,7 +65,7 @@ class MstPincodeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstPincode->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstPincode);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -83,7 +90,7 @@ class MstPincodeController extends AbstractController
     public function search(Request $request): Response
     {
         $mstPincode = $request->query->get('pincodeSearch');
-        $mstPincode = $this->getDoctrine()->getRepository(MstPincode::class)->findBy(["pincode"=>$mstPincode,'delivery'=>'Delivery']);
+        $mstPincode = $this->managerRegistry->getRepository(MstPincode::class)->findBy(["pincode"=>$mstPincode,'delivery'=>'Delivery']);
         return $this->render('master/mst_pincode/_ajax_listing.html.twig', [
             'mst_pincodes' => $mstPincode,
             'path_add' => 'master_pincode_add',
@@ -106,7 +113,7 @@ class MstPincodeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_pincode_index');
         }
@@ -130,7 +137,7 @@ class MstPincodeController extends AbstractController
     public function delete(Request $request, MstPincode $mstPincode): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstPincode->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstPincode);
             $entityManager->flush();
         }

@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstCategory;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstCategoryController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstCategoryRepository $mstCategoryRepository
@@ -52,7 +59,7 @@ class MstCategoryController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstCategory->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstCategory);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstCategoryController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $mstCategory = ucwords($request->query->get('categorySearch'));
 
-        $mstCategory = $this->getDoctrine()->getRepository(MstCategory::class)->getCityListByCountryId($mstCategory, $countryId);
+        $mstCategory = $this->managerRegistry->getRepository(MstCategory::class)->getCityListByCountryId($mstCategory, $countryId);
         return $this->render('master/mst_category/_ajax_listing.html.twig', [
             'mst_cities' => $mstCategory,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstCategoryController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_category_index');
         }
@@ -127,7 +134,7 @@ class MstCategoryController extends AbstractController
     public function delete(Request $request, MstCategory $mstCategory): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstCategory->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstCategory);
             $entityManager->flush();
         }

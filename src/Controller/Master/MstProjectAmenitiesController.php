@@ -5,6 +5,7 @@ namespace App\Controller\Master;
 use App\Entity\Master\MstCategory;
 use App\Service\CommonHelper;
 use App\Service\FileUploaderHelper;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstProjectAmenities;
@@ -22,6 +23,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstProjectAmenitiesController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstProjectAmenitiesRepository $mstProjectAmenitiesRepository
@@ -52,7 +59,7 @@ class MstProjectAmenitiesController extends AbstractController
     public function new(Request $request, FileUploaderHelper $fileUploaderHelper, CommonHelper $commonHelper): Response
     {
         $mstProjectAmenities = new MstProjectAmenities();
-        $mstCategory = $this->getDoctrine()->getRepository(MstCategory::class)->find(1);
+        $mstCategory = $this->managerRegistry->getRepository(MstCategory::class)->find(1);
         $mstProjectAmenities->setMstCategory($mstCategory);
         $form = $this->createForm(MstProjectAmenitiesType::class, $mstProjectAmenities);
         $form->handleRequest($request);
@@ -87,7 +94,7 @@ class MstProjectAmenitiesController extends AbstractController
                 $mstProjectAmenities->setMobileImage($newFilename);
             }
             $mstProjectAmenities->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstProjectAmenities);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -114,7 +121,7 @@ class MstProjectAmenitiesController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $project_amenities = ucwords($request->query->get('project_amenitiesSearch'));
 
-        $mstProjectAmenities = $this->getDoctrine()->getRepository(MstProjectAmenities::class)->getCityListByCountryId($project_amenities, $countryId);
+        $mstProjectAmenities = $this->managerRegistry->getRepository(MstProjectAmenities::class)->getCityListByCountryId($project_amenities, $countryId);
         return $this->render('master/mst_project_amenities/_ajax_listing.html.twig', [
             'mst_cities' => $mstProjectAmenities,
             'country_id' => $countryId,
@@ -170,9 +177,9 @@ class MstProjectAmenitiesController extends AbstractController
                 $newFilename = $fileUploaderHelper->uploadPublicFile($imageContentFile, $strSaveFileName,null);
                 $mstProjectAmenities->setMobileImage($newFilename);
             }
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstProjectAmenities);
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_project_amenities_index');
         }
@@ -196,7 +203,7 @@ class MstProjectAmenitiesController extends AbstractController
     public function delete(Request $request, MstProjectAmenities $mstProjectAmenities): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstProjectAmenities->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstProjectAmenities);
             $entityManager->flush();
         }

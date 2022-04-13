@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstProductServiceMode;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstProductServiceModeController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstProductServiceModeRepository $mstProductServiceModeRepository
@@ -52,7 +59,7 @@ class MstProductServiceModeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstProductServiceMode->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstProductServiceMode);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstProductServiceModeController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $product_service_mode = ucwords($request->query->get('product_service_modeSearch'));
 
-        $mstProductServiceMode = $this->getDoctrine()->getRepository(MstProductServiceMode::class)->getCityListByCountryId($product_service_mode, $countryId);
+        $mstProductServiceMode = $this->managerRegistry->getRepository(MstProductServiceMode::class)->getCityListByCountryId($product_service_mode, $countryId);
         return $this->render('master/mst_product_service_mode/_ajax_listing.html.twig', [
             'mst_cities' => $mstProductServiceMode,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstProductServiceModeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_product_service_mode_index');
         }
@@ -127,7 +134,7 @@ class MstProductServiceModeController extends AbstractController
     public function delete(Request $request, MstProductServiceMode $mstProductServiceMode): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstProductServiceMode->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstProductServiceMode);
             $entityManager->flush();
         }

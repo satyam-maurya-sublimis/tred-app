@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstPropertySaleCategory;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstPropertySaleCategoryController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstPropertySaleCategoryRepository $mstPropertySaleCategoryRepository
@@ -52,7 +59,7 @@ class MstPropertySaleCategoryController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstPropertySaleCategory->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstPropertySaleCategory);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -81,7 +88,7 @@ class MstPropertySaleCategoryController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_properties_sale_category_index');
         }
@@ -105,7 +112,7 @@ class MstPropertySaleCategoryController extends AbstractController
     public function delete(Request $request, MstPropertySaleCategory $mstPropertySaleCategory): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstPropertySaleCategory->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstPropertySaleCategory);
             $entityManager->flush();
         }

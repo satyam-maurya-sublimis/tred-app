@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstPostedBy;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstPostedByController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstPostedByRepository $mstPostedByRepository
@@ -52,7 +59,7 @@ class MstPostedByController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstPostedBy->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstPostedBy);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstPostedByController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $posted_by = ucwords($request->query->get('posted_bySearch'));
 
-        $mstPostedBy = $this->getDoctrine()->getRepository(MstPostedBy::class)->getCityListByCountryId($posted_by, $countryId);
+        $mstPostedBy = $this->managerRegistry->getRepository(MstPostedBy::class)->getCityListByCountryId($posted_by, $countryId);
         return $this->render('master/mst_posted_by/_ajax_listing.html.twig', [
             'mst_cities' => $mstPostedBy,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstPostedByController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_posted_by_index');
         }
@@ -127,7 +134,7 @@ class MstPostedByController extends AbstractController
     public function delete(Request $request, MstPostedBy $mstPostedBy): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstPostedBy->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstPostedBy);
             $entityManager->flush();
         }

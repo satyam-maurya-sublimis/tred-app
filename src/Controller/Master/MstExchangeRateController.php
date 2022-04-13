@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstExchangeRate;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstExchangeRateController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstExchangeRateRepository $mstExchangeRateRepository
@@ -52,7 +59,7 @@ class MstExchangeRateController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstExchangeRate->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstExchangeRate);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstExchangeRateController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $mstExchangeRate = ucwords($request->query->get('exchange_rateSearch'));
 
-        $mstExchangeRate = $this->getDoctrine()->getRepository(MstExchangeRate::class)->getCityListByCountryId($mstExchangeRate, $countryId);
+        $mstExchangeRate = $this->managerRegistry->getRepository(MstExchangeRate::class)->getCityListByCountryId($mstExchangeRate, $countryId);
         return $this->render('master/mst_exchange_rate/_ajax_listing.html.twig', [
             'mst_cities' => $mstExchangeRate,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstExchangeRateController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_exchange_rate_index');
         }
@@ -127,7 +134,7 @@ class MstExchangeRateController extends AbstractController
     public function delete(Request $request, MstExchangeRate $mstExchangeRate): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstExchangeRate->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstExchangeRate);
             $entityManager->flush();
         }

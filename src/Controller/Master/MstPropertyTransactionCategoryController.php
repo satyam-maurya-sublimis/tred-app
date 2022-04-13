@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstPropertyTransactionCategory;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstPropertyTransactionCategoryController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstPropertyTransactionCategoryRepository $mstPropertyTransactionCategoryRepository
@@ -52,7 +59,7 @@ class MstPropertyTransactionCategoryController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstPropertyTransactionCategory->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstPropertyTransactionCategory);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -81,7 +88,7 @@ class MstPropertyTransactionCategoryController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_properties_transaction_category_index');
         }
@@ -105,7 +112,7 @@ class MstPropertyTransactionCategoryController extends AbstractController
     public function delete(Request $request, MstPropertyTransactionCategory $mstPropertyTransactionCategory): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstPropertyTransactionCategory->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstPropertyTransactionCategory);
             $entityManager->flush();
         }

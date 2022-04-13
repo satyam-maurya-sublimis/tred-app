@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstProjectSpecification;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstProjectSpecificationController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstProjectSpecificationRepository $mstProjectSpecificationRepository
@@ -52,7 +59,7 @@ class MstProjectSpecificationController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstProjectSpecification->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstProjectSpecification);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstProjectSpecificationController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $project_specification = ucwords($request->query->get('project_specificationSearch'));
 
-        $mstProjectSpecification = $this->getDoctrine()->getRepository(MstProjectSpecification::class)->getCityListByCountryId($project_specification, $countryId);
+        $mstProjectSpecification = $this->managerRegistry->getRepository(MstProjectSpecification::class)->getCityListByCountryId($project_specification, $countryId);
         return $this->render('master/mst_project_specification/_ajax_listing.html.twig', [
             'mst_cities' => $mstProjectSpecification,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstProjectSpecificationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_project_specification_index');
         }
@@ -127,7 +134,7 @@ class MstProjectSpecificationController extends AbstractController
     public function delete(Request $request, MstProjectSpecification $mstProjectSpecification): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstProjectSpecification->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstProjectSpecification);
             $entityManager->flush();
         }

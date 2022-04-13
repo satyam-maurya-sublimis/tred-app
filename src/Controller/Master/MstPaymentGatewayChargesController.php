@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstPaymentGatewayCharges;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstPaymentGatewayChargesController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstPaymentGatewayChargesRepository $mstPaymentGatewayChargesRepository
@@ -52,7 +59,7 @@ class MstPaymentGatewayChargesController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstPaymentGatewayCharges->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstPaymentGatewayCharges);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstPaymentGatewayChargesController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $mstPaymentGatewayCharges = ucwords($request->query->get('payment_gateway_chargesSearch'));
 
-        $mstPaymentGatewayCharges = $this->getDoctrine()->getRepository(MstPaymentGatewayCharges::class)->getCityListByCountryId($mstPaymentGatewayCharges, $countryId);
+        $mstPaymentGatewayCharges = $this->managerRegistry->getRepository(MstPaymentGatewayCharges::class)->getCityListByCountryId($mstPaymentGatewayCharges, $countryId);
         return $this->render('master/mst_payment_gateway_charges/_ajax_listing.html.twig', [
             'mst_cities' => $mstPaymentGatewayCharges,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstPaymentGatewayChargesController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_payment_gateway_charges_index');
         }
@@ -127,7 +134,7 @@ class MstPaymentGatewayChargesController extends AbstractController
     public function delete(Request $request, MstPaymentGatewayCharges $mstPaymentGatewayCharges): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstPaymentGatewayCharges->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstPaymentGatewayCharges);
             $entityManager->flush();
         }

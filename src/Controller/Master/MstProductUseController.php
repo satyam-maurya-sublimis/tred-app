@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstProductUse;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstProductUseController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstProductUseRepository $mstProductUseRepository
@@ -52,7 +59,7 @@ class MstProductUseController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstProductUse->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstProductUse);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstProductUseController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $product_use = ucwords($request->query->get('product_useSearch'));
 
-        $mstProductUse = $this->getDoctrine()->getRepository(MstProductUse::class)->getCityListByCountryId($product_use, $countryId);
+        $mstProductUse = $this->managerRegistry->getRepository(MstProductUse::class)->getCityListByCountryId($product_use, $countryId);
         return $this->render('master/mst_product_use/_ajax_listing.html.twig', [
             'mst_cities' => $mstProductUse,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstProductUseController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_product_use_index');
         }
@@ -127,7 +134,7 @@ class MstProductUseController extends AbstractController
     public function delete(Request $request, MstProductUse $mstProductUse): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstProductUse->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstProductUse);
             $entityManager->flush();
         }

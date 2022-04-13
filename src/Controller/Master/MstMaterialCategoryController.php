@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstMaterialCategory;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstMaterialCategoryController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstMaterialCategoryRepository $mstMaterialCategoryRepository
@@ -52,7 +59,7 @@ class MstMaterialCategoryController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstMaterialCategory->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstMaterialCategory);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstMaterialCategoryController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $mstMaterialCategory = ucwords($request->query->get('material_categorySearch'));
 
-        $mstMaterialCategory = $this->getDoctrine()->getRepository(MstMaterialCategory::class)->getCityListByCountryId($mstMaterialCategory, $countryId);
+        $mstMaterialCategory = $this->managerRegistry->getRepository(MstMaterialCategory::class)->getCityListByCountryId($mstMaterialCategory, $countryId);
         return $this->render('master/mst_material_category/_ajax_listing.html.twig', [
             'mst_cities' => $mstMaterialCategory,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstMaterialCategoryController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_material_category_index');
         }
@@ -127,7 +134,7 @@ class MstMaterialCategoryController extends AbstractController
     public function delete(Request $request, MstMaterialCategory $mstMaterialCategory): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstMaterialCategory->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstMaterialCategory);
             $entityManager->flush();
         }

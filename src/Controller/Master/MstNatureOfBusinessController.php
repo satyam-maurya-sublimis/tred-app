@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstNatureOfBusiness;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstNatureOfBusinessController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstNatureOfBusinessRepository $mstNatureOfBusinessRepository
@@ -52,7 +59,7 @@ class MstNatureOfBusinessController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstNatureOfBusiness->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstNatureOfBusiness);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstNatureOfBusinessController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $nature_of_business = ucwords($request->query->get('nature_of_businessSearch'));
 
-        $mstNatureOfBusiness = $this->getDoctrine()->getRepository(MstNatureOfBusiness::class)->getCityListByCountryId($nature_of_business, $countryId);
+        $mstNatureOfBusiness = $this->managerRegistry->getRepository(MstNatureOfBusiness::class)->getCityListByCountryId($nature_of_business, $countryId);
         return $this->render('master/mst_nature_of_business/_ajax_listing.html.twig', [
             'mst_cities' => $mstNatureOfBusiness,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstNatureOfBusinessController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_nature_of_business_index');
         }
@@ -127,7 +134,7 @@ class MstNatureOfBusinessController extends AbstractController
     public function delete(Request $request, MstNatureOfBusiness $mstNatureOfBusiness): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstNatureOfBusiness->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstNatureOfBusiness);
             $entityManager->flush();
         }

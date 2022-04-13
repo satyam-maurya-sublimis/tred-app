@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstSalutation;
@@ -22,6 +23,12 @@ use Knp\Component\Pager\PaginatorInterface;
 
 class MstSalutationController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstSalutationRepository $mstSalutationRepository
@@ -61,7 +68,7 @@ class MstSalutationController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstSalutation->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstSalutation);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -89,7 +96,7 @@ class MstSalutationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_salutation_index');
         }
@@ -112,7 +119,7 @@ class MstSalutationController extends AbstractController
     public function delete(Request $request, MstSalutation $mstSalutation): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstSalutation->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstSalutation);
             $entityManager->flush();
         }

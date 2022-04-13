@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstMessageStatus;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstMessageStatusController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstMessageStatusRepository $mstMessageStatusRepository
@@ -52,7 +59,7 @@ class MstMessageStatusController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstMessageStatus->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstMessageStatus);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstMessageStatusController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $message_status = ucwords($request->query->get('message_statusSearch'));
 
-        $mstMessageStatus = $this->getDoctrine()->getRepository(MstMessageStatus::class)->getCityListByCountryId($message_status, $countryId);
+        $mstMessageStatus = $this->managerRegistry->getRepository(MstMessageStatus::class)->getCityListByCountryId($message_status, $countryId);
         return $this->render('master/mst_message_status/_ajax_listing.html.twig', [
             'mst_cities' => $mstMessageStatus,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstMessageStatusController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_message_status_index');
         }
@@ -127,7 +134,7 @@ class MstMessageStatusController extends AbstractController
     public function delete(Request $request, MstMessageStatus $mstMessageStatus): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstMessageStatus->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstMessageStatus);
             $entityManager->flush();
         }

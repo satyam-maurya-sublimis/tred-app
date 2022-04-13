@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstTax;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstTaxController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstTaxRepository $mstTaxRepository
@@ -52,7 +59,7 @@ class MstTaxController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstTax->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstTax);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstTaxController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $mstTax = ucwords($request->query->get('taxSearch'));
 
-        $mstTax = $this->getDoctrine()->getRepository(MstTax::class)->getCityListByCountryId($mstTax, $countryId);
+        $mstTax = $this->managerRegistry->getRepository(MstTax::class)->getCityListByCountryId($mstTax, $countryId);
         return $this->render('master/mst_tax/_ajax_listing.html.twig', [
             'mst_cities' => $mstTax,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstTaxController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_tax_index');
         }
@@ -127,7 +134,7 @@ class MstTaxController extends AbstractController
     public function delete(Request $request, MstTax $mstTax): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstTax->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstTax);
             $entityManager->flush();
         }

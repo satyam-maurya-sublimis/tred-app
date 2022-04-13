@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstDepartment;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstDepartmentController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstDepartmentRepository $mstDepartmentRepository
@@ -52,7 +59,7 @@ class MstDepartmentController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstDepartment->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstDepartment);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstDepartmentController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $department = ucwords($request->query->get('departmentSearch'));
 
-        $mstDepartment = $this->getDoctrine()->getRepository(MstDepartment::class)->getCityListByCountryId($department, $countryId);
+        $mstDepartment = $this->managerRegistry->getRepository(MstDepartment::class)->getCityListByCountryId($department, $countryId);
         return $this->render('master/mst_department/_ajax_listing.html.twig', [
             'mst_cities' => $mstDepartment,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstDepartmentController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_department_index');
         }
@@ -127,7 +134,7 @@ class MstDepartmentController extends AbstractController
     public function delete(Request $request, MstDepartment $mstDepartment): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstDepartment->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstDepartment);
             $entityManager->flush();
         }

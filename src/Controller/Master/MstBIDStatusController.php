@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstBIDStatus;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstBIDStatusController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstBIDStatusRepository $mstBIDStatusRepository
@@ -52,7 +59,7 @@ class MstBIDStatusController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstBIDStatus->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstBIDStatus);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstBIDStatusController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $bid_status = ucwords($request->query->get('bid_statusSearch'));
 
-        $mstBIDStatus = $this->getDoctrine()->getRepository(MstBIDStatus::class)->getCityListByCountryId($bid_status, $countryId);
+        $mstBIDStatus = $this->managerRegistry->getRepository(MstBIDStatus::class)->getCityListByCountryId($bid_status, $countryId);
         return $this->render('master/mst_bid_status/_ajax_listing.html.twig', [
             'mst_cities' => $mstBIDStatus,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstBIDStatusController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_bid_status_index');
         }
@@ -127,7 +134,7 @@ class MstBIDStatusController extends AbstractController
     public function delete(Request $request, MstBIDStatus $mstBIDStatus): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstBIDStatus->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstBIDStatus);
             $entityManager->flush();
         }

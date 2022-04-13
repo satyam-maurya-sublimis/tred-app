@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstRoomConfiguration;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstRoomConfigurationController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstRoomConfigurationRepository $mstRoomConfigurationRepository
@@ -52,7 +59,7 @@ class MstRoomConfigurationController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstRoomConfiguration->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstRoomConfiguration);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstRoomConfigurationController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $room_configuration = ucwords($request->query->get('room_configurationSearch'));
 
-        $mstRoomConfiguration = $this->getDoctrine()->getRepository(MstRoomConfiguration::class)->getCityListByCountryId($room_configuration, $countryId);
+        $mstRoomConfiguration = $this->managerRegistry->getRepository(MstRoomConfiguration::class)->getCityListByCountryId($room_configuration, $countryId);
         return $this->render('master/mst_room_configuration/_ajax_listing.html.twig', [
             'mst_cities' => $mstRoomConfiguration,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstRoomConfigurationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_room_configuration_index');
         }
@@ -127,7 +134,7 @@ class MstRoomConfigurationController extends AbstractController
     public function delete(Request $request, MstRoomConfiguration $mstRoomConfiguration): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstRoomConfiguration->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstRoomConfiguration);
             $entityManager->flush();
         }

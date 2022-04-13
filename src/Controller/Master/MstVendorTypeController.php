@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstVendorType;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstVendorTypeController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstVendorTypeRepository $mstVendorTypeRepository
@@ -52,7 +59,7 @@ class MstVendorTypeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstVendorType->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstVendorType);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstVendorTypeController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $vendor_type = ucwords($request->query->get('vendor_typeSearch'));
 
-        $mstVendorType = $this->getDoctrine()->getRepository(MstVendorType::class)->getCityListByCountryId($vendor_type, $countryId);
+        $mstVendorType = $this->managerRegistry->getRepository(MstVendorType::class)->getCityListByCountryId($vendor_type, $countryId);
         return $this->render('master/mst_vendor_type/_ajax_listing.html.twig', [
             'mst_cities' => $mstVendorType,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstVendorTypeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_vendor_type_index');
         }
@@ -127,7 +134,7 @@ class MstVendorTypeController extends AbstractController
     public function delete(Request $request, MstVendorType $mstVendorType): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstVendorType->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstVendorType);
             $entityManager->flush();
         }

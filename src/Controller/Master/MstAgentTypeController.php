@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstAgentType;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstAgentTypeController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstAgentTypeRepository $mstAgentTypeRepository
@@ -52,7 +59,7 @@ class MstAgentTypeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstAgentType->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstAgentType);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstAgentTypeController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $agent_type = ucwords($request->query->get('agent_typeSearch'));
 
-        $mstAgentType = $this->getDoctrine()->getRepository(MstAgentType::class)->getCityListByCountryId($agent_type, $countryId);
+        $mstAgentType = $this->managerRegistry->getRepository(MstAgentType::class)->getCityListByCountryId($agent_type, $countryId);
         return $this->render('master/mst_agent_type/_ajax_listing.html.twig', [
             'mst_cities' => $mstAgentType,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstAgentTypeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_agent_type_index');
         }
@@ -127,7 +134,7 @@ class MstAgentTypeController extends AbstractController
     public function delete(Request $request, MstAgentType $mstAgentType): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstAgentType->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstAgentType);
             $entityManager->flush();
         }

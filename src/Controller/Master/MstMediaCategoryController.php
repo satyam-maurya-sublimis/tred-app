@@ -5,6 +5,7 @@ namespace App\Controller\Master;
 use App\Entity\Master\MstMediaCategory;
 use App\Form\Master\MstMediaCategoryType;
 use App\Repository\Master\MstMediaCategoryRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\PaginatorInterface;
 use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -19,6 +20,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class MstMediaCategoryController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstMediaCategoryRepository $mstMediaCategoryRepository
@@ -60,7 +67,7 @@ class MstMediaCategoryController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstMediaCategory->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstMediaCategory);
             $entityManager->flush();
 
@@ -89,7 +96,7 @@ class MstMediaCategoryController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
 
             return $this->redirectToRoute('master_media_category_index');
         }
@@ -113,7 +120,7 @@ class MstMediaCategoryController extends AbstractController
     public function delete(Request $request, MstMediaCategory $mstMediaCategory): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstMediaCategory->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstMediaCategory);
             $entityManager->flush();
         }

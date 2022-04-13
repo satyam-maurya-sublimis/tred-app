@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstDaysOfWeek;
@@ -22,6 +23,12 @@ use Knp\Component\Pager\PaginatorInterface;
 
 class MstDaysOfWeekController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstDaysOfWeekRepository $mstDaysOfWeekRepository
@@ -61,7 +68,7 @@ class MstDaysOfWeekController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstDaysOfWeek->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstDaysOfWeek);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -89,7 +96,7 @@ class MstDaysOfWeekController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_days_of_week_index');
         }
@@ -112,7 +119,7 @@ class MstDaysOfWeekController extends AbstractController
     public function delete(Request $request, MstDaysOfWeek $mstDaysOfWeek): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstDaysOfWeek->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstDaysOfWeek);
             $entityManager->flush();
         }

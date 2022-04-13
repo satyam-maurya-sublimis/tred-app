@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstDeviceType;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstDeviceTypeController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstDeviceTypeRepository $mstDeviceTypeRepository
@@ -52,7 +59,7 @@ class MstDeviceTypeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstDeviceType->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstDeviceType);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstDeviceTypeController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $device_type = ucwords($request->query->get('device_typeSearch'));
 
-        $mstDeviceType = $this->getDoctrine()->getRepository(MstDeviceType::class)->getCityListByCountryId($device_type, $countryId);
+        $mstDeviceType = $this->managerRegistry->getRepository(MstDeviceType::class)->getCityListByCountryId($device_type, $countryId);
         return $this->render('master/mst_device_type/_ajax_listing.html.twig', [
             'mst_cities' => $mstDeviceType,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstDeviceTypeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_device_type_index');
         }
@@ -127,7 +134,7 @@ class MstDeviceTypeController extends AbstractController
     public function delete(Request $request, MstDeviceType $mstDeviceType): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstDeviceType->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstDeviceType);
             $entityManager->flush();
         }

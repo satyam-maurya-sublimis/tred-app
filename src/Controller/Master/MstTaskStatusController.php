@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstTaskStatus;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstTaskStatusController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstTaskStatusRepository $mstTaskStatusRepository
@@ -52,7 +59,7 @@ class MstTaskStatusController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstTaskStatus->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstTaskStatus);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstTaskStatusController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $mstTaskStatus = ucwords($request->query->get('task_statusSearch'));
 
-        $mstTaskStatus = $this->getDoctrine()->getRepository(MstTaskStatus::class)->getCityListByCountryId($mstTaskStatus, $countryId);
+        $mstTaskStatus = $this->managerRegistry->getRepository(MstTaskStatus::class)->getCityListByCountryId($mstTaskStatus, $countryId);
         return $this->render('master/mst_task_status/_ajax_listing.html.twig', [
             'mst_cities' => $mstTaskStatus,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstTaskStatusController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_task_status_index');
         }
@@ -127,7 +134,7 @@ class MstTaskStatusController extends AbstractController
     public function delete(Request $request, MstTaskStatus $mstTaskStatus): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstTaskStatus->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstTaskStatus);
             $entityManager->flush();
         }

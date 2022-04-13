@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstPossession;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstPossessionController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstPossessionRepository $mstPossessionRepository
@@ -52,7 +59,7 @@ class MstPossessionController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstPossession->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstPossession);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstPossessionController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $possession = ucwords($request->query->get('possessionSearch'));
 
-        $mstPossession = $this->getDoctrine()->getRepository(MstPossession::class)->getCityListByCountryId($possession, $countryId);
+        $mstPossession = $this->managerRegistry->getRepository(MstPossession::class)->getCityListByCountryId($possession, $countryId);
         return $this->render('master/mst_possession/_ajax_listing.html.twig', [
             'mst_cities' => $mstPossession,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstPossessionController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_possession_index');
         }
@@ -127,7 +134,7 @@ class MstPossessionController extends AbstractController
     public function delete(Request $request, MstPossession $mstPossession): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstPossession->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstPossession);
             $entityManager->flush();
         }

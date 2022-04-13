@@ -5,6 +5,7 @@ namespace App\Controller\Master;
 use App\Entity\Master\MstCurrency;
 use App\Form\Master\MstCurrencyType;
 use App\Repository\Master\MstCurrencyRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,6 +21,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
  */
 class MstCurrencyController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstCurrencyRepository $mstCurrencyRepository
@@ -59,7 +66,7 @@ class MstCurrencyController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstCurrency->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstCurrency);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -88,7 +95,7 @@ class MstCurrencyController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_currency_index');
         }
@@ -112,7 +119,7 @@ class MstCurrencyController extends AbstractController
     public function delete(Request $request, MstCurrency $mstCurrency): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstCurrency->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstCurrency);
             $entityManager->flush();
         }

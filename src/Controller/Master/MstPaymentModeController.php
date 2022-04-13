@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstPaymentMode;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstPaymentModeController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstPaymentModeRepository $mstPaymentModeRepository
@@ -52,7 +59,7 @@ class MstPaymentModeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstPaymentMode->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstPaymentMode);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstPaymentModeController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $mstPaymentMode = ucwords($request->query->get('payment_modeSearch'));
 
-        $mstPaymentMode = $this->getDoctrine()->getRepository(MstPaymentMode::class)->getCityListByCountryId($mstPaymentMode, $countryId);
+        $mstPaymentMode = $this->managerRegistry->getRepository(MstPaymentMode::class)->getCityListByCountryId($mstPaymentMode, $countryId);
         return $this->render('master/mst_payment_mode/_ajax_listing.html.twig', [
             'mst_cities' => $mstPaymentMode,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstPaymentModeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_payment_mode_index');
         }
@@ -127,7 +134,7 @@ class MstPaymentModeController extends AbstractController
     public function delete(Request $request, MstPaymentMode $mstPaymentMode): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstPaymentMode->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstPaymentMode);
             $entityManager->flush();
         }

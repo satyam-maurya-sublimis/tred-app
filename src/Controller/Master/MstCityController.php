@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstCity;
@@ -18,6 +19,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class MstCityController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstCityRepository $mstCityRepository
@@ -50,7 +57,7 @@ class MstCityController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstCity);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -77,7 +84,7 @@ class MstCityController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $city = ucwords($request->query->get('citySearch'));
 
-        $mstCity = $this->getDoctrine()->getRepository(MstCity::class)->getCityListByCountryId($city, $countryId);
+        $mstCity = $this->managerRegistry->getRepository(MstCity::class)->getCityListByCountryId($city, $countryId);
         return $this->render('master/mst_city/_ajax_listing.html.twig', [
             'mst_cities' => $mstCity,
             'country_id' => $countryId,
@@ -101,7 +108,7 @@ class MstCityController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_city_index');
         }
@@ -125,7 +132,7 @@ class MstCityController extends AbstractController
     public function delete(Request $request, MstCity $mstCity): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstCity->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstCity);
             $entityManager->flush();
         }

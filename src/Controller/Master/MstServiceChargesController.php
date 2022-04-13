@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstServiceCharges;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstServiceChargesController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstServiceChargesRepository $mstServiceChargesRepository
@@ -52,7 +59,7 @@ class MstServiceChargesController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstServiceCharges->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstServiceCharges);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstServiceChargesController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $mstServiceCharges = ucwords($request->query->get('service_chargesSearch'));
 
-        $mstServiceCharges = $this->getDoctrine()->getRepository(MstServiceCharges::class)->getCityListByCountryId($mstServiceCharges, $countryId);
+        $mstServiceCharges = $this->managerRegistry->getRepository(MstServiceCharges::class)->getCityListByCountryId($mstServiceCharges, $countryId);
         return $this->render('master/mst_service_charges/_ajax_listing.html.twig', [
             'mst_cities' => $mstServiceCharges,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstServiceChargesController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_service_charges_index');
         }
@@ -127,7 +134,7 @@ class MstServiceChargesController extends AbstractController
     public function delete(Request $request, MstServiceCharges $mstServiceCharges): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstServiceCharges->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstServiceCharges);
             $entityManager->flush();
         }

@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstHighlights;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstHighlightsController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstHighlightsRepository $mstHighlightsRepository
@@ -52,7 +59,7 @@ class MstHighlightsController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstHighlights->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstHighlights);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstHighlightsController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $mstHighlights = ucwords($request->query->get('highlightsSearch'));
 
-        $mstHighlights = $this->getDoctrine()->getRepository(MstHighlights::class)->getCityListByCountryId($mstHighlights, $countryId);
+        $mstHighlights = $this->managerRegistry->getRepository(MstHighlights::class)->getCityListByCountryId($mstHighlights, $countryId);
         return $this->render('master/mst_highlights/_ajax_listing.html.twig', [
             'mst_cities' => $mstHighlights,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstHighlightsController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_highlights_index');
         }
@@ -127,7 +134,7 @@ class MstHighlightsController extends AbstractController
     public function delete(Request $request, MstHighlights $mstHighlights): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstHighlights->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstHighlights);
             $entityManager->flush();
         }

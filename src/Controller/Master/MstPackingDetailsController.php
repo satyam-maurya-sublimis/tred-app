@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstPackingDetails;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstPackingDetailsController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstPackingDetailsRepository $mstPackingDetailsRepository
@@ -52,7 +59,7 @@ class MstPackingDetailsController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstPackingDetails->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstPackingDetails);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstPackingDetailsController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $mstPackingDetails = ucwords($request->query->get('packing_detailsSearch'));
 
-        $mstPackingDetails = $this->getDoctrine()->getRepository(MstPackingDetails::class)->getCityListByCountryId($mstPackingDetails, $countryId);
+        $mstPackingDetails = $this->managerRegistry->getRepository(MstPackingDetails::class)->getCityListByCountryId($mstPackingDetails, $countryId);
         return $this->render('master/mst_packing_details/_ajax_listing.html.twig', [
             'mst_cities' => $mstPackingDetails,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstPackingDetailsController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_packing_details_index');
         }
@@ -127,7 +134,7 @@ class MstPackingDetailsController extends AbstractController
     public function delete(Request $request, MstPackingDetails $mstPackingDetails): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstPackingDetails->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstPackingDetails);
             $entityManager->flush();
         }

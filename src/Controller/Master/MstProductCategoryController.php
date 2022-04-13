@@ -3,6 +3,7 @@
 namespace App\Controller\Master;
 
 use App\Service\CommonHelper;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstProductCategory;
@@ -20,6 +21,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstProductCategoryController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstProductCategoryRepository $mstProductCategoryRepository
@@ -54,7 +61,7 @@ class MstProductCategoryController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $mstProductCategory->setRowId(Uuid::uuid4()->toString());
             $mstProductCategory->setProductCategorySlugName($commonHelper->slugify($form->get('productCategory')->getData()));
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstProductCategory);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -81,7 +88,7 @@ class MstProductCategoryController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $mstProductCategory = ucwords($request->query->get('product_categorySearch'));
 
-        $mstProductCategory = $this->getDoctrine()->getRepository(MstProductCategory::class)->getCityListByCountryId($mstProductCategory, $countryId);
+        $mstProductCategory = $this->managerRegistry->getRepository(MstProductCategory::class)->getCityListByCountryId($mstProductCategory, $countryId);
         return $this->render('master/mst_product_category/_ajax_listing.html.twig', [
             'mst_cities' => $mstProductCategory,
             'country_id' => $countryId,
@@ -106,7 +113,7 @@ class MstProductCategoryController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstProductCategory->setProductCategorySlugName($commonHelper->slugify($form->get('productCategory')->getData()));
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_product_category_index');
         }
@@ -130,7 +137,7 @@ class MstProductCategoryController extends AbstractController
     public function delete(Request $request, MstProductCategory $mstProductCategory): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstProductCategory->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstProductCategory);
             $entityManager->flush();
         }

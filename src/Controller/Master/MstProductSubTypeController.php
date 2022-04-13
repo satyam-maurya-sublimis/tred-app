@@ -4,6 +4,7 @@ namespace App\Controller\Master;
 
 use App\Service\CommonHelper;
 use App\Service\FileUploaderHelper;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstProductSubType;
@@ -21,6 +22,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstProductSubTypeController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstProductSubTypeRepository $mstProductSubTypeRepository
@@ -60,7 +67,7 @@ class MstProductSubTypeController extends AbstractController
                 $mstProductSubType->getMediaIcon()->setIconImage($newFilename);
             }
             $mstProductSubType->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstProductSubType);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -87,7 +94,7 @@ class MstProductSubTypeController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $product_subtype = ucwords($request->query->get('product_subtypeSearch'));
 
-        $mstProductSubType = $this->getDoctrine()->getRepository(MstProductSubType::class)->getCityListByCountryId($product_subtype, $countryId);
+        $mstProductSubType = $this->managerRegistry->getRepository(MstProductSubType::class)->getCityListByCountryId($product_subtype, $countryId);
         return $this->render('master/mst_product_subtype/_ajax_listing.html.twig', [
             'mst_cities' => $mstProductSubType,
             'country_id' => $countryId,
@@ -117,7 +124,7 @@ class MstProductSubTypeController extends AbstractController
                 $newFilename = $fileUploaderHelper->uploadPublicFile($iconContentFile, $strSaveFileName,null);
                 $mstProductSubType->getMediaIcon()->setIconImage($newFilename);
             }
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_product_subtype_index');
         }
@@ -141,7 +148,7 @@ class MstProductSubTypeController extends AbstractController
     public function delete(Request $request, MstProductSubType $mstProductSubType): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstProductSubType->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstProductSubType);
             $entityManager->flush();
         }

@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstUserMemberType;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstUserMemberTypeController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstUserMemberTypeRepository $mstUserMemberTypeRepository
@@ -52,7 +59,7 @@ class MstUserMemberTypeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstUserMemberType->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstUserMemberType);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstUserMemberTypeController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $user_member_type = ucwords($request->query->get('user_member_typeSearch'));
 
-        $mstUserMemberType = $this->getDoctrine()->getRepository(MstUserMemberType::class)->getCityListByCountryId($user_member_type, $countryId);
+        $mstUserMemberType = $this->managerRegistry->getRepository(MstUserMemberType::class)->getCityListByCountryId($user_member_type, $countryId);
         return $this->render('master/mst_user_member_type/_ajax_listing.html.twig', [
             'mst_cities' => $mstUserMemberType,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstUserMemberTypeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_user_member_type_index');
         }
@@ -127,7 +134,7 @@ class MstUserMemberTypeController extends AbstractController
     public function delete(Request $request, MstUserMemberType $mstUserMemberType): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstUserMemberType->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstUserMemberType);
             $entityManager->flush();
         }

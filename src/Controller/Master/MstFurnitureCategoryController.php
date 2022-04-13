@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstFurnitureCategory;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstFurnitureCategoryController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstFurnitureCategoryRepository $mstFurnitureCategoryRepository
@@ -52,7 +59,7 @@ class MstFurnitureCategoryController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstFurnitureCategory->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstFurnitureCategory);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstFurnitureCategoryController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $furniture_category = ucwords($request->query->get('furniture_categorySearch'));
 
-        $mstFurnitureCategory = $this->getDoctrine()->getRepository(MstFurnitureCategory::class)->getCityListByCountryId($furniture_category, $countryId);
+        $mstFurnitureCategory = $this->managerRegistry->getRepository(MstFurnitureCategory::class)->getCityListByCountryId($furniture_category, $countryId);
         return $this->render('master/mst_furniture_category/_ajax_listing.html.twig', [
             'mstFurnitureCategory' => $mstFurnitureCategory,
             'path_add' => 'master_furniture_category_add',
@@ -102,7 +109,7 @@ class MstFurnitureCategoryController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_furniture_category_index');
         }
@@ -126,7 +133,7 @@ class MstFurnitureCategoryController extends AbstractController
     public function delete(Request $request, MstFurnitureCategory $mstFurnitureCategory): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstFurnitureCategory->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstFurnitureCategory);
             $entityManager->flush();
         }

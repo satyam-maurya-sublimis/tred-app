@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstDenomination;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstDenominationController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstDenominationRepository $mstDenominationRepository
@@ -52,7 +59,7 @@ class MstDenominationController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstDenomination->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstDenomination);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstDenominationController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $denomination = ucwords($request->query->get('denominationSearch'));
 
-        $mstDenomination = $this->getDoctrine()->getRepository(MstDenomination::class)->getCityListByCountryId($denomination, $countryId);
+        $mstDenomination = $this->managerRegistry->getRepository(MstDenomination::class)->getCityListByCountryId($denomination, $countryId);
         return $this->render('master/mst_denomination/_ajax_listing.html.twig', [
             'mst_cities' => $mstDenomination,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstDenominationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_denomination_index');
         }
@@ -127,7 +134,7 @@ class MstDenominationController extends AbstractController
     public function delete(Request $request, MstDenomination $mstDenomination): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstDenomination->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstDenomination);
             $entityManager->flush();
         }

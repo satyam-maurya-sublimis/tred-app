@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstFurnishing;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstFurnishingController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstFurnishingRepository $furnishingRepository
@@ -52,7 +59,7 @@ class MstFurnishingController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $furnishing->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($furnishing);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstFurnishingController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $furnishing = ucwords($request->query->get('furnishingSearch'));
 
-        $furnishing = $this->getDoctrine()->getRepository(MstFurnishing::class)->getCityListByCountryId($furnishing, $countryId);
+        $furnishing = $this->managerRegistry->getRepository(MstFurnishing::class)->getCityListByCountryId($furnishing, $countryId);
         return $this->render('master/mst_furnishing/_ajax_listing.html.twig', [
             'mst_cities' => $furnishing,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstFurnishingController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_furnishing_index');
         }
@@ -127,7 +134,7 @@ class MstFurnishingController extends AbstractController
     public function delete(Request $request, MstFurnishing $furnishing): Response
     {
         if ($this->isCsrfTokenValid('delete'.$furnishing->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($furnishing);
             $entityManager->flush();
         }

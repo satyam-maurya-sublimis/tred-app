@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstCallPurpose;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstCallPurposeController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstCallPurposeRepository $mstCallPurposeRepository
@@ -52,7 +59,7 @@ class MstCallPurposeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstCallPurpose->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstCallPurpose);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstCallPurposeController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $call_purpose = ucwords($request->query->get('call_purposeSearch'));
 
-        $mstCallPurpose = $this->getDoctrine()->getRepository(MstCallPurpose::class)->getCityListByCountryId($call_purpose, $countryId);
+        $mstCallPurpose = $this->managerRegistry->getRepository(MstCallPurpose::class)->getCityListByCountryId($call_purpose, $countryId);
         return $this->render('master/mst_call_purpose/_ajax_listing.html.twig', [
             'mst_cities' => $mstCallPurpose,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstCallPurposeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_call_purpose_index');
         }
@@ -127,7 +134,7 @@ class MstCallPurposeController extends AbstractController
     public function delete(Request $request, MstCallPurpose $mstCallPurpose): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstCallPurpose->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstCallPurpose);
             $entityManager->flush();
         }

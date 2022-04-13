@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstFacing;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstFacingController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstFacingRepository $mstFacingRepository
@@ -52,7 +59,7 @@ class MstFacingController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstFacing->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstFacing);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstFacingController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $facing = ucwords($request->query->get('facingSearch'));
 
-        $mstFacing = $this->getDoctrine()->getRepository(MstFacing::class)->getCityListByCountryId($facing, $countryId);
+        $mstFacing = $this->managerRegistry->getRepository(MstFacing::class)->getCityListByCountryId($facing, $countryId);
         return $this->render('master/mst_facing/_ajax_listing.html.twig', [
             'mst_cities' => $mstFacing,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstFacingController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_facing_index');
         }
@@ -127,7 +134,7 @@ class MstFacingController extends AbstractController
     public function delete(Request $request, MstFacing $mstFacing): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstFacing->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstFacing);
             $entityManager->flush();
         }

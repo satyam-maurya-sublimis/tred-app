@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstState;
@@ -18,6 +19,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class MstStateController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstStateRepository $mstStatesRepository
@@ -50,7 +57,7 @@ class MstStateController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstState);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -78,7 +85,7 @@ class MstStateController extends AbstractController
         $form = $this->createForm(MstStateType::class, $mstState);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_state_index');
         }
@@ -100,7 +107,7 @@ class MstStateController extends AbstractController
     public function search(Request $request): Response
     {
         $countryId = trim($request->query->get('countryId'));
-        $mstState = $this->getDoctrine()->getRepository(MstState::class)->findBy(['mstCountry' => $countryId]);
+        $mstState = $this->managerRegistry->getRepository(MstState::class)->findBy(['mstCountry' => $countryId]);
         return $this->render('master/mst_state/_ajax_listing.html.twig', [
             'mst_states' => $mstState,
             'path_add' => 'master_state_add',
@@ -119,7 +126,7 @@ class MstStateController extends AbstractController
     public function delete(Request $request, MstState $mstState): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstState->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstState);
             $entityManager->flush();
         }

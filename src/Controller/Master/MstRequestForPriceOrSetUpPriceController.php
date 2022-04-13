@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstRequestForPriceOrSetUpPrice;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstRequestForPriceOrSetUpPriceController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstRequestForPriceOrSetUpPriceRepository $mstRequestForPriceOrSetUpPriceRepository
@@ -52,7 +59,7 @@ class MstRequestForPriceOrSetUpPriceController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstRequestForPriceOrSetUpPrice->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstRequestForPriceOrSetUpPrice);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstRequestForPriceOrSetUpPriceController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $request_for_price_or_setup_price = ucwords($request->query->get('request_for_price_or_setup_priceSearch'));
 
-        $mstRequestForPriceOrSetUpPrice = $this->getDoctrine()->getRepository(MstRequestForPriceOrSetUpPrice::class)->getCityListByCountryId($request_for_price_or_setup_price, $countryId);
+        $mstRequestForPriceOrSetUpPrice = $this->managerRegistry->getRepository(MstRequestForPriceOrSetUpPrice::class)->getCityListByCountryId($request_for_price_or_setup_price, $countryId);
         return $this->render('master/mst_request_for_price_or_setup_price/_ajax_listing.html.twig', [
             'mst_cities' => $mstRequestForPriceOrSetUpPrice,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstRequestForPriceOrSetUpPriceController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_request_for_price_or_setup_price_index');
         }
@@ -127,7 +134,7 @@ class MstRequestForPriceOrSetUpPriceController extends AbstractController
     public function delete(Request $request, MstRequestForPriceOrSetUpPrice $mstRequestForPriceOrSetUpPrice): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstRequestForPriceOrSetUpPrice->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstRequestForPriceOrSetUpPrice);
             $entityManager->flush();
         }

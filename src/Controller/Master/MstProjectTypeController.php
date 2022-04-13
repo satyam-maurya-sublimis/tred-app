@@ -4,6 +4,7 @@ namespace App\Controller\Master;
 
 use App\Service\CommonHelper;
 use App\Service\FileUploaderHelper;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstProjectType;
@@ -21,6 +22,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstProjectTypeController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstProjectTypeRepository $mstProjectTypeRepository
@@ -67,7 +74,7 @@ class MstProjectTypeController extends AbstractController
                 $mstProjectType->setProjectTypeVideo($form['projectTypeVideo']->getData());
                 $mstProjectType->setProjectTypeVideoPath($form['projectTypeVideoPath']->getData());
             }
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstProjectType);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -94,7 +101,7 @@ class MstProjectTypeController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $project_type = ucwords($request->query->get('project_typeSearch'));
 
-        $mstProjectType = $this->getDoctrine()->getRepository(MstProjectType::class)->getCityListByCountryId($project_type, $countryId);
+        $mstProjectType = $this->managerRegistry->getRepository(MstProjectType::class)->getCityListByCountryId($project_type, $countryId);
         return $this->render('master/mst_project_type/_ajax_listing.html.twig', [
             'mst_cities' => $mstProjectType,
             'country_id' => $countryId,
@@ -143,7 +150,7 @@ class MstProjectTypeController extends AbstractController
                 $mstProjectType->setProjectTypeVideo($form['projectTypeVideo']->getData());
                 $mstProjectType->setProductTypeVideoPath($form['projectTypeVideoPath']->getData());
             }
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_project_type_index');
         }
@@ -167,7 +174,7 @@ class MstProjectTypeController extends AbstractController
     public function delete(Request $request, MstProjectType $mstProjectType): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstProjectType->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstProjectType);
             $entityManager->flush();
         }

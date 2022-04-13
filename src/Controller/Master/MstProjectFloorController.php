@@ -2,6 +2,7 @@
 
 namespace App\Controller\Master;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Master\MstProjectFloor;
@@ -19,6 +20,12 @@ use Ramsey\Uuid\Uuid;
  */
 class MstProjectFloorController extends AbstractController
 {
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
     /**
      * @Route("/", name="index", methods={"GET"})
      * @param MstProjectFloorRepository $mstProjectFloorRepository
@@ -52,7 +59,7 @@ class MstProjectFloorController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mstProjectFloor->setRowId(Uuid::uuid4()->toString());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->persist($mstProjectFloor);
             $entityManager->flush();
             $this->addFlash('success', 'form.created_successfully');
@@ -79,7 +86,7 @@ class MstProjectFloorController extends AbstractController
         $countryId = trim($request->query->get('countryId'));
         $project_floor = ucwords($request->query->get('project_floorSearch'));
 
-        $mstProjectFloor = $this->getDoctrine()->getRepository(MstProjectFloor::class)->getCityListByCountryId($project_floor, $countryId);
+        $mstProjectFloor = $this->managerRegistry->getRepository(MstProjectFloor::class)->getCityListByCountryId($project_floor, $countryId);
         return $this->render('master/mst_project_floor/_ajax_listing.html.twig', [
             'mst_cities' => $mstProjectFloor,
             'country_id' => $countryId,
@@ -103,7 +110,7 @@ class MstProjectFloorController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
             $this->addFlash('success', 'form.updated_successfully');
             return $this->redirectToRoute('master_project_floor_index');
         }
@@ -127,7 +134,7 @@ class MstProjectFloorController extends AbstractController
     public function delete(Request $request, MstProjectFloor $mstProjectFloor): Response
     {
         if ($this->isCsrfTokenValid('delete'.$mstProjectFloor->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
             $entityManager->remove($mstProjectFloor);
             $entityManager->flush();
         }
