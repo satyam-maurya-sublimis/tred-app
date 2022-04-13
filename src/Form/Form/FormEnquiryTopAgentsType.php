@@ -116,7 +116,7 @@ class FormEnquiryTopAgentsType extends AbstractType
                 'class' => MstState::class,
                 'required' => false,
                 'query_builder' => function (EntityRepository $dr) use ($data) {
-                    if (array_key_exists('mstCountry', $data)) {
+                    if (is_array($data)) {
                         $country_id = $data["mstCountry"];
                     } else {
                         $country_id = $data->getMstCountry() ? $data->getMstCountry()->getId() : null;
@@ -129,7 +129,7 @@ class FormEnquiryTopAgentsType extends AbstractType
                 'class' => MstCity::class,
                 'required' => false,
                 'query_builder' => function (EntityRepository $dr) use ($data) {
-                    if (array_key_exists('mstState', $data)) {
+                    if (is_array($data)) {
                         $state_id = $data["mstState"];
                     } else {
                         $state_id = $data->getMstState() ? $data->getMstState()->getId() : null;
@@ -151,7 +151,7 @@ class FormEnquiryTopAgentsType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($refreshLocation) {
             $form = $event->getForm();
             $data = $event->getData();
-            if (array_key_exists('mstCountry', $data)) {
+            if (isset($data["mstCountry"])) {
                 $refreshLocation($form, $data);
             }
         });

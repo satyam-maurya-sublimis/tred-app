@@ -315,7 +315,7 @@ class FurnitureController extends AbstractController
         $form = $this->createForm(FurnitureTredExpertsType::class, $formEnquiry);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $filter = $request->query->get('filter');
+            $filter = $request->get('filter');
             if (isset($filter['trnFurniture'])){
                 $trnFurniture =  $this->managerRegistry->getRepository(TrnFurniture::class)->find($filter['trnFurniture']);
                 $formEnquiry->setTrnFurniture($trnFurniture);

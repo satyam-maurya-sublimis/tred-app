@@ -257,7 +257,7 @@ class FormFurnitureEnquiryType extends AbstractType
                 'required' => false,
                 'placeholder' => 'placeholder.form.select',
                 'query_builder' => function (EntityRepository $dr) use ($data) {
-                    if (array_key_exists('mstCountry', $data)) {
+                    if (is_array($data)) {
                         $country_id = $data["mstCountry"];
                     } else {
                         $country_id = $data->getMstCountry() ? $data->getMstCountry()->getId() : null;
@@ -278,7 +278,7 @@ class FormFurnitureEnquiryType extends AbstractType
                 'required' => false,
                 'placeholder' => 'placeholder.form.select',
                 'query_builder' => function (EntityRepository $dr) use ($data) {
-                    if (array_key_exists('mstState', $data)) {
+                    if (is_array($data)) {
                         $state_id = $data["mstState"];
                     } else {
                         $state_id = $data->getMstState() ? $data->getMstState()->getId() : null;
@@ -302,10 +302,10 @@ class FormFurnitureEnquiryType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($refreshState,$refreshCity,$refreshProductSubType,$refreshFurnitureCategory) {
             $form = $event->getForm();
             $data = $event->getData();
-            if (array_key_exists('mstCountry', $data)) {
+            if (isset($data["mstCountry"])) {
                 $refreshState($form, $data);
             }
-            if (array_key_exists('mstState', $data)) {
+            if (isset($data["mstState"])) {
                 $refreshCity($form, $data);
             }
             if (isset($data['mstProductType'])) {
